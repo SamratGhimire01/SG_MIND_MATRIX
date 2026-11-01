@@ -21,4 +21,4 @@ Read first: `01_brand/SGMM_Brand_Bible.md` (look + truth; it wins on appearance)
 Naming: `SGMM_EP###_{asset}_v###.ext`.
 
 ## Video production
-Follow `.claude/skills/sgmm-video-production/SKILL.md` for every SGMM video: Samrat's approved look, hands/keyboard, screens mapping, the Sufi tension score and the render pipeline. Record new preferences there.
+Follow `.claude/skills/sgmm-video-production/SKILL.md` for every SGMM video and `.claude/skills/sgmm-publishing/SKILL.md` when posting: Samrat's approved look, hands/keyboard, screens mapping, the Sufi tension score and the render pipeline. Record new preferences there.
