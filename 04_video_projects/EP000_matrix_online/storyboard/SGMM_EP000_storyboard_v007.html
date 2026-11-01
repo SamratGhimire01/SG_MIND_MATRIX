@@ -836,12 +836,12 @@ function drawCaps(ctx,t){for(const [a,b,parts] of CAPS){if(t<a||t>b)continue;con
   lines.forEach((ln,li)=>{const w=ln.reduce((s,[x])=>s+ctx.measureText(x).width,0);let x=540-w/2;const y=1440+li*60+(1-inn)*14;ctx.fillStyle='rgba(5,8,7,.62)';ctx.fillRect(x-16,y-30,w+32,60);for(const [txt,col] of ln){ctx.fillStyle=col;ctx.fillText(txt,x,y);x+=ctx.measureText(txt).width}});ctx.restore()}}
 
 /* ================= sound: a compact kit (ideas from the reference kit: buses, compressor, room reverb, seeded noise, paper/stroke/key primitives) ================= */
-function makeKit(ctx,start){const T0=start||0,base=ctx.currentTime+.03,SR=ctx.sampleRate,TINY=1e-4,at=t=>(Math.round((base+(t-T0))*SR)+.25)/SR;
+function makeKit(ctx,start,mute){const T0=start||0,base=ctx.currentTime+.03,SR=ctx.sampleRate,TINY=1e-4,at=t=>(Math.round((base+(t-T0))*SR)+.25)/SR;
   const master=ctx.createGain();master.gain.value=.9;const comp=ctx.createDynamicsCompressor();comp.threshold.value=-16;comp.knee.value=8;comp.ratio.value=3;comp.attack.value=.004;comp.release.value=.18;comp.connect(master);master.connect(ctx.destination);
-  const bus={};for(const [n,g] of Object.entries({sfx:.85,amb:.5,music:.5})){bus[n]=ctx.createGain();bus[n].gain.value=g;bus[n].connect(comp)}
+  const bus={};for(const [n,g] of Object.entries({sfx:.85,amb:.5,music:.5})){bus[n]=ctx.createGain();bus[n].gain.value=g;const z=ctx.createGain();z.gain.value=(mute==='music'&&n==='music')||(mute==='sfx'&&n!=='music')?0:1;bus[n].connect(z);z.connect(comp)}
   const verb=ctx.createConvolver();{const n=Math.floor(1.6*SR),ir=ctx.createBuffer(2,n,SR);for(let c=0;c<2;c++){const r=rng(77+c),d=ir.getChannelData(c);let lp=0;for(let i=0;i<n;i++){const u=i/n;lp+=(.6-.45*u)*((r()*2-1)-lp);d[i]=lp*Math.pow(1-u,3)}}verb.buffer=ir}
   const vin=ctx.createGain();vin.gain.value=.9;vin.connect(verb);verb.connect(comp);
-  const verbM=ctx.createConvolver();verbM.buffer=verb.buffer;const vinM=ctx.createGain();vinM.gain.value=1;const voutM=ctx.createGain();voutM.gain.value=1;vinM.connect(verbM);verbM.connect(voutM);voutM.connect(comp);
+  const verbM=ctx.createConvolver();verbM.buffer=verb.buffer;const vinM=ctx.createGain();vinM.gain.value=1;const voutM=ctx.createGain();voutM.gain.value=1;vinM.connect(verbM);verbM.connect(voutM);const zm=ctx.createGain();zm.gain.value=mute==='music'?0:1;voutM.connect(zm);zm.connect(comp);vin.gain.value=mute==='sfx'?0:.9;
   const NB={};{const n=Math.floor(2.5*SR);for(const kind of ['white','pink','brown']){const b=ctx.createBuffer(1,n,SR),d=b.getChannelData(0),r=rng(kind.length*97);let p0=0,p1=0,p2=0,br=0;
     for(let i=0;i<n;i++){const w=r()*2-1;if(kind==='white')d[i]=w;else if(kind==='pink'){p0=.997*p0+.029*w;p1=.985*p1+.032*w;p2=.95*p2+.048*w;d[i]=(p0+p1+p2+w*.05)*2.2}else{br=(br+.02*w)/1.02;d[i]=br*3.2}}NB[kind]=b}}
   const sweep=(param,v,t)=>{if(!Array.isArray(v)){param.setValueAtTime(v,t);return}param.setValueAtTime(v[0][1],t+v[0][0]);for(let i=1;i<v.length;i++)param.exponentialRampToValueAtTime(Math.max(v[i][1],1),t+v[i][0])};
@@ -1005,12 +1005,12 @@ const fontSpecs=[`500 40px ${MONO}`,`700 40px ${MONO}`,`700 40px ${TITLE}`,`500 
 const ready=document.fonts?Promise.all(fontSpecs.map(f=>document.fonts.load(f))).catch(()=>{}):Promise.resolve();
 T=1.0;ready.then(()=>{draw();thumbs();window.__ready=true});
 window.__exp={
-  frame:(t)=>{cv.width=1080;cv.height=1920;const k=trailK(t),n=k>0?4:1,sh=1/120;
-    if(n===1)render(ctx,1080,1920,t,true);else{const tmp=offFor(1080,1921),tc=tmp.getContext('2d');ctx.setTransform(1,0,0,1,0,0);
-      for(let i=0;i<n;i++){const ti=Math.max(0,t-sh*(i/(n-1))*(k/.45));render(tc,1080,1920,ti,false);ctx.globalAlpha=1/(i+1);ctx.drawImage(tmp,0,0)}ctx.globalAlpha=1;ctx.setTransform(1,0,0,1,0,0);drawActTag(ctx,t);drawCaps(ctx,t)}
+  frame:(t,caps=true)=>{cv.width=1080;cv.height=1920;const k=trailK(t),n=k>0?4:1,sh=1/120;
+    if(n===1)render(ctx,1080,1920,t,caps);else{const tmp=offFor(1080,1921),tc=tmp.getContext('2d');ctx.setTransform(1,0,0,1,0,0);
+      for(let i=0;i<n;i++){const ti=Math.max(0,t-sh*(i/(n-1))*(k/.45));render(tc,1080,1920,ti,false);ctx.globalAlpha=1/(i+1);ctx.drawImage(tmp,0,0)}ctx.globalAlpha=1;ctx.setTransform(1,0,0,1,0,0);if(caps){drawActTag(ctx,t);drawCaps(ctx,t)}}
     return cv.toDataURL('image/jpeg',.96)},
-  audio:async()=>{const sr=48000,off=new OfflineAudioContext(2,sr*46,sr);score(makeKit(off,0));const buf=await off.startRendering();
-    const L=buf.getChannelData(0),R=buf.getChannelData(1),N=L.length;let pk=0;for(let i=0;i<N;i++)pk=Math.max(pk,Math.abs(L[i]),Math.abs(R[i]));const g=pk>0?.891/pk:1;
+  audio:async(mute)=>{const sr=48000,off=new OfflineAudioContext(2,sr*46,sr);const kk=makeKit(off,0,mute);score(kk);const buf=await off.startRendering();
+    const L=buf.getChannelData(0),R=buf.getChannelData(1),N=L.length;let pk=0;for(let i=0;i<N;i++)pk=Math.max(pk,Math.abs(L[i]),Math.abs(R[i]));const g=mute?1:(pk>0?.891/pk:1);
     const ab=new ArrayBuffer(44+N*4),v=new DataView(ab),ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
     ws(0,'RIFF');v.setUint32(4,36+N*4,true);ws(8,'WAVE');ws(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,2,true);v.setUint32(24,sr,true);v.setUint32(28,sr*4,true);v.setUint16(32,4,true);v.setUint16(34,16,true);ws(36,'data');v.setUint32(40,N*4,true);
     let o=44;for(let i=0;i<N;i++){v.setInt16(o,Math.round(clamp(L[i]*g,-1,1)*32767),true);v.setInt16(o+2,Math.round(clamp(R[i]*g,-1,1)*32767),true);o+=4}

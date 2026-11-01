@@ -6,3 +6,4 @@ __MACOSX/
 05_audio/voice/**
 *.mov
 *.mp4
+!09_exports/*.mp4

@@ -19,3 +19,6 @@ Read first: `01_brand/SGMM_Brand_Bible.md` (look + truth; it wins on appearance)
 ## Layout
 `01_brand 02_channel 03_signal 04_video_projects/EP###_slug/{script,research,footage,edit,export,storyboard} 05_audio 06_research 07_scripts 08_templates 09_exports 10_assets/{3d,images}`
 Naming: `SGMM_EP###_{asset}_v###.ext`.
+
+## Video production
+Follow `.claude/skills/sgmm-video-production/SKILL.md` for every SGMM video: Samrat's approved look, hands/keyboard, screens mapping, the Sufi tension score and the render pipeline. Record new preferences there.
