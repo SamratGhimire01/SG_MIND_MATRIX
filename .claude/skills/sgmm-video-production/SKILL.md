@@ -58,6 +58,6 @@ Stick-like finger · hands from above · long fingers · bald/3D figure · plain
 ## Voice (added after EP000 voice pass)
 - Samrat records all lines in one take with pauses; `edit/animatic/build_vo.py` cuts each line out and places it at its exact start (frame-accurate), with 80 ms pre-roll and short fades.
 - Voice chain: high-pass 85 Hz, light denoise, -2 dB at 220 Hz, +3 dB presence at 3.4 kHz, gentle compression; voice alone ≈ -17 LUFS.
-- Music ducks ~6 dB under the voice (side-chain, 25 ms attack, 450 ms release), full in the gaps. Final mix -14 LUFS, -1.5 dBTP.
+- **Samrat's voice must sit clearly on top: at least +12 dB (target +13 dB) above music + SFX on every line.** A 6 dB side-chain duck was too little (he said the voice felt pressed down). Use `edit/animatic/automix.py`: per-line background dips sized to reach +13 dB (ramps 80 ms, 120 ms pre-roll), a voice-pocket EQ on the background while he speaks (-7 dB at 2.6 kHz, -4 dB at 1.2 kHz), voice compressed 4:1 with +4 dB presence. Background returns to full between lines. Final mix -14 LUFS, -1.5 dBTP. Always measure the voice-over-background ratio per line before delivering.
 - If a line is longer than its slot: move it earlier or speed it up at most ~10% (pitch kept); never cut words. Captions are re-timed to the real voice.
 - Line identification: speech recognition (pocketsphinx works offline here; Hugging Face is blocked in this environment).
