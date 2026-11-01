@@ -1,0 +1,821 @@
+<title>The Matrix Is Online · Storyboard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap">
+<style>
+/* Layout: control-room desk — a sticky 9:16 player on the left, the live shot sheet and lanes on the right, the shot list and brand sheet below. Deliberately single dark look (the brand is Void). */
+:root{
+  --void:#050807; --panel:#0A110E; --line:#16241E; --forest:#0B3D2E;
+  --white:#F2F5F3; --fog:#7C8A84; --green:#00E676; --amber:#FFB547;
+  --title:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--void);color:var(--white);font-family:var(--title);font-size:15px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.mono{font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fog)}
+header.top{display:flex;gap:20px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:20px}
+.brandline{display:flex;gap:16px;align-items:center}
+.brandline svg{width:44px;height:44px;flex:none}
+h1{font-size:clamp(30px,5vw,54px);line-height:1;margin:6px 0 0;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
+h1 em{font-style:normal;color:var(--green)}
+.status{display:flex;gap:8px;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);padding:5px 9px;color:var(--fog)}
+.pill.on{color:var(--amber);border-color:#4a3a1a}
+.thesis{max-width:66ch;color:#C9D1CD;margin:18px 0 0;font-size:16px}
+
+.stage{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:28px;margin-top:28px;align-items:start}
+@media (max-width:860px){.stage{grid-template-columns:minmax(0,1fr)}}
+.player{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+@media (max-width:860px){.player{position:static;max-width:380px;margin:0 auto;width:100%}}
+.frame{position:relative;width:100%;aspect-ratio:9/16;max-width:100%;background:#000;border:1px solid var(--line);overflow:hidden}
+.frame canvas{width:100%;height:100%;display:block}
+.hud{position:absolute;left:10px;right:10px;top:8px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:rgba(242,245,243,.55);pointer-events:none;text-transform:uppercase}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+button{font-family:var(--mono);font-size:12px;letter-spacing:.06em;background:var(--panel);color:var(--white);border:1px solid var(--line);padding:8px 12px;cursor:pointer}
+button:hover{border-color:var(--fog)}
+button:focus-visible,input:focus-visible,.lane-click:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+button.primary{background:var(--green);color:var(--void);border-color:var(--green);font-weight:700;min-width:84px}
+button[aria-pressed="true"]{color:var(--green);border-color:var(--green)}
+.time{font-family:var(--mono);font-size:12px;color:var(--fog);margin-left:auto;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;margin-top:10px;accent-color:var(--green)}
+.legend-note{font-family:var(--mono);font-size:11px;color:var(--fog);margin-top:8px;line-height:1.5}
+
+.sheet{min-width:0}
+.now{border:1px solid var(--line);background:var(--panel);padding:20px}
+.now-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.now h2{margin:4px 0 0;font-size:28px;line-height:1.1;letter-spacing:-.01em}
+.actchip{font-family:var(--mono);font-size:11px;letter-spacing:.12em;padding:4px 8px;border:1px solid currentColor}
+.vo{font-family:var(--mono);font-size:15px;margin:14px 0 4px;color:var(--white)}
+.vo.none{color:var(--fog)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 22px;margin-top:14px}
+@media (max-width:560px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.field .kicker{display:block;margin-bottom:2px}
+.field p{margin:0;color:#C9D1CD;font-size:14px}
+
+.lanes{margin-top:18px;border:1px solid var(--line);padding:14px 14px 10px;overflow-x:auto}
+.lanes-inner{min-width:640px;position:relative}
+.lane{display:grid;grid-template-columns:70px 1fr;align-items:center;gap:8px;margin-bottom:6px}
+.lane .kicker{font-size:10px}
+.track{position:relative;height:26px;background:#07100C;border:1px solid #0f1b16}
+.blk{position:absolute;top:2px;bottom:2px;font-family:var(--mono);font-size:10px;line-height:20px;padding:0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:2px solid var(--void)}
+.tick{position:absolute;top:3px;bottom:3px;width:2px}
+.ruler{position:relative;height:16px;margin-left:78px;font-family:var(--mono);font-size:10px;color:var(--fog)}
+.ruler span{position:absolute;transform:translateX(-50%)}
+.playhead{position:absolute;top:0;bottom:0;width:1px;background:var(--green);pointer-events:none}
+.lane-click{position:absolute;inset:0 0 0 78px;cursor:pointer}
+
+section{margin-top:56px}
+section > h3{font-size:24px;margin:4px 0 6px;letter-spacing:-.01em}
+section > .lede{color:#C9D1CD;max-width:68ch;margin:0 0 18px}
+.shots{display:grid;gap:14px}
+.shot{display:grid;grid-template-columns:120px minmax(0,1fr);gap:18px;border:1px solid var(--line);padding:14px;background:var(--panel);cursor:pointer}
+.shot.active{border-color:var(--green)}
+.shot canvas{width:120px;aspect-ratio:9/16;height:auto;display:block;background:#000;border:1px solid var(--line)}
+.shot h4{margin:2px 0 4px;font-size:19px}
+.shot .vo{font-size:13px;margin:0 0 10px}
+.opts{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}
+.opts li{font-size:13px;color:var(--fog);padding-left:18px;position:relative}
+.opts li::before{content:"○";position:absolute;left:0;font-size:11px;top:1px}
+.opts li.pick{color:var(--white)}
+.opts li.pick::before{content:"●";color:var(--green)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:3px 7px;border:1px solid var(--line);color:var(--fog);text-transform:uppercase}
+.tag.film{color:var(--white);border-color:#3a4642}
+.tag.build{color:var(--green);border-color:#0f4f33}
+.risk{font-size:13px;color:#C9D1CD;margin-top:8px}
+.risk b{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--amber);font-weight:500;margin-right:6px}
+
+.brand{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+.sw{grid-column:span 2;border:1px solid var(--line)}
+.sw .chip{height:84px}
+.sw .meta{padding:10px;font-size:12px}
+.sw .meta b{display:block;font-size:13px}
+.sw .meta span{font-family:var(--mono);color:var(--fog);font-size:11px}
+@media (max-width:860px){.sw{grid-column:span 4}}
+@media (max-width:480px){.sw{grid-column:span 6}}
+.acts{grid-column:span 12;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:700px){.acts{grid-template-columns:minmax(0,1fr)}}
+.act{border:1px solid var(--line);padding:16px;min-width:0}
+.act .big{font-family:var(--mono);font-weight:700;font-size:30px;letter-spacing:.04em}
+.act p{margin:6px 0 0;color:#C9D1CD;font-size:13px}
+.typebox{grid-column:span 8;border:1px solid var(--line);padding:18px;min-width:0}
+.markbox{grid-column:span 4;border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;min-width:0}
+@media (max-width:860px){.typebox,.markbox{grid-column:span 12}}
+.markbox .safe{border:1px dashed #1f3a2e;padding:18px}
+.markbox svg{width:96px;height:96px;display:block}
+.spec-t{font-family:var(--title);font-weight:700;font-size:clamp(28px,4vw,44px);line-height:1;letter-spacing:-.02em}
+.spec-m{font-family:var(--mono);font-size:14px;color:#C9D1CD;margin-top:8px}
+
+table{border-collapse:collapse;width:100%;font-size:13px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line)}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--fog);font-weight:500}
+td.id{font-family:var(--mono);color:var(--green);white-space:nowrap}
+.qs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:700px){.qs{grid-template-columns:minmax(0,1fr)}}
+.q{border:1px solid var(--line);padding:16px;min-width:0}
+.q h5{margin:0 0 6px;font-size:16px}
+.q p{margin:0;color:#C9D1CD;font-size:13px}
+.q .rec{margin-top:8px;font-family:var(--mono);font-size:12px;color:var(--green)}
+footer{margin-top:56px;border-top:1px solid var(--line);padding-top:16px;color:var(--fog);font-size:12px}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brandline">
+      <svg viewBox="0 0 984 984" aria-label="SG Mind Matrix mark"><path id="markpath" transform="translate(0.0 18.0)" fill="#00E676" fill-rule="evenodd" d="M428.50 908.35C364.48 905.40 315.67 893.95 261.08 869.09C253.70 865.73 242.45 860.01 236.08 856.38C224.17 849.59 201.71 834.96 202.30 834.37C202.48 834.19 210.70 834.69 220.57 835.48C266.92 839.23 287.44 839.50 329.00 836.91C379.96 833.73 426.45 825.30 472.50 810.87C523.99 794.73 575.48 766.93 616.14 733.30C630.55 721.38 661.51 689.97 673.60 675.00C701.18 640.84 725.21 602.57 747.99 556.50C759.51 533.22 776.00 496.38 776.00 493.95C776.00 493.37 718.74 493.02 627.35 493.02C545.59 493.02 478.58 492.91 478.44 492.76C477.77 492.06 507.02 451.84 520.18 435.38C540.64 409.79 553.10 397.63 564.92 391.71L573.35 387.50L759.17 387.24L945.00 386.98L945.00 390.33C945.00 396.25 942.02 425.10 940.02 438.50C936.37 462.99 928.00 500.18 920.66 524.50C914.90 543.57 903.75 573.60 894.48 595.00C852.48 691.90 786.41 775.32 710.50 827.26C656.66 864.11 595.59 889.03 530.00 900.92C508.31 904.86 491.00 906.76 466.00 907.97C446.37 908.92 441.97 908.97 428.50 908.35ZM202.50 803.35C195.90 803.19 183.84 802.57 175.70 801.98L160.90 800.91L154.70 796.27C114.31 766.06 72.52 714.22 53.54 670.80C49.12 660.68 40.00 635.55 40.00 633.48C40.00 633.18 42.36 634.71 45.25 636.88C53.96 643.42 75.36 656.58 87.28 662.72C135.74 687.70 195.20 703.90 260.50 709.92C340.36 717.28 443.66 701.18 489.61 674.21C518.40 657.31 510.44 639.02 470.00 629.13C448.84 623.96 431.60 621.60 374.00 616.04C324.44 611.24 279.66 604.21 249.50 596.49C202.64 584.48 162.08 565.83 130.10 541.56C94.78 514.77 72.77 486.31 61.60 453.00C47.26 410.25 55.47 368.30 88.80 314.00C118.74 265.21 161.68 218.32 218.02 172.89C247.72 148.94 288.64 122.85 325.00 104.66C345.27 94.53 348.97 92.81 368.50 84.45C412.43 65.66 472.44 50.54 529.00 44.01C599.93 35.83 669.59 41.36 731.65 60.09C777.19 73.83 810.81 93.30 838.13 121.77C868.96 153.89 893.22 198.42 906.48 247.25C908.78 255.74 908.64 257.68 905.94 254.43C903.81 251.86 876.21 230.79 866.50 224.33C854.75 216.50 837.14 206.10 827.00 201.00C781.69 178.22 727.78 162.84 670.89 156.46C648.34 153.93 591.98 153.36 570.00 155.43C492.97 162.72 421.50 181.73 361.50 210.90C280.34 250.36 220.62 302.00 196.34 353.73C189.61 368.05 187.59 376.44 187.58 390.00C187.58 400.27 187.91 402.42 190.62 410.12C197.98 430.92 215.21 448.79 246.00 467.54C264.81 478.99 297.04 493.07 326.00 502.48C333.98 505.07 342.98 508.04 346.00 509.06C362.71 514.74 410.44 526.04 480.50 540.91C533.36 552.14 556.73 558.81 575.50 568.04C603.83 581.96 620.99 603.46 620.97 625.00C620.94 658.27 589.42 695.38 535.00 726.23C472.71 761.54 390.22 786.72 298.50 798.42C271.82 801.83 229.24 804.01 202.50 803.35ZM394.00 479.38C355.71 466.96 339.42 459.87 320.00 447.17C307.58 439.05 294.22 425.25 289.46 415.62C281.01 398.52 284.54 381.28 301.07 359.00C308.74 348.65 316.73 340.22 327.14 331.49C380.55 286.68 488.22 247.77 595.50 234.52C637.98 229.28 701.95 227.49 742.50 230.42C783.69 233.40 819.87 238.76 847.87 246.04C868.27 251.34 869.46 252.26 855.00 251.52C835.13 250.51 774.18 250.79 758.00 251.96C693.81 256.62 644.71 266.33 590.00 285.20C550.98 298.66 509.86 318.89 482.00 338.35C454.58 357.50 429.28 382.04 415.34 403.00C398.07 428.97 392.38 453.98 398.94 475.06C400.99 481.64 400.98 481.65 394.00 479.38Z"/></svg>
+      <div>
+        <div class="kicker">SG Mind Matrix · EP000 · Launch Short · 46 s</div>
+        <h1>The Matrix Is <em>Online</em></h1>
+      </div>
+    </div>
+    <div class="status">
+      <span class="pill on">Storyboard v002 · script enhanced</span>
+      <span class="pill">9:16 · 1080×1920 · 30 fps</span>
+    </div>
+  </header>
+  <p class="thesis">It opens in <b>pitch black</b>. One keystroke floods the room green, and its three screens become three times. The camera goes <b style="color:var(--amber)">through the left screen</b> into the past, films the present <b>live on the right screen</b>, and goes <b style="color:var(--green)">through the top screen</b> into a 3D field of what comes next. It ends the way it began: a second keystroke, every light cuts out, and in the dark one screen types what's coming. The last black frame loops into the first.</p>
+
+  <div class="stage">
+    <div class="player">
+      <div class="frame">
+        <canvas id="cv" width="540" height="960" aria-label="Animatic of the 46-second short"></canvas>
+        <div class="hud"><span id="hudShot">01 · Hook</span><span id="hudAct">—</span></div>
+      </div>
+      <div class="controls">
+        <button class="primary" id="play" type="button">▶ Play</button>
+        <button id="snd" type="button" aria-pressed="false">Sound off</button>
+        <button id="cap" type="button" aria-pressed="true">Captions</button>
+        <button id="ver" type="button" aria-pressed="false">Lines: v002</button>
+        <span class="time" id="clock">0:00.0 / 0:46</span>
+      </div>
+      <input type="range" id="scrub" min="0" max="46" step="0.01" value="0" aria-label="Scrub timeline">
+      <p class="legend-note">Animatic only: drawn previs, not the final look. The studio, hands and Claude chat will be real footage; the amber library and the green field will be rendered segments. The sound is a placeholder sketch. “Lines” switches the captions between your original script and the v002 lines.</p>
+    </div>
+
+    <div class="sheet">
+      <div class="now" id="now"></div>
+      <div class="lanes">
+        <div class="lanes-inner" id="lanes"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <section>
+    <div class="kicker">Script review · v001 → v002</div>
+    <h3>What was weak, and the fix</h3>
+    <p class="lede">I kept your structure and timings and fixed where people swipe away, where it says nothing, and where it sounds like every other AI channel. Use the <span class="mono" style="color:var(--white)">Lines</span> button on the player to compare the two versions.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Where</th><th>Problem</th><th>Fix in v002</th></tr></thead>
+      <tbody>
+        <tr><td class="id">0:00</td><td>The first 0.4 s showed an empty black frame. On Shorts the swipe decision happens on frame 1.</td><td>Pitch black, but frame 1 already reads: the line is on screen and spoken in the dark, the ENTER legend glows faintly, a finger descends. The press comes <i>after</i> the line, and the whole room floods green in 0.2 s.</td></tr>
+        <tr><td class="id">0:02</td><td>3 seconds with no voice and no information, right where viewers decide to stay.</td><td>The screens snap on reading <b style="color:var(--amber)">THEN</b> · <b>NOW</b> · <b style="color:var(--green)">NEXT</b>. The silent beat becomes the map of the film, and the left word then dissolves into the library.</td></tr>
+        <tr><td class="id">0:06</td><td>“Twenty years ago” is 2006, when people already searched online. The library picture would be wrong for the date.</td><td>“<b>A generation ago</b>… you searched. And you waited.” It's still true, and it rhymes with “today” and “next”.</td></tr>
+        <tr><td class="id">0:24</td><td>“Will change… everything” is the most common hype line in AI videos, and the brand rejects hype.</td><td>“What comes next… <b style="color:var(--green)">is already being written</b>.” It sets up the closing line and the channel message (the world is being rewritten).</td></tr>
+        <tr><td class="id">0:31</td><td>“I'm going to document it…” is 5 words over 9 seconds. Dead air at the point where retention drops most.</td><td>“I'm going to document all of it. Every shift. Every tool. Everything I build, in public.” Three beats, each on a new keystroke.</td></tr>
+        <tr><td class="id">0:39</td><td>The ending was a static wide with a logo: no tension and no reason to come back. It also dropped the channel's signature line.</td><td>A slow push toward the mark, then “The world is being rewritten.” On “rewritten” a second CLACK cuts every light. Silence. One screen flickers on and types <b>EPISODE 01 · SATURDAY</b>. Then the last line, whispered: “Let's build it together.”</td></tr>
+        <tr><td class="id">loop</td><td>Shorts replay automatically. The old ending jumped from a bright wide to a black start.</td><td>The last black frame matches the first black frame, so the Short loops without a seam and replays count toward views.</td></tr>
+        <tr><td class="id">all</td><td>Motion: moves started and stopped at full speed, hard jumps between shots, a flickering field, jittery hands.</td><td>Every move eases in and out, and each shot starts where the last one ended. Dissolves only where the camera travels; hard cuts only at the act change (THEN → NOW) and the blackout. Motion trails on fast moves, softer hands, and a field that fades instead of popping.</td></tr>
+        <tr><td class="id">new</td><td>No structure markers inside the acts.</td><td>Act tags (green-disc style from the brand's titles): <span class="mono">01 THEN · 02 NOW · 03 NEXT</span>. A green streaming cursor on the live answer. A 3D NEXT space with volumetric forms.</td></tr>
+        <tr><td class="id">keep</td><td>“This is the Matrix.” can read as a Matrix-movie fan line.</td><td>Kept, because it's your signature, but never paired with green code rain or a CRT look, and spoken calm and low.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tablewrap" style="margin-top:16px"><table>
+      <thead><tr><th>Time</th><th>v002 voice (Samrat)</th><th>On screen</th></tr></thead>
+      <tbody>
+        <tr><td class="id">0:00</td><td>“This is the Matrix.” <span style="color:var(--fog)">(in the dark)</span></td><td>Pitch black → ENTER → room floods green</td></tr>
+        <tr><td class="id">0:02</td><td style="color:var(--fog)">—</td><td>Screens: THEN · NOW · NEXT</td></tr>
+        <tr><td class="id">0:05</td><td>“A generation ago… you searched. And you waited.”</td><td>01 THEN · paper library</td></tr>
+        <tr><td class="id">0:13</td><td>“Today, you just ask. And something answers.”</td><td>02 NOW · real Claude chat</td></tr>
+        <tr><td class="id">0:22</td><td>“What comes next… is already being written.”</td><td>03 NEXT · 3D field</td></tr>
+        <tr><td class="id">0:30</td><td>“I'm going to document all of it. Every shift. Every tool. Everything I build, in public.”</td><td>Slide to the Mac mini</td></tr>
+        <tr><td class="id">0:39</td><td>“This is SG Mind Matrix. The world is being rewritten.”</td><td>Mark on the top screen</td></tr>
+        <tr><td class="id">0:43</td><td>“Let's build it together.” <span style="color:var(--fog)">(whispered, in black)</span></td><td>Blackout → EPISODE 01 · SATURDAY</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+  <section>
+    <div class="kicker">Shot list</div>
+    <h3>Seven shots, three acts</h3>
+    <p class="lede">For each shot I compared several options and picked one (filled dot). <span class="mono" style="color:var(--white)">FILM</span> is for you to shoot on the phone; <span class="mono" style="color:var(--green)">BUILD</span> is what I make. Click a shot to jump the player there.</p>
+    <div class="shots" id="shots"></div>
+  </section>
+
+  <section>
+    <div class="kicker">Brand sheet · v1.1</div>
+    <h3>What every frame obeys</h3>
+    <p class="lede">Five colours, two typefaces, one mark, three acts. Matrix Green appears on one element per frame: the thing being explained or the emphasis beat.</p>
+    <div class="brand">
+      <div class="sw"><div class="chip" style="background:#00E676"></div><div class="meta"><b>Matrix Green</b><span>#00E676 · NEXT · logo</span></div></div>
+      <div class="sw"><div class="chip" style="background:#050807;border-bottom:1px solid var(--line)"></div><div class="meta"><b>Void Black</b><span>#050807 · ground</span></div></div>
+      <div class="sw"><div class="chip" style="background:#F2F5F3"></div><div class="meta"><b>Signal White</b><span>#F2F5F3 · NOW · text</span></div></div>
+      <div class="sw"><div class="chip" style="background:#0B3D2E"></div><div class="meta"><b>Deep Forest</b><span>#0B3D2E · panels</span></div></div>
+      <div class="sw"><div class="chip" style="background:#FFB547"></div><div class="meta"><b>Archive Amber</b><span>#FFB547 · THEN</span></div></div>
+      <div class="sw"><div class="chip" style="background:#7C8A84"></div><div class="meta"><b>Fog</b><span>#7C8A84 · captions</span></div></div>
+
+      <div class="acts">
+        <div class="act"><div class="kicker">Act · 0:05–0:13</div><div class="big" style="color:var(--amber)">THEN</div><p><b>Editorial Essay Collage.</b> Amber and cream paper, halftone cut-outs from your own photos, masking tape, one green annotation circle.</p></div>
+        <div class="act"><div class="kicker">Act · 0:13–0:22</div><div class="big">NOW</div><p><b>Real footage.</b> Hands, the RGB keyboard and a real Claude chat filmed over the shoulder. Nothing mocked up.</p></div>
+        <div class="act"><div class="kicker">Act · 0:22–0:30</div><div class="big" style="color:var(--green)">NEXT</div><p><b>Flow Field.</b> Hairline green streamlines on Void, parting around an unseen core, with one white thread. No bloom, no neon.</p></div>
+      </div>
+
+      <div class="typebox">
+        <div class="kicker">Titles · Space Grotesk Bold</div>
+        <div class="spec-t">The world is being rewritten.</div>
+        <div class="kicker" style="margin-top:16px">Labels, captions, data · JetBrains Mono</div>
+        <div class="spec-m">THEN · NOW · NEXT — 0:28.0 — "everything."</div>
+      </div>
+      <div class="markbox">
+        <div class="safe"><svg viewBox="0 0 984 984" aria-label="SG mark"><use href="#markpath"/></svg></div>
+        <div class="kicker" style="text-align:center">Mark · 25% clear space · min 24 px<br>Green, white or black · on Void only</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">Build list</div>
+    <h3>What I make, and when</h3>
+    <p class="lede">Screen content is built first, because it has to be playing on your monitors while you film. Each segment keeps its HTML source beside an H.264 MP4.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>ID</th><th>Asset</th><th>Used in</th><th>Needed</th></tr></thead>
+      <tbody>
+        <tr><td class="id">B1</td><td>Left screen: first frame of the THEN collage, gently breathing (loop)</td><td>Shot 3 push-in</td><td>Before the shoot</td></tr>
+        <tr><td class="id">B2</td><td>Top screen: Emergence Field, 30 s loop at monitor resolution</td><td>Shots 2, 5, 6</td><td>Before the shoot</td></tr>
+        <tr><td class="id">B3</td><td>Word cards THEN · NOW · NEXT (hook), finale (sides → Void, top → SG mark), and the blackout card “EPISODE 01 · SATURDAY”</td><td>Shot 7</td><td>Before the shoot</td></tr>
+        <tr><td class="id">B4</td><td>Void black screen file, for the "off" plates</td><td>Shot 1</td><td>Before the shoot</td></tr>
+        <tr><td class="id">B9</td><td>THEN / NOW / NEXT wallpapers (replace the JK wallpapers)</td><td>Every shot</td><td>Before the shoot</td></tr>
+        <tr><td class="id">B5</td><td>THEN library collage segment, 8 s, from your photos</td><td>Shot 3</td><td>After the shoot</td></tr>
+        <tr><td class="id">B6</td><td>NEXT 3D field, 2.6 s full frame: the same flow field in depth, with matte volumetric forms in perspective, soft key + rim light, depth fog, slow dolly</td><td>Shot 5</td><td>After the shoot</td></tr>
+        <tr><td class="id">B7</td><td>Original music bed + SFX stems (48 kHz WAV)</td><td>Whole film</td><td>After the shoot</td></tr>
+        <tr><td class="id">B10</td><td>Act tags 01 THEN · 02 NOW · 03 NEXT (Swiss-style lower-left disc + mono label), alpha MOV for the edit</td><td>Shots 3–5</td><td>After the shoot</td></tr>
+        <tr><td class="id">B8</td><td>Edit kit: Resolve marker list, SRT captions, grade notes</td><td>Edit</td><td>After the shoot</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <div class="kicker">Decisions for you</div>
+    <h3>Calls before I build</h3>
+    <div class="qs">
+      <div class="q"><h5>Who is "the character"?</h5><p>You, faceless: hands, back of head, silhouette. SIGNAL isn't rigged yet, so it can't sit at the desk.</p><div class="rec">→ recommend: you, faceless</div></div>
+      <div class="q"><h5>Your 3D scan as the person</h5><p>The scan you sent ("3d-scan-man-1") is a single static, unrigged mesh: about 176k vertices with 4K textures. It's a real person's scanned face, it shows sneaker logos and a cross necklace, and the licence isn't in the zip. To sit and type, it needs rigging and posing first. It fits a fully 3D desk scene. For filmed footage you are the person, and the scan isn't needed.</p><div class="rec">→ tell me: filmed studio, or a full 3D studio? And where is the scan from (licence)?</div></div>
+      <div class="q"><h5>Which screen is the "centre monitor"?</h5><p>The desk has left (AOC), right (Philips) and top (Himstar). The plan puts the SG mark on the top screen.</p><div class="rec">→ recommend: top (Himstar)</div></div>
+      <div class="q"><h5>Can the LED strip chase?</h5><p>If the remote has a flow/chase mode, the light race is real. If not, I build it in the edit from an off plate and an on plate.</p><div class="rec">→ either works; tell me which</div></div>
+      <div class="q"><h5>Episode tease at the end</h5><p>The blackout card promises “EPISODE 01 · SATURDAY”. Keep it only if episode 1 really comes out that Saturday (the plan says 7 Nov). Otherwise it becomes “NEW EPISODE EVERY SATURDAY”.</p><div class="rec">→ confirm the date</div></div>
+      <div class="q"><h5>Wordmark</h5><p>The approved "SG MIND MATRIX" lockup is raster only and isn't in the repo. The film can end on the mark alone, or you upload the lockup PNG.</p><div class="rec">→ upload it if you want the name on screen</div></div>
+      <div class="q"><h5>Format</h5><p>Vertical Short first (1080×1920), plus a 16:9 cut of the wide for X, as in the master plan.</p><div class="rec">→ recommend: 9:16 master + 16:9 for X</div></div>
+    </div>
+  </section>
+
+  <footer>Source: <span class="mono">04_video_projects/EP000_matrix_online/storyboard/</span> · Brand: <span class="mono">01_brand/SGMM_Brand_Bible.md</span> · SG Mind Matrix, 1 Nov 2026</footer>
+</div>
+
+<script>
+(()=>{
+const C={green:'#00E676',void:'#050807',white:'#F2F5F3',forest:'#0B3D2E',amber:'#FFB547',fog:'#7C8A84',cream:'#F1E4C8',ink:'#1E170C'};
+const DUR=46;
+const MARK=new Path2D(document.getElementById('markpath').getAttribute('d'));
+const MONO='"JetBrains Mono", ui-monospace, monospace', TITLE='"Space Grotesk", system-ui, sans-serif';
+const BLACKOUT=43.4;
+
+const SHOTS=[
+ {n:1,a:0,b:2,name:'Pitch black',act:'HOOK',col:C.white,vo:'“This is the Matrix.” — spoken in the dark, before the press',thumb:1.55,
+  opts:['Pitch black; the line is spoken in the dark; ENTER; the whole room floods green and the screens snap on THEN · NOW · NEXT','v001: ECU press first, then a slow light race','Silence, then CLACK, then the voice','Black with only the caption; the room reveals on the word “Matrix”'],pick:0,
+  comp:'Frame 1 already reads: pitch black, the ENTER legend faintly visible, a finger descending, the caption on screen.',
+  cam:'Locked, with a slow 5% creep-in so the frame is never dead.',make:'Room lights and LED wall on one switch (smart plug or the remote’s all-on). Off plate + on plate; the flood is a 6-frame ramp with a tiny overshoot.',
+  snd:'Room tone → the line in the dark → CLACK → a low relay thump as the room floods → three screen ticks.',risk:'If the real lights fade in slowly, the snap is built from the two plates in the edit.',tags:['film','build: B4 plates']},
+ {n:2,a:2,b:5,name:'The map',act:'HOOK',col:C.white,vo:'No voice. The three screens read THEN · NOW · NEXT',thumb:4.2,
+  opts:['One continuous pull-back from the key to an over-shoulder wide','Crane up to a top-down view','Static wide; the character sits into frame','The screens carry THEN · NOW · NEXT, so the silent 3 s become the map of the film'],pick:0,also:3,
+  comp:'Ends low behind the right shoulder: silhouette lower-left, three lit screens reading THEN · NOW · NEXT, the green room around them.',
+  cam:'One move, fast out and slow in (cubic); the blur clears as it slows. No hold before the next push.',make:'Real footage; the screens play the B3 word cards.',
+  snd:'Music bed swells in under the move.',risk:'Jitter on the fast part. Desk sled + stabilise + ramp in Resolve.',tags:['film','build: B3']},
+ {n:3,a:5,b:13,name:'Through the left screen',act:'THEN',col:C.amber,vo:'“A generation ago… you searched. And you waited.”',thumb:11.9,
+  opts:['The word THEN dissolves into the collage’s first frame; the camera keeps pushing through the screen into the paper library','Amber light spills out and turns the studio to paper','The screen tears like paper','A card-catalogue drawer slides out at the camera'],pick:0,
+  comp:'Paper library in parallax layers: cut-out hands pull a book, three pages flip, a clock waits inside the one green circle.',
+  cam:'The push accelerates into the screen, and the collage takes over at the same speed, then decelerates. No speed jump at the handoff.',make:'B1 on the screen while filming; B5 collage from your own photos.',
+  snd:'Bed filtered warm. Paper rustle, three page flips, a clock tick under “And you waited.”',risk:'Moiré on the LCD; stop the physical push early and continue digitally.',tags:['film','build: B1','build: B5']},
+ {n:4,a:13,b:22,name:'Ask',act:'NOW',col:C.white,vo:'“Today, you just ask. And something answers.”',thumb:20.8,
+  opts:['Hard cut on a keystroke to hands, rising over the shoulder onto a real Claude chat','Pull back out of the left screen and pan right','THEN and NOW in one frame: amber screen soft at the edge, answer on the right','Full-frame OBS recording'],pick:0,also:2,
+  comp:'Hands on the RGB keyboard, then a soft rise over the shoulder; the amber left screen stays soft at frame edge.',
+  cam:'Hard cut in (the act change), then a dissolve-rise from hands to the screen and a slow push while the answer streams.',make:'Real chat on the brand profile; OBS capture too.',
+  snd:'Real typing. The bed opens brighter. One soft high note as the answer starts.',risk:'Check the real answer before publishing.',tags:['film']},
+ {n:5,a:22,b:30,name:'Look up',act:'NEXT',col:C.green,vo:'“What comes next… is already being written.”',
+  opts:['One continuous tilt from the chat up to the top screen; the head lifts into silhouette','Rack focus from the hands to the top screen','Low angle past the shoulder','Through the top screen into a 3D field: the camera dollies between soft-lit volumetric forms, which converge on the line'],pick:0,also:3,thumb:29.0,
+  comp:'Green streamlines on the top screen; head silhouette below. Through the screen: the same field in depth, with matte spheres and rings in Deep Forest and white floating in perspective, and one green form on the white thread. On the line they converge toward the thread.',
+  cam:'The tilt starts where shot 4 ends. The push into the screen matches the field 1:1, then becomes a slow dolly forward with a slight drift and roll; the forms pass the lens with depth of field, and the camera settles toward the green form.',make:'B2 on the Himstar; B6 = full-frame field + 3D forms (soft key light, rim, depth fog). Built in three.js or Blender, matte materials only.',
+  snd:'Bed thins as we rise. The 0.4 s of silence now happens inside the 3D space. Then the second half of the line + a deep low hit as the forms converge.',risk:'3D must stay matte and soft, never chrome or glowing (the bible bans tech-glow). Screen at ~60% to avoid green clipping.',tags:['film','build: B2','build: B6']},
+ {n:6,a:30,b:39,name:'The builder',act:'BUILD',col:C.white,vo:'“I’m going to document all of it. Every shift. Every tool. Everything I build, in public.”',thumb:33.5,
+  opts:['Low lateral slide along the keys to the Mac mini','Overhead slide','The Mac mini as a foreground wipe into the wide','Macro on the Mac mini'],pick:0,also:2,
+  comp:'Keys pass in the foreground, hands soft above, the screens as green bokeh.',
+  cam:'Constant-speed slide; the Mac mini crosses the lens and wipes into the wide.',make:'Real footage; Apple logo out of focus.',
+  snd:'Soft typing; one warm motif note on “document”.',risk:'The slide speed must stay constant; 3 takes.',tags:['film']},
+ {n:7,a:39,b:46,name:'Blackout',act:'END',col:C.green,vo:'“This is SG Mind Matrix. The world is being rewritten.” [black] “Let’s build it together.”',thumb:44.9,
+  opts:['Static wide; the mark appears (v001)','Slow push toward the top screen as the mark lands','On “rewritten” every light cuts to black; the top screen alone types the next episode','Black loops straight back into the pitch-black first frame'],pick:2,also:1,
+  comp:'Wide; the side screens go dark and the mark lands on the top screen. Then total black, and only the top screen flickers on: EPISODE 01 · SATURDAY.',
+  cam:'Slow push toward the top screen (tension) → hard black → locked.',make:'B3 finale clips on all three screens; room lights off with the same switch as shot 1.',
+  snd:'Riser under “The world is being rewritten” → CLACK → total silence → typing ticks → the last line, whispered.',risk:'The tease is a promise. Only use it if episode 1 really comes out that Saturday.',tags:['film','build: B3']}
+];
+const CAPS_NEW=[
+ [0.15,1.1,[['This is the Matrix.',C.white]]],
+ [6.9,8.4,[['A generation ago…',C.white]]],
+ [8.7,10.2,[['you searched.',C.white]]],
+ [10.8,12.7,[['And you waited.',C.white]]],
+ [15.8,18.0,[['Today, you just ask.',C.white]]],
+ [19.3,21.6,[['And something answers.',C.white]]],
+ [24.6,27.4,[['What comes next…',C.white]]],
+ [28.0,29.9,[['is already ',C.white],['being written.',C.green]]],
+ [31.0,33.4,[['I’m going to document',C.white],['\nall of it.',C.white]]],
+ [33.8,35.6,[['Every shift. Every tool.',C.white]]],
+ [36.0,38.6,[['Everything I build,',C.white],['\nin public.',C.white]]],
+ [40.2,41.8,[['This is ',C.white],['SG Mind Matrix',C.green],['.',C.white]]],
+ [42.0,43.35,[['The world is being rewritten.',C.white]]],
+ [45.0,45.9,[['Let’s build it together.',C.white]]],
+];
+const CAPS_OLD=[
+ [0.15,1.1,[['This is the Matrix.',C.white]]],
+ [6.9,8.4,[['Twenty years ago…',C.white]]],
+ [8.7,10.2,[['you searched.',C.white]]],
+ [10.8,12.7,[['You waited.',C.white]]],
+ [15.8,18.0,[['Today, you just ask.',C.white]]],
+ [19.3,21.6,[['And something answers.',C.white]]],
+ [24.6,27.4,[['What comes next',C.white],['\nwill change…',C.white]]],
+ [28.0,29.8,[['everything.',C.green]]],
+ [31.5,35.5,[['I’m going to document it…',C.white]]],
+ [40.2,41.8,[['This is ',C.white],['SG Mind Matrix',C.green],['.',C.white]]],
+ [45.0,45.9,[['Let’s build it together.',C.white]]],
+];
+let CAPS=CAPS_NEW;
+const SFX=[[1.15,'CLACK'],[1.15,'room thump'],[1.35,'tick'],[1.5,'tick'],[1.65,'tick'],[9.0,'page'],[9.6,'page'],[10.2,'page'],[11.4,'clock'],[13.0,'key (cut)'],[19.5,'note'],[28.0,'HIT'],[33.0,'note'],[41.0,'hit'],[43.4,'CLACK · lights out'],[44.0,'screen flicker'],[44.2,'type ticks']];
+const ACTTAGS=[[5.25,12.7,'01','THEN',C.amber],[13.15,21.7,'02','NOW',C.white],[22.3,29.7,'03','NEXT',C.green]];
+
+/* ---------- helpers ---------- */
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const io=t=>{t=clamp(t);return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2};
+const oc=t=>{t=clamp(t);return 1-Math.pow(1-t,3)};
+const ic=t=>{t=clamp(t);return t*t*t};
+const ss=t=>{t=clamp(t);return t*t*t*(t*(t*6-15)+10)};
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const zlerp=(a,b,t)=>a*Math.pow(b/a,t);
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R0=rng(7);
+const GRAIN=Array.from({length:900},()=>[R0()*2-1,R0(),R0()]);
+const BOOKS=[0,1,2].map(r=>{const a=[];let x=-430;while(x<420){const w=26+R0()*34;a.push({x,w,h:120+R0()*50,c:[C.amber,'#C98A2E',C.forest,'#2A2016','#D9C49A','#8A5A1E'][Math.floor(R0()*6)]});x+=w+3}return a});
+const TORN=Array.from({length:40},(_,i)=>[i/39,R0()]);
+const SEEDS=Array.from({length:240},()=>({u:R0(),v:R0(),c:Math.floor(R0()*5),w:.6+R0()*1.2}));
+const FLOWPAL=['#0B3D2E','#116B4A','#1FA86B','#00E676','#7DF2B5'];
+const KEYT=Array.from({length:60},()=>13+R0()*5.5).sort((a,b)=>a-b);
+const hasFilter=(()=>{try{const c=document.createElement('canvas').getContext('2d');return 'filter' in c}catch(e){return false}})();
+function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function drawMark(ctx,cx,cy,size,col){ctx.save();ctx.translate(cx-size/2,cy-size/2);ctx.scale(size/984,size/984);ctx.translate(0,18);ctx.fillStyle=col;ctx.fill(MARK,'evenodd');ctx.restore()}
+
+/* ---------- screen content ---------- */
+function collage(ctx,R,tc){
+  const s=R.h/1920, cx=R.x+R.w/2, cy=R.y+R.h/2;
+  const X=v=>cx+v*s, Y=v=>R.y+v*s;
+  const k=1+0.14*oc(clamp(tc/6.4));
+  const layer=(f,fn)=>{const kk=1+(k-1)*f;ctx.save();ctx.translate(cx,cy);ctx.scale(kk,kk);ctx.translate(-cx,-cy);fn();ctx.restore()};
+  ctx.save();ctx.beginPath();ctx.rect(R.x,R.y,R.w,R.h);ctx.clip();
+  layer(.5,()=>{
+    ctx.fillStyle=C.cream;ctx.fillRect(R.x-R.w,R.y-R.h,R.w*3,R.h*3);
+    ctx.fillStyle='rgba(30,23,12,.08)';
+    for(const g of GRAIN){ctx.fillRect(cx+g[0]*R.w*.8,R.y+g[1]*R.h,2.2*s+.4,2.2*s+.4)}
+    ctx.fillStyle=C.amber;ctx.beginPath();ctx.moveTo(R.x-R.w,R.y-R.h);ctx.lineTo(R.x+2*R.w,R.y-R.h);
+    for(let i=TORN.length-1;i>=0;i--){const p=TORN[i];ctx.lineTo(R.x-R.w+p[0]*R.w*3,Y(520+p[1]*36))}
+    ctx.closePath();ctx.fill();
+    ctx.fillStyle=C.forest;ctx.fillRect(X(-560),Y(1700),300*s,260*s);
+  });
+  layer(1,()=>{
+    ctx.save();ctx.translate(X(0),Y(920));ctx.rotate(-.025);
+    ctx.fillStyle='rgba(0,0,0,.25)';ctx.fillRect(-470*s+10*s,-330*s+14*s,940*s,660*s);
+    ctx.fillStyle='#FBF6EA';ctx.fillRect(-480*s,-340*s,960*s,680*s);
+    ctx.fillStyle='#E9D9B6';ctx.fillRect(-455*s,-315*s,910*s,630*s);
+    BOOKS.forEach((row,ri)=>{const by=(-300+ri*205)*s;ctx.fillStyle='#3B2E1C';ctx.fillRect(-455*s,by+185*s,910*s,14*s);
+      row.forEach((b,bi)=>{let dy=0,sc=1;const sel=ri===1&&bi===8;if(sel){const p=io(seg(tc,.5,2.0));dy=p*120;sc=1+p*.25}
+        ctx.fillStyle=b.c;ctx.fillRect(b.x*s,by+(185-b.h)*s+dy*s,b.w*s*sc,b.h*s*sc);
+        if(sel&&tc>.3){const p=io(seg(tc,.3,2.0));ctx.globalAlpha=clamp((tc-.3)/.3);ctx.fillStyle='#0B3D2E';ctx.strokeStyle='#FBF6EA';ctx.lineWidth=6*s;
+          ctx.beginPath();ctx.ellipse((b.x+b.w*.5)*s,by+(185-b.h*.35+dy+40)*s,70*s,44*s,-.3,0,7);ctx.fill();ctx.stroke();
+          ctx.fillRect((b.x-20)*s,by+(185-b.h*.35+dy+60)*s,60*s,180*s*p+40*s);ctx.globalAlpha=1}
+      })});
+    ctx.fillStyle='rgba(5,8,7,.13)';
+    for(let yy=-310;yy<310;yy+=14)for(let xx=-450;xx<450;xx+=14){ctx.beginPath();ctx.arc(xx*s,yy*s,(2.2+((xx*yy)%5)*.25)*s,0,7);ctx.fill()}
+    ctx.restore();
+    ctx.fillStyle='rgba(241,228,200,.72)';
+    ctx.save();ctx.translate(X(-430),Y(600));ctx.rotate(-.6);ctx.fillRect(-70*s,-20*s,140*s,40*s);ctx.restore();
+    ctx.save();ctx.translate(X(430),Y(1250));ctx.rotate(-.5);ctx.fillRect(-70*s,-20*s,140*s,40*s);ctx.restore();
+  });
+  layer(1.5,()=>{
+    ctx.fillStyle=C.void;ctx.font=`700 ${54*s}px ${MONO}`;ctx.textBaseline='alphabetic';ctx.fillText('THEN',X(-460),Y(170));
+    ctx.font=`500 ${24*s}px ${MONO}`;ctx.fillText('THE LIBRARY',X(-460),Y(215));
+    const ob=ss(seg(tc,2.2,2.7));
+    if(ob>0){ctx.save();ctx.globalAlpha=ob;ctx.translate(X(-20),Y(1470+(1-ob)*40));ctx.rotate(.02);
+      ctx.fillStyle='rgba(0,0,0,.25)';ctx.fillRect(-370*s+10*s,-160*s+12*s,740*s,320*s);
+      ctx.fillStyle='#FBF6EA';ctx.fillRect(-370*s,-160*s,740*s,320*s);
+      ctx.fillStyle='#E9D9B6';ctx.fillRect(-350*s,-140*s,340*s,280*s);ctx.fillRect(10*s,-140*s,340*s,280*s);
+      ctx.fillStyle='rgba(30,23,12,.35)';for(let i=0;i<9;i++){ctx.fillRect(-325*s,(-115+i*28)*s,290*s,6*s);ctx.fillRect(35*s,(-115+i*28)*s,290*s,6*s)}
+      for(let f=0;f<3;f++){const p=io(seg(tc,2.6+f*.55,3.1+f*.55));if(p>0&&p<1){const w=Math.cos(p*Math.PI)*340;ctx.fillStyle='#F6EBD3';ctx.fillRect(w>0?0:w*s,-140*s,Math.abs(w)*s,280*s);ctx.strokeStyle='rgba(30,23,12,.3)';ctx.lineWidth=2*s;ctx.strokeRect(w>0?0:w*s,-140*s,Math.abs(w)*s,280*s)}}
+      ctx.restore()}
+    const ls=ss(seg(tc,2.6,3.0));
+    if(ls>0){ctx.save();ctx.globalAlpha=ls;ctx.translate(X(-80),Y(1210+(1-ls)*30));ctx.rotate(-.03);
+      const hl=io(seg(tc,2.9,3.5));ctx.fillStyle='rgba(255,181,71,.75)';ctx.fillRect(-300*s,10*s,600*s*hl,46*s);
+      ctx.fillStyle='#FBF6EA';ctx.fillRect(-300*s,-70*s,600*s,96*s);
+      ctx.fillStyle=C.void;ctx.font=`700 ${84*s}px ${TITLE}`;ctx.fillText('SEARCHED',-280*s,10*s);ctx.restore()}
+    const cl=ss(seg(tc,4.2,4.7));
+    if(cl>0){ctx.save();ctx.globalAlpha=cl;const ccx=X(260),ccy=Y(1700+(1-cl)*40);
+      ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.arc(ccx+8*s,ccy+10*s,130*s,0,7);ctx.fill();
+      ctx.fillStyle='#FBF6EA';ctx.beginPath();ctx.arc(ccx,ccy,130*s,0,7);ctx.fill();
+      ctx.strokeStyle=C.ink;ctx.lineWidth=5*s;ctx.beginPath();ctx.arc(ccx,ccy,112*s,0,7);ctx.stroke();
+      for(let i=0;i<12;i++){const a=i/12*Math.PI*2;ctx.beginPath();ctx.moveTo(ccx+Math.cos(a)*92*s,ccy+Math.sin(a)*92*s);ctx.lineTo(ccx+Math.cos(a)*104*s,ccy+Math.sin(a)*104*s);ctx.stroke()}
+      const ma=-Math.PI/2+Math.max(0,tc-4.2)*2.4, ha=-Math.PI/2+.9+Math.max(0,tc-4.2)*.2;
+      ctx.lineWidth=7*s;ctx.beginPath();ctx.moveTo(ccx,ccy);ctx.lineTo(ccx+Math.cos(ma)*90*s,ccy+Math.sin(ma)*90*s);ctx.stroke();
+      ctx.lineWidth=9*s;ctx.beginPath();ctx.moveTo(ccx,ccy);ctx.lineTo(ccx+Math.cos(ha)*58*s,ccy+Math.sin(ha)*58*s);ctx.stroke();
+      const gc=io(seg(tc,4.8,5.8));if(gc>0){ctx.strokeStyle=C.green;ctx.lineWidth=8*s;ctx.lineCap='round';ctx.beginPath();ctx.arc(ccx,ccy,168*s,-2.2,-2.2+gc*Math.PI*2.08);ctx.stroke();ctx.lineCap='butt'}
+      ctx.restore();
+      const wa=ss(seg(tc,4.5,4.9));ctx.save();ctx.globalAlpha=wa;ctx.translate(X(-250),Y(1790+(1-wa)*30));ctx.rotate(.035);ctx.fillStyle='#FBF6EA';ctx.fillRect(-250*s,-70*s,500*s,96*s);
+      ctx.fillStyle=C.void;ctx.font=`700 ${84*s}px ${TITLE}`;ctx.fillText('WAITED',-226*s,10*s);ctx.restore()}
+  });
+  const vg=ctx.createRadialGradient(cx,cy,R.h*.3,cx,cy,R.h*.75);vg.addColorStop(0,'rgba(30,20,5,0)');vg.addColorStop(1,'rgba(30,20,5,.28)');ctx.fillStyle=vg;ctx.fillRect(R.x,R.y,R.w,R.h);
+  ctx.restore();
+}
+/* one field, drawn identically on the screen and full frame (normalised coordinates), so the push-through matches */
+function flow(ctx,R,t,conv=0,extra=0,thin=0){
+  ctx.save();ctx.beginPath();ctx.rect(R.x,R.y,R.w,R.h);ctx.clip();
+  ctx.fillStyle=C.void;ctx.fillRect(R.x,R.y,R.w,R.h);
+  ctx.globalCompositeOperation='lighter';
+  const N=120+Math.round(120*extra), steps=44, sl=R.w/55, u=R.h/325;
+  const field=(nx,ny)=>{let a=Math.sin(nx*3.1+t*.35)*1.1+Math.cos(ny*2.7-t*.28)*.9+Math.sin((nx+ny)*5.3+t*.45)*.4;
+    const dx=nx-.5, dy=(ny-.55)*(R.h/R.w), r2=dx*dx+dy*dy, w=Math.exp(-r2/.03);
+    a=a*(1-w)+(Math.atan2(dy,dx)+Math.PI/2)*w;
+    const ta=Math.atan2((.52-ny)*2.5,1); return a*(1-conv*.75)+ta*conv*.75};
+  for(let i=0;i<N;i++){const sd=SEEDS[i];const ph=(sd.u+t*.012)%1;let x=R.x+ph*R.w*1.1-R.w*.05,y=R.y+sd.v*R.h;
+    ctx.beginPath();ctx.moveTo(x,y);
+    for(let k=0;k<steps;k++){const a=field((x-R.x)/R.w,(y-R.y)/R.h);x+=Math.cos(a)*sl;y+=Math.sin(a)*sl;ctx.lineTo(x,y)}
+    const fadeWrap=Math.pow(Math.sin(Math.PI*ph),.6);
+    ctx.strokeStyle=FLOWPAL[sd.c];ctx.globalAlpha=(.34+conv*.3)*fadeWrap*(i>=120?extra:1);ctx.lineWidth=sd.w*(1+conv*1.2)*u*lerp(1,.3,thin);ctx.stroke()}
+  ctx.globalCompositeOperation='source-over';ctx.globalAlpha=.95;
+  let x=R.x+R.w*.02,y=R.y+R.h*.62;ctx.beginPath();ctx.moveTo(x,y);
+  for(let k=0;k<steps*1.6;k++){const a=field((x-R.x)/R.w,(y-R.y)/R.h);x+=Math.cos(a)*sl;y+=Math.sin(a)*sl;ctx.lineTo(x,y)}
+  ctx.strokeStyle=C.white;ctx.lineWidth=1.6*u*lerp(1,.4,thin);ctx.stroke();
+  ctx.restore();
+}
+
+/* ---------- NEXT: stylised volumetric forms in perspective (3D in NEXT only, per the bible) ---------- */
+const R3=rng(42);
+const FORMS=Array.from({length:24},(_,i)=>({x:(R3()*2-1)*5.5,y:(R3()*2-1)*8.5,z:6+R3()*34,r:.35+R3()*.9,type:R3()<.3?'ring':'sphere',tone:R3()<.25?'white':'forest',tilt:R3()*3,spin:(R3()-.5)*.6}));
+FORMS.push({x:.15,y:.3,z:16,r:1.15,type:'sphere',tone:'green',tilt:0,spin:0});
+const TONES={forest:['#3F8F6E','#0B3D2E','#010302'],white:['#F2F5F3','#AEB8B3','#1E2624'],green:['#B9F8D8','#00E676','#063A22']};
+function forms3d(ctx,t,conv,alpha){
+  if(alpha<=0)return;
+  const tt=t-27.6, cz=tt*4.2, camX=Math.sin(tt*.5)*.7, camY=-Math.sin(tt*.35)*.4, roll=Math.sin(tt*.4)*.04;
+  const items=[];
+  for(const f of FORMS){const dz=f.z-cz;if(dz<.9)continue;
+    const k=f.tone==='green'?0:conv*.55;const x=lerp(f.x,f.x*.25,k)-camX,y=lerp(f.y,f.y*.12+.3,k)-camY;
+    items.push({f,dz,x,y})}
+  items.sort((a,b)=>b.dz-a.dz);
+  ctx.save();ctx.translate(540,960);ctx.rotate(roll);ctx.translate(-540,-960);
+  for(const {f,dz,x,y} of items){
+    const F=950/dz, sx=540+x*F, sy=960+y*F, rr2=f.r*F;
+    if(sx<-rr2*2||sx>1080+rr2*2||sy<-rr2*2||sy>1920+rr2*2)continue;
+    const fog=clamp(1-(dz-6)/34), near=clamp((dz-.9)/1.6);
+    const a=alpha*Math.pow(fog,.8)*near;if(a<=.01)continue;
+    const blur=Math.min(9,Math.abs(dz-9)*.28);
+    ctx.save();ctx.globalAlpha=a;if(hasFilter&&blur>1.2)ctx.filter=`blur(${blur.toFixed(1)}px)`;
+    const [li,ba,da]=TONES[f.tone];
+    if(f.type==='sphere'){
+      const g=ctx.createRadialGradient(sx-rr2*.38,sy-rr2*.42,rr2*.05,sx,sy,rr2);g.addColorStop(0,li);g.addColorStop(.55,ba);g.addColorStop(1,da);
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(sx,sy,rr2,0,7);ctx.fill();
+      ctx.strokeStyle=f.tone==='green'?'rgba(242,245,243,.35)':'rgba(0,230,118,.28)';ctx.lineWidth=Math.max(1,rr2*.05);ctx.beginPath();ctx.arc(sx,sy,rr2*.97,.15,1.35);ctx.stroke();
+    } else {
+      const ang=f.tilt+t*f.spin, sq=Math.abs(Math.cos(f.tilt*1.3+t*f.spin*.7))*.8+.2;
+      ctx.translate(sx,sy);ctx.rotate(ang);
+      ctx.lineWidth=rr2*.32;ctx.strokeStyle=da;ctx.beginPath();ctx.ellipse(0,rr2*.04,rr2,rr2*sq,0,0,7);ctx.stroke();
+      ctx.lineWidth=rr2*.22;ctx.strokeStyle=ba;ctx.beginPath();ctx.ellipse(0,0,rr2,rr2*sq,0,0,7);ctx.stroke();
+      ctx.lineWidth=rr2*.07;ctx.strokeStyle=li;ctx.globalAlpha=a*.7;ctx.beginPath();ctx.ellipse(0,-rr2*.05,rr2,rr2*sq,0,Math.PI*1.1,Math.PI*1.75);ctx.stroke();
+    }
+    ctx.restore()}
+  ctx.restore();
+}
+const Q='How did people find a book in a library before computers?';
+function chat(ctx,R,t){
+  ctx.fillStyle='#141716';ctx.fillRect(R.x,R.y,R.w,R.h);
+  const s=R.w/740;
+  const typed=Q.slice(0,Math.floor(Q.length*seg(t,15.6,18.6)));
+  const sent=t>=18.9;
+  ctx.fillStyle='#202523';rr(ctx,R.x+90*s,R.y+R.h-74*s,R.w-180*s,50*s,12*s);ctx.fill();
+  ctx.font=`500 ${15*s}px ${TITLE}`;ctx.fillStyle=C.white;
+  if(!sent){ctx.fillText(typed,R.x+108*s,R.y+R.h-43*s);if(Math.floor(t*2.5)%2){const w=ctx.measureText(typed).width;ctx.fillStyle=C.white;ctx.fillRect(R.x+110*s+w,R.y+R.h-58*s,2*s,20*s)}}
+  else{ctx.fillStyle='#2A302D';rr(ctx,R.x+R.w-470*s,R.y+40*s,400*s,58*s,12*s);ctx.fill();ctx.fillStyle=C.white;
+    ctx.fillText('How did people find a book in a library',R.x+R.w-452*s,R.y+64*s);ctx.fillText('before computers?',R.x+R.w-452*s,R.y+86*s);
+    const p=seg(t,19.5,22.5);const lines=12;ctx.fillStyle='rgba(242,245,243,.55)';let lx=R.x+90*s,ly=R.y+130*s;
+    for(let i=0;i<lines;i++){const q=clamp(p*lines-i);if(q<=0)break;const w=(i%4===3?260:520-((i*37)%90))*s*q;ctx.fillRect(R.x+90*s,R.y+(130+i*20)*s,w,7*s);lx=R.x+90*s+w;ly=R.y+(130+i*20)*s}
+    if(p>0&&p<1){ctx.fillStyle=C.green;ctx.fillRect(lx+4*s,ly-3*s,8*s,13*s)}}
+  ctx.fillStyle=C.fog;ctx.font=`500 ${11*s}px ${MONO}`;ctx.fillText('real Claude chat · filmed live',R.x+14*s,R.y+R.h-8*s);
+}
+function word(ctx,R,txt,col){ctx.fillStyle=C.void;ctx.fillRect(R.x,R.y,R.w,R.h);ctx.fillStyle=col;ctx.font=`700 ${R.h*.26}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt,R.x+R.w/2,R.y+R.h/2);ctx.textAlign='left';ctx.textBaseline='alphabetic'}
+
+/* ---------- studio world ---------- */
+const MON={top:{x:690,y:420,w:620,h:349},left:{x:150,y:860,w:740,h:416},right:{x:1110,y:860,w:740,h:416}};
+const inner=m=>({x:m.x+12,y:m.y+12,w:m.w-24,h:m.h-24});
+function paint(ctx,R,m,t,o){
+  if(m==='then')collage(ctx,R,o.tc||0);
+  else if(m==='next')flow(ctx,R,t,0,0,0);
+  else if(m==='chat')chat(ctx,R,t);
+  else if(m==='word')word(ctx,R,o.txt,o.col);
+  else if(m==='mark'){ctx.fillStyle=C.void;ctx.fillRect(R.x,R.y,R.w,R.h);drawMark(ctx,R.x+R.w/2,R.y+R.h/2,R.h*.62,C.green)}
+  else {ctx.fillStyle='#030504';ctx.fillRect(R.x,R.y,R.w,R.h)}
+}
+function screen(ctx,which,st,t){
+  const R=inner(MON[which]);const sc=st[which]||{m:'off',a:0};
+  ctx.save();ctx.beginPath();ctx.rect(R.x,R.y,R.w,R.h);ctx.clip();
+  ctx.fillStyle='#030504';ctx.fillRect(R.x,R.y,R.w,R.h);
+  ctx.globalAlpha=sc.a;paint(ctx,R,sc.m,t,sc);
+  if(sc.m2&&sc.a2>0){ctx.globalAlpha=sc.a*sc.a2;paint(ctx,R,sc.m2,t,sc.o2||{})}
+  ctx.restore();
+}
+function spill(ctx,which,col,a){if(a<=0)return;const m=MON[which];const g=ctx.createRadialGradient(m.x+m.w/2,m.y+m.h/2,m.w*.2,m.x+m.w/2,m.y+m.h/2,m.w*.95);g.addColorStop(0,col);g.addColorStop(1,'rgba(0,0,0,0)');ctx.globalAlpha=a*.16;ctx.fillStyle=g;ctx.fillRect(m.x-m.w,m.y-m.h,m.w*3,m.h*3);ctx.globalAlpha=1}
+function studio(ctx,cam,st,t){
+  ctx.save();ctx.translate(540,960);ctx.scale(cam.z,cam.z);ctx.translate(-cam.x,-cam.y);
+  ctx.fillStyle=C.void;ctx.fillRect(-2000,-2000,6000,6600);
+  const lv=st.led??1, room=st.room??1;
+  if(lv>0&&room>0){const g=ctx.createRadialGradient(1000,340,50,1000,600,1500);g.addColorStop(0,`rgba(11,61,46,${Math.min(1,.8*lv*room)})`);g.addColorStop(1,'rgba(11,61,46,0)');ctx.fillStyle=g;ctx.fillRect(-500,-400,3000,2600);
+    ctx.fillStyle=`rgba(0,230,118,${.045*lv*room})`;ctx.fillRect(-500,-400,3000,2600)}
+  ctx.lineCap='round';
+  ctx.strokeStyle='#0D1512';ctx.lineWidth=12;ctx.beginPath();ctx.moveTo(120,330);ctx.lineTo(1880,330);ctx.moveTo(120,330);ctx.lineTo(120,1400);ctx.moveTo(1880,330);ctx.lineTo(1880,1400);ctx.stroke();
+  if(lv>0&&room>0){
+    ctx.strokeStyle=`rgba(0,230,118,${Math.min(1,.18*lv*room)})`;ctx.lineWidth=60;ctx.beginPath();ctx.moveTo(120,330);ctx.lineTo(1880,330);ctx.stroke();
+    ctx.strokeStyle=C.green;ctx.globalAlpha=Math.min(1,(.35+.65*lv)*room);ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(120,330);ctx.lineTo(1880,330);ctx.moveTo(120,330);ctx.lineTo(120,1400);ctx.moveTo(1880,330);ctx.lineTo(1880,1400);ctx.stroke();
+    ctx.globalAlpha=1}
+  ctx.lineCap='butt';
+  const sp=(k)=>(st[k]?.a||0)*(st[k]?.m==='off'?0:1);
+  spill(ctx,'left',st.left?.m==='then'?C.amber:'#F2F5F3',sp('left')*(st.left?.m==='then'?1:.4));spill(ctx,'right','#F2F5F3',sp('right'));spill(ctx,'top',C.green,sp('top'));
+  for(const k of ['top','left','right']){const m=MON[k];ctx.fillStyle='#0B0F0E';rr(ctx,m.x,m.y,m.w,m.h,8);ctx.fill();ctx.strokeStyle='#1C2421';ctx.lineWidth=3;ctx.stroke();screen(ctx,k,st,t)}
+  ctx.fillStyle='#0B0F0E';ctx.fillRect(500,1276,40,150);ctx.fillRect(1460,1276,40,150);
+  ctx.fillStyle='#070C0A';ctx.fillRect(-500,1420,3000,2000);ctx.fillStyle=`rgba(0,230,118,${.25*room*lv})`;ctx.fillRect(-500,1420,3000,3);
+  ctx.fillStyle='#1A1F1D';rr(ctx,1520,1555,240,70,14);ctx.fill();ctx.fillStyle='rgba(242,245,243,.8)';ctx.beginPath();ctx.arc(1545,1600,4,0,7);ctx.fill();
+  ctx.fillStyle='#0A0F0D';rr(ctx,640,1520,720,180,14);ctx.fill();
+  for(let r=0;r<5;r++)for(let c=0;c<15;c++){const kx=656+c*46.5,ky=1534+r*32;const hit=st.typing&&((Math.floor(t*9)+c*7+r*3)%23===0);
+    ctx.fillStyle=hit?'#1F3A2E':'#121916';ctx.fillRect(kx,ky,40,26);ctx.fillStyle=`rgba(0,230,118,${(hit?.7:.22)*(st.kb??1)})`;ctx.fillRect(kx,ky+24,40,2)}
+  if(st.char){const dy=st.headDy||0;ctx.fillStyle='#020403';
+    ctx.beginPath();ctx.moveTo(700,1760);ctx.bezierCurveTo(710,1540,830,1462,1000,1455);ctx.bezierCurveTo(1170,1462,1290,1540,1300,1760);ctx.closePath();ctx.fill();
+    ctx.fillRect(950,1360+dy*.5,100,120);
+    ctx.beginPath();ctx.ellipse(1000,1290+dy,104,124,0,0,7);ctx.fill();
+    ctx.strokeStyle=`rgba(0,230,118,${.45*Math.min(1,room*lv)})`;ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(1000,1290+dy,104,124,0,Math.PI*1.08,Math.PI*1.92);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(760,1520);ctx.bezierCurveTo(840,1468,920,1458,1000,1455);ctx.stroke()}
+  ctx.restore();
+}
+function studioBlur(ctx,cam,st,t,px){if(px<.5){studio(ctx,cam,st,t);return}if(hasFilter){ctx.save();ctx.filter=`blur(${px}px)`;studio(ctx,cam,st,t);ctx.restore()}else{studio(ctx,cam,st,t);ctx.fillStyle='rgba(5,8,7,.35)';ctx.fillRect(0,0,1080,1920)}}
+
+function bigKeys(ctx,off,lit,enterPress,hl,standby=0){
+  for(let r=0;r<4;r++)for(let c=-1;c<7;c++){const x=c*250+off+(r%2)*90,y=1060+r*250;
+    const isE=(r===0&&c===2);const dy=isE?enterPress*16:0;
+    ctx.fillStyle='rgba(0,230,118,'+(lit*(isE?.55:.18)+(hl&&hl(r,c)?.45:0))+')';rr(ctx,x-6,y+dy+10,232,214,30);ctx.fill();
+    ctx.fillStyle=isE?'#121A17':'#0D1311';rr(ctx,x,y+dy,220,206,26);ctx.fill();
+    ctx.fillStyle=isE?'#18221E':'#111816';rr(ctx,x+16,y+dy+14,188,160,20);ctx.fill();
+    if(isE){ctx.fillStyle=lit>0?C.white:`rgba(242,245,243,${.35+standby})`;ctx.font=`500 34px ${MONO}`;ctx.fillText('ENTER',x+56,y+dy+105)}}
+}
+function finger(ctx,x,y,rim=.4){ctx.fillStyle='#0A0D0C';ctx.beginPath();ctx.moveTo(x-70,2000);ctx.lineTo(x-62,y+60);ctx.quadraticCurveTo(x,y-20,x+62,y+60);ctx.lineTo(x+70,2000);ctx.closePath();ctx.fill();
+  ctx.strokeStyle=`rgba(0,230,118,${rim})`;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x-62,y+120);ctx.quadraticCurveTo(x,y-20,x+62,y+120);ctx.stroke()}
+
+/* ---------- scenes ---------- */
+const PRESS=1.15;
+function roomState(t){
+  const flood=ss(seg(t,PRESS,PRESS+.22));
+  const bump=Math.exp(-Math.pow((t-(PRESS+.24))/.07,2))*.22;
+  const on=(a)=>ss(seg(t,a,a+.12));
+  const lw=ss(seg(t,4.3,5.0));
+  return {room:flood,led:flood*(1+bump),char:true,kb:flood,
+    left:{m:'word',txt:'THEN',col:C.amber,a:on(1.35),m2:'then',a2:lw,o2:{tc:0}},
+    right:{m:'word',txt:'NOW',col:C.white,a:on(1.5)},
+    top:{m:'word',txt:'NEXT',col:C.green,a:on(1.65)}};
+}
+const S_LIT={room:1,led:1,char:true,kb:1,left:{m:'then',a:1,tc:0},right:{m:'chat',a:1},top:{m:'next',a:1}};
+const REV0={x:1290,y:1600,z:2.6}, REV1={x:930,y:1080,z:.62};
+function revealCam(t){const e=oc(seg(t,1.95,5.0));return{x:lerp(REV0.x,REV1.x,e),y:lerp(REV0.y,REV1.y,e),z:zlerp(REV0.z,REV1.z,e)}}
+function pushCam(t){const m=MON.left;const e=ic(seg(t,5.0,6.35));return{x:lerp(REV1.x,m.x+m.w/2,ss(seg(t,5.0,6.2))),y:lerp(REV1.y,m.y+m.h/2,ss(seg(t,5.0,6.2))),z:zlerp(REV1.z,1920/392,e)*(1+.14*oc(Math.max(0,t-6.35)/6.4))}}
+function otsCam(t){return{x:1300+(t-15.4)*4,y:1080,z:1.25+.06*ss(seg(t,15.4,22))}}
+function nextCam(t){const a=otsCam(22),top=MON.top;const p=ss(seg(t,22,25.5));
+  let c={x:lerp(a.x,1000,p),y:lerp(a.y,700,p),z:lerp(a.z,1.2,p)+.06*seg(t,25.5,27.6)};
+  const q=ic(seg(t,26.6,27.95));if(q>0){c={x:1000,y:lerp(700,top.y+top.h/2,ss(seg(t,26.6,27.7))),z:zlerp(c.z,5.95,q)}}return c}
+function endCam(t){const p=io(seg(t,39.3,BLACKOUT));return{x:1000,y:lerp(1020,880,p),z:lerp(.56,.7,p)}}
+const FULLFLOW=()=>{const R=inner(MON.top);const w=1920*R.w/R.h;return{x:540-w/2,y:0,w,h:1920}};
+
+const SCENES=[
+ {a:0,b:2.25,fn:(ctx,t)=>{
+   const st=roomState(t);
+   const pull=seg(t,1.95,2.25);
+   studioBlur(ctx,{x:1000,y:1500,z:.52},st,t,16);
+   const press=t<PRESS-.1?0:t<PRESS?(t-(PRESS-.1))/.1:t<1.45?1:Math.max(0,1-(t-1.45)/.15);
+   const lit=ss(seg(t,PRESS,PRESS+.22));
+   const k=(1+.05*ss(seg(t,0,2.2)))*(1-.12*oc(pull));
+   ctx.save();ctx.translate(540,960);ctx.scale(k,k);ctx.translate(-540,-960);
+   bigKeys(ctx,-150,lit,press,null,.0);
+   const fy=t<PRESS-.1?lerp(1700,960,ss(seg(t,0,PRESS-.1))):t<1.5?960+press*16:lerp(976,2150,io(seg(t,1.5,2.05)));
+   finger(ctx,460,fy,lerp(.12,.4,lit));
+   ctx.restore();
+   const dark=t<PRESS?.82:.82*(1-ss(seg(t,PRESS,PRESS+.2)));ctx.fillStyle=`rgba(0,0,0,${dark})`;ctx.fillRect(0,0,1080,1920);
+   if(t<PRESS){ctx.save();ctx.translate(540,960);ctx.scale(k,k);ctx.translate(-540,-960);ctx.fillStyle='rgba(242,245,243,.32)';ctx.font=`500 34px ${MONO}`;ctx.fillText('ENTER',2*250-150+56,1060+105);ctx.restore()}
+ }},
+ {a:1.95,b:5.0,fn:(ctx,t)=>{studioBlur(ctx,revealCam(t),roomState(t),t,10*(1-ss(seg(t,1.95,2.8))))}},
+ {a:5.0,b:6.6,fn:(ctx,t)=>{studio(ctx,pushCam(t),{...roomState(9),right:{m:'word',txt:'NOW',col:C.white,a:1},top:{m:'word',txt:'NEXT',col:C.green,a:1},left:{m:'then',a:1,tc:0}},t)}},
+ {a:6.35,b:13,fn:(ctx,t)=>collage(ctx,{x:0,y:0,w:1080,h:1920},Math.max(0,t-6.35))},
+ {a:13,b:15.7,fn:(ctx,t)=>{
+   studioBlur(ctx,{x:1350,y:1350,z:.8},{...S_LIT,typing:true},t,14);
+   const lift=ss(seg(t,15.0,15.7));
+   ctx.save();ctx.translate(540,1920);ctx.scale(1-.15*lift,1-.15*lift);ctx.translate(-540,-1920+lift*260);
+   bigKeys(ctx,-60-(t-13)*12,1,0,(r,c)=>((Math.floor(t*7)+r*5+c*3)%9===0));
+   ctx.fillStyle='#0A0D0C';const b1=Math.sin(t*7)*7,b2=Math.sin(t*7+1.7)*7;
+   ctx.beginPath();ctx.ellipse(300,1150+b1,190,120,-.2,0,7);ctx.fill();ctx.beginPath();ctx.ellipse(800,1170+b2,190,120,.2,0,7);ctx.fill();
+   ctx.strokeStyle='rgba(0,230,118,.35)';ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(300,1150+b1,190,120,-.2,Math.PI*1.1,Math.PI*1.9);ctx.stroke();ctx.beginPath();ctx.ellipse(800,1170+b2,190,120,.2,Math.PI*1.1,Math.PI*1.9);ctx.stroke();
+   ctx.restore();
+ }},
+ {a:15.4,b:22,fn:(ctx,t)=>studio(ctx,otsCam(t),{...S_LIT,typing:t<18.8},t)},
+ {a:22,b:27.95,fn:(ctx,t)=>{
+   studio(ctx,nextCam(t),{...S_LIT,typing:t<23.6,headDy:-40*ss(seg(t,24.4,26.2))},t);
+ }},
+ {a:27.6,b:30.4,fn:(ctx,t)=>{const cv2=io(seg(t,28.0,29.6));flow(ctx,FULLFLOW(),t,cv2,ss(seg(t,27.9,28.6)),ss(seg(t,27.9,28.5)));forms3d(ctx,t,cv2,ss(seg(t,27.8,28.5)));if(t>27.5&&t<28.05){ctx.fillStyle=`rgba(5,8,7,${.18*Math.sin(Math.PI*seg(t,27.5,28.05))})`;ctx.fillRect(0,0,1080,1920)}}},
+ {a:29.9,b:39.3,fn:(ctx,t)=>{
+   const p=(t-29.9)/9.4;
+   studioBlur(ctx,{x:lerp(850,1450,p),y:1250,z:1.0},{...S_LIT,typing:true},t,10);
+   if(hasFilter){ctx.save();ctx.filter='blur(6px)'}
+   ctx.fillStyle='#050807';const b1=Math.sin(t*6)*6,b2=Math.sin(t*6+1.9)*6;ctx.beginPath();ctx.ellipse(lerp(560,300,p),1120+b1,180,100,0,0,7);ctx.fill();ctx.beginPath();ctx.ellipse(lerp(900,640,p),1130+b2,180,100,0,0,7);ctx.fill();
+   if(hasFilter)ctx.restore();
+   bigKeys(ctx,250-(t-29.9)*230,1,0,(r,c)=>((Math.floor(t*6)+r*5+c*3)%11===0));
+   const mm=seg(t,36.8,39.3);if(mm>0){const e=ss(mm),mx=lerp(1200,-60,e),my=lerp(1000,-80,e*e),mh=lerp(1100,2100,e*e);ctx.fillStyle='#161B19';rr(ctx,mx,my,1500,mh,60);ctx.fill();ctx.fillStyle='#232A27';ctx.fillRect(mx+40,my,1420,8);ctx.fillStyle='rgba(242,245,243,.85)';ctx.beginPath();ctx.arc(mx+120,my+300,9,0,7);ctx.fill();
+     if(hasFilter&&mm>.6){}}
+ }},
+ {a:39.3,b:46,fn:(ctx,t)=>{
+   if(t<BLACKOUT){
+     const fadeSide=ss(seg(t,40.6,41.3)), mk=ss(seg(t,40.9,41.5));
+     const st={room:1,led:1,char:true,kb:1,
+       left:{m:'word',txt:'THEN',col:C.amber,a:1,m2:'off',a2:fadeSide},
+       right:{m:'word',txt:'NOW',col:C.white,a:1,m2:'off',a2:fadeSide},
+       top:{m:'word',txt:'NEXT',col:C.green,a:1,m2:'mark',a2:mk}};
+     studio(ctx,endCam(t),st,t);
+     const w=ss(seg(t,39.3,39.9));if(w<1){const mx=lerp(-60,-1700,oc(seg(t,39.3,39.85)));ctx.fillStyle='#161B19';rr(ctx,mx,-80,1500,2100,60);ctx.fill();ctx.fillStyle='rgba(242,245,243,.85)';ctx.beginPath();ctx.arc(mx+120,220,9,0,7);ctx.fill()}
+   } else {
+     ctx.fillStyle='#000';ctx.fillRect(0,0,1080,1920);
+     const cam=endCam(BLACKOUT),R=inner(MON.top);
+     const X=v=>(v-cam.x)*cam.z+540,Y=v=>(v-cam.y)*cam.z+960;
+     const fl=t<44.0?0:t<44.06?.6:t<44.1?.15:t<44.2?.8:1;
+     if(fl>0){ctx.globalAlpha=fl;ctx.fillStyle='#060A08';ctx.fillRect(X(R.x),Y(R.y),R.w*cam.z,R.h*cam.z);
+       const txt='EPISODE 01 · SATURDAY';const n=Math.floor(txt.length*seg(t,44.25,45.0));
+       ctx.font=`700 ${R.h*cam.z*.135}px ${MONO}`;ctx.fillStyle=C.white;ctx.textBaseline='middle';
+       const full=ctx.measureText(txt).width;const x0=X(R.x+R.w/2)-full/2,y0=Y(R.y+R.h/2);
+       ctx.fillText(txt.slice(0,n),x0,y0);
+       const cw=ctx.measureText(txt.slice(0,n)).width;if(t<45.0||Math.floor(t*2.2)%2===0){ctx.fillStyle=C.green;ctx.fillRect(x0+cw+6,y0-R.h*cam.z*.055,R.h*cam.z*.05,R.h*cam.z*.11)}
+       ctx.textBaseline='alphabetic';ctx.globalAlpha=1}
+     if(t>45.85){ctx.fillStyle=`rgba(0,0,0,${seg(t,45.85,46)})`;ctx.fillRect(0,0,1080,1920)}
+   }
+ }},
+];
+
+let OFF=new Map();
+function offFor(W,H){const k=W+'x'+H;if(!OFF.has(k)){const c=document.createElement('canvas');c.width=W;c.height=H;OFF.set(k,c)}return OFF.get(k)}
+function render(ctx,W,H,t,caps=true){
+  const S=W/1080;
+  ctx.setTransform(S,0,0,H/1920,0,0);ctx.globalAlpha=1;ctx.filter='none';
+  ctx.fillStyle=C.void;ctx.fillRect(0,0,1080,1920);
+  const act=SCENES.filter(s=>t>=s.a&&t<s.b);
+  act.forEach((s,i)=>{
+    if(i===0){ctx.save();s.fn(ctx,t);ctx.restore();return}
+    const prev=act[i-1];const al=ss(seg(t,s.a,prev.b));
+    const oc2=offFor(W,H),o=oc2.getContext('2d');o.setTransform(S,0,0,H/1920,0,0);o.globalAlpha=1;o.filter='none';o.fillStyle=C.void;o.fillRect(0,0,1080,1920);
+    o.save();s.fn(o,t);o.restore();
+    ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=al;ctx.drawImage(oc2,0,0);ctx.restore();
+  });
+  ctx.setTransform(S,0,0,H/1920,0,0);
+  if(caps){drawActTag(ctx,t);drawCaps(ctx,t)}
+}
+function drawActTag(ctx,t){
+  for(const [a,b,num,lab,col] of ACTTAGS){if(t<a||t>b)continue;
+    const inn=ss(seg(t,a,a+.45)),out=1-ss(seg(t,b-.35,b));const al=Math.min(inn,out);
+    ctx.save();ctx.globalAlpha=al;
+    const x=72,y=330;ctx.fillStyle=col;ctx.beginPath();ctx.arc(x+18,y,18*inn,0,7);ctx.fill();
+    ctx.beginPath();ctx.rect(x+48,y-34,360*inn,68);ctx.clip();
+    ctx.fillStyle='rgba(5,8,7,.55)';ctx.fillRect(x+48,y-30,360,60);
+    ctx.font=`500 26px ${MONO}`;ctx.fillStyle=C.fog;ctx.textBaseline='middle';ctx.fillText(num,x+62,y+1);
+    ctx.font=`700 38px ${MONO}`;ctx.fillStyle=col===C.amber&&t<13?'#F2F5F3':C.white;ctx.fillStyle=col;ctx.fillText(lab,x+112,y+2);
+    ctx.restore()}
+}
+function drawCaps(ctx,t){
+  for(const [a,b,parts] of CAPS){if(t<a||t>b)continue;const inn=ss(seg(t,a,a+.2)),al=Math.min(inn,1-ss(seg(t,b-.2,b)));
+    ctx.save();ctx.globalAlpha=al;ctx.font=`500 44px ${MONO}`;ctx.textBaseline='middle';
+    const lines=[[]];for(const [txt,col] of parts){const segs=txt.split('\n');segs.forEach((sg,i)=>{if(i>0)lines.push([]);if(sg)lines[lines.length-1].push([sg,col])})}
+    lines.forEach((ln,li)=>{const w=ln.reduce((s,[x])=>s+ctx.measureText(x).width,0);let x=540-w/2;const y=1440+li*60+(1-inn)*14;
+      ctx.fillStyle='rgba(5,8,7,.62)';ctx.fillRect(x-16,y-30,w+32,60);
+      for(const [txt,col] of ln){ctx.fillStyle=col;ctx.fillText(txt,x,y);x+=ctx.measureText(txt).width}});
+    ctx.restore()}
+}
+
+/* ---------- audio sketch ---------- */
+let actx=null, bus=null, noiseBuf=null, soundOn=false;
+function ensureAudio(){if(actx)return;const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;actx=new AC();
+  noiseBuf=actx.createBuffer(1,actx.sampleRate*2,actx.sampleRate);const d=noiseBuf.getChannelData(0);const rr2=rng(3);for(let i=0;i<d.length;i++)d[i]=rr2()*2-1}
+function stopAudio(){if(!bus)return;const b=bus;bus=null;try{b.gain.setTargetAtTime(0,actx.currentTime,.03);setTimeout(()=>b.disconnect(),300)}catch(e){}}
+function pts(param,P,t0,at){let v=P[P.length-1][1];for(let i=0;i<P.length-1;i++){if(t0>=P[i][0]&&t0<=P[i+1][0]){v=lerp(P[i][1],P[i+1][1],(t0-P[i][0])/((P[i+1][0]-P[i][0])||1));break}}if(t0<P[0][0])v=P[0][1];
+  param.setValueAtTime(v,at(t0));for(const [tt,vv] of P)if(tt>t0)param.linearRampToValueAtTime(vv,at(tt))}
+function startAudio(t0){
+  if(!soundOn)return;ensureAudio();if(!actx)return;if(actx.state==='suspended')actx.resume();stopAudio();
+  bus=actx.createGain();bus.gain.value=.8;bus.connect(actx.destination);const now=actx.currentTime+.05;const at=x=>now+(x-t0);
+  const noise=(time,dur,f,q,g,type='bandpass')=>{if(time<t0)return;const s=actx.createBufferSource();s.buffer=noiseBuf;s.loop=true;const fl=actx.createBiquadFilter();fl.type=type;fl.frequency.value=f;fl.Q.value=q;const gg=actx.createGain();gg.gain.setValueAtTime(g,at(time));gg.gain.exponentialRampToValueAtTime(.0001,at(time)+dur);s.connect(fl).connect(gg).connect(bus);s.start(at(time));s.stop(at(time)+dur+.05)};
+  const tone=(time,f0,f1,dur,g,type='sine')=>{if(time<t0)return;const o=actx.createOscillator();o.type=type;o.frequency.setValueAtTime(f0,at(time));o.frequency.exponentialRampToValueAtTime(f1,at(time)+dur*.6);const gg=actx.createGain();gg.gain.setValueAtTime(.0001,at(time));gg.gain.exponentialRampToValueAtTime(g,at(time)+.01);gg.gain.exponentialRampToValueAtTime(.0001,at(time)+dur);o.connect(gg).connect(bus);o.start(at(time));o.stop(at(time)+dur+.05)};
+  if(t0<PRESS){const s=actx.createBufferSource();s.buffer=noiseBuf;s.loop=true;const fl=actx.createBiquadFilter();fl.type='lowpass';fl.frequency.value=220;const g=actx.createGain();g.gain.value=.05;s.connect(fl).connect(g).connect(bus);s.start(at(t0));s.stop(at(PRESS))}
+  noise(PRESS,.05,2600,1.2,.9);tone(PRESS,180,120,.08,.25,'triangle');
+  tone(PRESS,72,38,1.1,.4);noise(PRESS+.02,.35,160,.7,.3,'lowpass');
+  [1.35,1.5,1.65].forEach(x=>tone(x,2400,2000,.05,.06));
+  const padStart=Math.max(t0,1.2);if(padStart<BLACKOUT){const fl=actx.createBiquadFilter();fl.type='lowpass';fl.Q.value=.7;const g=actx.createGain();g.connect(bus);fl.connect(g);
+    pts(g.gain,[[1.2,0],[2.4,.09],[27.4,.09],[27.6,.015],[28.0,.015],[29,.1],[41.8,.1],[43.39,.13],[43.4,0]],t0,at);
+    pts(fl.frequency,[[1.2,500],[5,450],[5.3,520],[13,520],[13.05,1700],[22,1600],[27.5,700],[28,700],[30,1100],[41.8,900],[43.4,2800]],t0,at);
+    [[55,'sawtooth',.5],[82.41,'sawtooth',.35],[110,'sine',.6],[164.8,'sine',.25]].forEach(([f,ty,gn])=>{const o=actx.createOscillator();o.type=ty;o.frequency.value=f;o.detune.value=(f%7)-3;const og=actx.createGain();og.gain.value=gn;o.connect(og).connect(fl);o.start(at(padStart));o.stop(at(BLACKOUT+.02))})}
+  noise(2.0,1.2,700,.5,.12);
+  [9.0,9.6,10.2].forEach(x=>noise(x,.25,3200,.6,.18));
+  for(let x=11.4;x<12.9;x+=.5)noise(x,.03,4200,4,.2);
+  noise(13.0,.04,3000,1.5,.35);
+  KEYT.filter(x=>x<18.5).forEach(x=>noise(x,.03,3000,1.5,.22));
+  for(let x=30.4;x<38.5;x+=.17+((x*13)%7)/40)noise(x,.025,3000,1.5,.12);
+  tone(19.5,1320,1318,1.6,.05);tone(33.0,659,658,1.6,.05);
+  tone(28.0,95,36,2.4,.6);noise(28.0,.4,180,.7,.35,'lowpass');
+  tone(41.0,90,40,2.2,.38);
+  if(t0<BLACKOUT){const s=actx.createBufferSource();s.buffer=noiseBuf;s.loop=true;const fl=actx.createBiquadFilter();fl.type='bandpass';fl.Q.value=3;const g=actx.createGain();
+    pts(fl.frequency,[[41.8,300],[43.4,4200]],t0,at);pts(g.gain,[[41.8,0],[43.39,.14],[43.4,0]],t0,at);s.connect(fl).connect(g).connect(bus);s.start(at(Math.max(t0,41.8)));s.stop(at(BLACKOUT+.05))}
+  noise(BLACKOUT,.05,2600,1.2,.9);tone(BLACKOUT,180,120,.08,.25,'triangle');
+  noise(44.0,.03,6000,2,.08);noise(44.1,.03,6000,2,.06);
+  for(let i=0;i<21;i++)noise(44.25+i*.75/21,.02,3500,2,.12);
+  tone(45.0,60,35,1.6,.22);
+}
+
+/* ---------- UI ---------- */
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+const dpr=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(540*dpr);cv.height=Math.round(960*dpr);
+const prevC=document.createElement('canvas');prevC.width=cv.width;prevC.height=cv.height;const pctx=prevC.getContext('2d');let lastT=-9;
+const TRAIL=[[1.95,3.3,.42],[5.5,6.6,.42],[13.0,13.01,0],[15.1,15.8,.3],[22,25.5,.25],[26.6,28.1,.45],[29.9,39.3,.28],[39.3,39.9,.3]];
+const trailK=t=>{for(const [a,b,k] of TRAIL){if(t>=a&&t<b)return k*Math.min(seg(t,a,a+.15),1-seg(t,b-.15,b))}return 0};
+let T=0, playing=false, t0=0, p0=0, caps=true, lastShot=-1;
+const $=id=>document.getElementById(id);
+const fmt=t=>{const m=Math.floor(t/60),s=t-m*60;return `${m}:${s<10?'0':''}${s.toFixed(1)}`};
+const shotAt=t=>{const i=SHOTS.findIndex(s=>t>=s.a&&t<s.b);return i>=0?i:SHOTS.length-1};
+
+function nowCard(i){const s=SHOTS[i];
+  $('now').innerHTML=`<div class="now-head"><div><div class="kicker">Shot ${String(s.n).padStart(2,'0')} · ${fmt(s.a)}–${fmt(s.b)}</div><h2>${s.name}</h2></div><span class="actchip" style="color:${s.col}">${s.act}</span></div>
+  <div class="vo">${s.vo}</div>
+  <div class="grid2"><div class="field"><span class="kicker">Composition</span><p>${s.comp}</p></div><div class="field"><span class="kicker">Camera</span><p>${s.cam}</p></div>
+  <div class="field"><span class="kicker">How it’s made</span><p>${s.make}</p></div><div class="field"><span class="kicker">Sound</span><p>${s.snd}</p></div></div>`;
+  document.querySelectorAll('.shot').forEach((el,j)=>el.classList.toggle('active',j===i));
+  $('hudShot').textContent=`${String(s.n).padStart(2,'0')} · ${s.name}`;$('hudAct').textContent=s.act;$('hudAct').style.color=s.col;
+}
+function buildLanes(){
+  const L=$('lanes');const pct=t=>(t/DUR*100)+'%';
+  const acts=[[0,2,'HOOK',C.white,'#18201D'],[2,5,'MAP',C.white,'#18201D'],[5,13,'THEN',C.void,C.amber],[13,22,'NOW',C.void,C.white],[22,30,'NEXT',C.void,C.green],[30,39,'BUILDER',C.white,'#18201D'],[39,43.4,'MARK',C.void,C.green],[43.4,46,'BLACK',C.fog,'#000']];
+  const src=[[0,6.45,'FILM'],[6.45,13,'BUILD B5'],[13,27.8,'FILM'],[27.8,30.2,'B6 3D'],[30.2,46,'FILM']];
+  let h=`<div class="ruler">`;for(let s=0;s<=46;s+=5)h+=`<span style="left:${pct(s)}">${s}s</span>`;h+=`</div>`;
+  h+=`<div class="lane"><span class="kicker">Act</span><div class="track">${acts.map(([a,b,n,fc,bg])=>`<div class="blk" style="left:${pct(a)};width:calc(${pct(b-a)});background:${bg};color:${fc}">${n}</div>`).join('')}</div></div>`;
+  h+=`<div class="lane"><span class="kicker">Source</span><div class="track">${src.map(([a,b,n])=>`<div class="blk" style="left:${pct(a)};width:calc(${pct(b-a)});background:${n==='FILM'?'#1B2421':'#0F3B29'};color:${n==='FILM'?C.white:C.green}">${n}</div>`).join('')}</div></div>`;
+  h+=`<div class="lane"><span class="kicker">Voice</span><div class="track" id="vlane"></div></div>`;
+  h+=`<div class="lane"><span class="kicker">SFX</span><div class="track">${SFX.map(([a,n])=>`<div class="tick" title="${n} @ ${a}s" style="left:${pct(a)};background:${/HIT|hit/.test(n)?C.green:/CLACK/.test(n)?C.white:C.fog};${/HIT|CLACK/.test(n)?'width:4px':''}"></div>`).join('')}<div class="blk" title="silence" style="left:${pct(27.5)};width:calc(${pct(.5)});background:transparent;border:1px dashed ${C.fog};"></div><div class="blk" title="silence" style="left:${pct(43.4)};width:calc(${pct(.8)});background:transparent;border:1px dashed ${C.fog};"></div></div></div>`;
+  h+=`<div class="lane"><span class="kicker">Music</span><div class="track"><div class="blk" style="left:${pct(1.2)};width:${pct(3.8)};background:#0F1A16;color:${C.fog}">swell</div><div class="blk" style="left:${pct(5)};width:${pct(8)};background:#2A2213;color:${C.amber}">warm</div><div class="blk" style="left:${pct(13)};width:${pct(9)};background:#1B2421;color:${C.white}">open</div><div class="blk" style="left:${pct(22)};width:${pct(5.5)};background:#0F1A16;color:${C.fog}">thin</div><div class="blk" style="left:${pct(28)};width:${pct(13.8)};background:#0F2A1F;color:${C.green}">return</div><div class="blk" style="left:${pct(41.8)};width:${pct(1.6)};background:#1D3A2C;color:${C.white}">riser</div><div class="blk" style="left:${pct(43.4)};width:${pct(2.6)};background:#000;color:${C.fog}">silence</div></div></div>`;
+  h+=`<div class="playhead" id="ph"></div><div class="lane-click" id="laneclick" tabindex="0" role="slider" aria-label="Seek timeline" aria-valuemin="0" aria-valuemax="46"></div>`;
+  L.innerHTML=h;fillVoice();
+  $('laneclick').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();seek(clamp((e.clientX-r.left)/r.width)*DUR)});
+}
+function fillVoice(){const pct=t=>(t/DUR*100)+'%';$('vlane').innerHTML=CAPS.map(([a,b,p])=>`<div class="blk" title="${p.map(x=>x[0]).join('').replace('\n',' ')}" style="left:${pct(a)};width:calc(${pct(b-a)});background:#16241E;color:#C9D1CD">${p.map(x=>x[0]).join('').replace('\n',' ')}</div>`).join('')}
+function placeHead(){const ph=$('ph');if(!ph)return;ph.style.left=`calc(78px + (100% - 78px) * ${T/DUR})`}
+function buildShots(){
+  $('shots').innerHTML=SHOTS.map((s,i)=>`<article class="shot" data-i="${i}" tabindex="0"><canvas width="240" height="427" id="th${i}"></canvas><div style="min-width:0">
+   <div class="kicker">${String(s.n).padStart(2,'0')} · ${fmt(s.a)}–${fmt(s.b)} · <span style="color:${s.col}">${s.act}</span></div><h4>${s.name}</h4>
+   <div class="vo">${s.vo}</div>
+   <ul class="opts">${s.opts.map((o,j)=>`<li class="${j===s.pick||j===s.also?'pick':''}">${o}${j===s.also?' <span class="mono" style="font-size:10px;color:var(--fog)">(folded in)</span>':''}</li>`).join('')}</ul>
+   <div class="risk"><b>RISK</b>${s.risk}</div>
+   <div class="tags">${s.tags.map(t=>`<span class="tag ${t.startsWith('film')?'film':'build'}">${t}</span>`).join('')}</div></div></article>`).join('');
+  document.querySelectorAll('.shot').forEach(el=>{const go=()=>{const s=SHOTS[+el.dataset.i];seek(s.a+.01);window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})};el.addEventListener('click',go);el.addEventListener('keydown',e=>{if(e.key==='Enter')go()})});
+}
+function thumbs(){SHOTS.forEach((s,i)=>{const c=$('th'+i);if(c)render(c.getContext('2d'),c.width,c.height,s.thumb,false)})}
+function draw(){
+  render(ctx,cv.width,cv.height,T,caps);
+  const k=playing?trailK(T):0;
+  if(k>0&&T-lastT>0&&T-lastT<.1){ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=k;ctx.drawImage(prevC,0,0);ctx.restore()}
+  pctx.clearRect(0,0,prevC.width,prevC.height);pctx.drawImage(cv,0,0);lastT=T;
+  $('clock').textContent=`${fmt(T)} / 0:46`;$('scrub').value=T;placeHead();const i=shotAt(T);if(i!==lastShot){lastShot=i;nowCard(i)}}
+function loop(){if(!playing)return;T=p0+(performance.now()-t0)/1000;if(T>=DUR){if(loopOn){T=0;p0=0;t0=performance.now();startAudio(0)}else{T=DUR-.001;pause();draw();return}}draw();requestAnimationFrame(loop)}
+let loopOn=true;
+function play(){if(T>=DUR-.05)T=0;playing=true;t0=performance.now();p0=T;$('play').textContent='❚❚ Pause';startAudio(T);requestAnimationFrame(loop)}
+function pause(){playing=false;$('play').textContent='▶ Play';stopAudio()}
+function seek(t){const was=playing;if(was)pause();T=clamp(t,0,DUR-.001);lastT=-9;draw();if(was)play()}
+$('play').addEventListener('click',()=>playing?pause():play());
+$('scrub').addEventListener('input',e=>seek(+e.target.value));
+$('snd').addEventListener('click',e=>{soundOn=!soundOn;e.currentTarget.setAttribute('aria-pressed',soundOn);e.currentTarget.textContent=soundOn?'Sound on':'Sound off';if(soundOn){ensureAudio();if(playing)startAudio(T)}else stopAudio()});
+$('cap').addEventListener('click',e=>{caps=!caps;e.currentTarget.setAttribute('aria-pressed',caps);draw()});
+$('ver').addEventListener('click',e=>{const v2=CAPS===CAPS_OLD;CAPS=v2?CAPS_NEW:CAPS_OLD;e.currentTarget.textContent=v2?'Lines: v002':'Lines: original';e.currentTarget.setAttribute('aria-pressed',v2);fillVoice();draw()});
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&e.target===document.body){e.preventDefault();playing?pause():play()}});
+buildLanes();buildShots();
+T=1.55;draw();thumbs();
+const ready=document.fonts?Promise.all([document.fonts.load(`500 40px ${MONO}`),document.fonts.load(`700 40px ${MONO}`),document.fonts.load(`700 40px ${TITLE}`),document.fonts.load(`500 20px ${TITLE}`)]):Promise.resolve();
+ready.then(()=>{draw();thumbs()}).catch(()=>{});
+window.__render=(t)=>{T=t;lastT=-9;draw()};
+})();
+</script>
