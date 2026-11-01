@@ -54,3 +54,10 @@ Brand rules live in `01_brand/SGMM_Brand_Bible.md` and the `sg-mind-matrix-brand
 
 ## Not wanted (rejected during EP000)
 Stick-like finger · hands from above · long fingers · bald/3D figure · plain rectangle monitors · keyboard sliding across the screen · tick sounds on page turns · static logo ending · generic tech-glow look.
+
+## Voice (added after EP000 voice pass)
+- Samrat records all lines in one take with pauses; `edit/animatic/build_vo.py` cuts each line out and places it at its exact start (frame-accurate), with 80 ms pre-roll and short fades.
+- Voice chain: high-pass 85 Hz, light denoise, -2 dB at 220 Hz, +3 dB presence at 3.4 kHz, gentle compression; voice alone ≈ -17 LUFS.
+- Music ducks ~6 dB under the voice (side-chain, 25 ms attack, 450 ms release), full in the gaps. Final mix -14 LUFS, -1.5 dBTP.
+- If a line is longer than its slot: move it earlier or speed it up at most ~10% (pitch kept); never cut words. Captions are re-timed to the real voice.
+- Line identification: speech recognition (pocketsphinx works offline here; Hugging Face is blocked in this environment).
