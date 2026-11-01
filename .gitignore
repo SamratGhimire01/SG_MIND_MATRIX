@@ -5,3 +5,4 @@ __MACOSX/
 !04_video_projects/*/footage/.gitkeep
 05_audio/voice/**
 *.mov
+*.mp4

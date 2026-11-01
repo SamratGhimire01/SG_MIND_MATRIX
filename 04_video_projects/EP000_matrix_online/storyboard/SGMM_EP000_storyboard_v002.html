@@ -569,7 +569,13 @@ function studio(ctx,cam,st,t){
     ctx.beginPath();ctx.moveTo(760,1520);ctx.bezierCurveTo(840,1468,920,1458,1000,1455);ctx.stroke()}
   ctx.restore();
 }
-function studioBlur(ctx,cam,st,t,px){if(px<.5){studio(ctx,cam,st,t);return}if(hasFilter){ctx.save();ctx.filter=`blur(${px}px)`;studio(ctx,cam,st,t);ctx.restore()}else{studio(ctx,cam,st,t);ctx.fillStyle='rgba(5,8,7,.35)';ctx.fillRect(0,0,1080,1920)}}
+const BLURC=document.createElement('canvas');
+function studioBlur(ctx,cam,st,t,px){if(px<.6){studio(ctx,cam,st,t);return}
+  const q=Math.max(1.5,Math.min(10,px*.75)),w=Math.max(8,Math.round(1080/q)),h=Math.max(8,Math.round(1920/q));
+  if(BLURC.width!==w||BLURC.height!==h){BLURC.width=w;BLURC.height=h}const b=BLURC.getContext('2d');
+  b.setTransform(w/1080,0,0,h/1920,0,0);b.filter='none';studio(b,cam,st,t);
+  if(hasFilter&&px>3){b.setTransform(1,0,0,1,0,0);b.filter='blur(1px)';b.drawImage(BLURC,0,0);b.filter='none'}
+  ctx.save();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(BLURC,0,0,1080,1920);ctx.restore()}
 
 function bigKeys(ctx,off,lit,enterPress,hl,standby=0){
   for(let r=0;r<4;r++)for(let c=-1;c<7;c++){const x=c*250+off+(r%2)*90,y=1060+r*250;
@@ -721,7 +727,7 @@ function stopAudio(){if(!bus)return;const b=bus;bus=null;try{b.gain.setTargetAtT
 function pts(param,P,t0,at){let v=P[P.length-1][1];for(let i=0;i<P.length-1;i++){if(t0>=P[i][0]&&t0<=P[i+1][0]){v=lerp(P[i][1],P[i+1][1],(t0-P[i][0])/((P[i+1][0]-P[i][0])||1));break}}if(t0<P[0][0])v=P[0][1];
   param.setValueAtTime(v,at(t0));for(const [tt,vv] of P)if(tt>t0)param.linearRampToValueAtTime(vv,at(tt))}
 function startAudio(t0){
-  if(!soundOn)return;ensureAudio();if(!actx)return;if(actx.state==='suspended')actx.resume();stopAudio();
+  if(!soundOn)return;ensureAudio();if(!actx)return;if(actx.state==='suspended'&&!(window.OfflineAudioContext&&actx instanceof OfflineAudioContext))actx.resume();stopAudio();
   bus=actx.createGain();bus.gain.value=.8;bus.connect(actx.destination);const now=actx.currentTime+.05;const at=x=>now+(x-t0);
   const noise=(time,dur,f,q,g,type='bandpass')=>{if(time<t0)return;const s=actx.createBufferSource();s.buffer=noiseBuf;s.loop=true;const fl=actx.createBiquadFilter();fl.type=type;fl.frequency.value=f;fl.Q.value=q;const gg=actx.createGain();gg.gain.setValueAtTime(g,at(time));gg.gain.exponentialRampToValueAtTime(.0001,at(time)+dur);s.connect(fl).connect(gg).connect(bus);s.start(at(time));s.stop(at(time)+dur+.05)};
   const tone=(time,f0,f1,dur,g,type='sine')=>{if(time<t0)return;const o=actx.createOscillator();o.type=type;o.frequency.setValueAtTime(f0,at(time));o.frequency.exponentialRampToValueAtTime(f1,at(time)+dur*.6);const gg=actx.createGain();gg.gain.setValueAtTime(.0001,at(time));gg.gain.exponentialRampToValueAtTime(g,at(time)+.01);gg.gain.exponentialRampToValueAtTime(.0001,at(time)+dur);o.connect(gg).connect(bus);o.start(at(time));o.stop(at(time)+dur+.05)};
@@ -816,6 +822,23 @@ buildLanes();buildShots();
 T=1.55;draw();thumbs();
 const ready=document.fonts?Promise.all([document.fonts.load(`500 40px ${MONO}`),document.fonts.load(`700 40px ${MONO}`),document.fonts.load(`700 40px ${TITLE}`),document.fonts.load(`500 20px ${TITLE}`)]):Promise.resolve();
 ready.then(()=>{draw();thumbs()}).catch(()=>{});
+window.__exp={
+  frame:(t)=>{cv.width=1080;cv.height=1920;const k=trailK(t),n=k>0?4:1,sh=1/120;
+    if(n===1){render(ctx,1080,1920,t,true)}
+    else{const tmp=document.createElement('canvas');tmp.width=1080;tmp.height=1920;const tc=tmp.getContext('2d');
+      ctx.setTransform(1,0,0,1,0,0);
+      for(let i=0;i<n;i++){const ti=Math.max(0,t-sh*(i/(n-1))*(k/.45));render(tc,1080,1920,ti,false);ctx.globalAlpha=1/(i+1);ctx.drawImage(tmp,0,0)}
+      ctx.globalAlpha=1;ctx.setTransform(1,0,0,1,0,0);drawActTag(ctx,t);drawCaps(ctx,t)}
+    return cv.toDataURL('image/jpeg',.96)},
+  audio:async()=>{const sr=48000,off=new OfflineAudioContext(2,sr*46,sr);actx=off;bus=null;
+    noiseBuf=off.createBuffer(1,sr*2,sr);const d=noiseBuf.getChannelData(0);const r=rng(3);for(let i=0;i<d.length;i++)d[i]=r()*2-1;
+    soundOn=true;startAudio(0);const buf=await off.startRendering();
+    const L=buf.getChannelData(0),R=buf.getChannelData(1),N=L.length;let pk=0;for(let i=0;i<N;i++)pk=Math.max(pk,Math.abs(L[i]),Math.abs(R[i]));
+    const g=pk>0?0.891/pk:1;const ab=new ArrayBuffer(44+N*4),v=new DataView(ab);const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+    ws(0,'RIFF');v.setUint32(4,36+N*4,true);ws(8,'WAVE');ws(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,2,true);v.setUint32(24,sr,true);v.setUint32(28,sr*4,true);v.setUint16(32,4,true);v.setUint16(34,16,true);ws(36,'data');v.setUint32(40,N*4,true);
+    let o=44;for(let i=0;i<N;i++){v.setInt16(o,Math.round(clamp(L[i]*g,-1,1)*32767),true);v.setInt16(o+2,Math.round(clamp(R[i]*g,-1,1)*32767),true);o+=4}
+    const u=new Uint8Array(ab);let bin='';for(let i=0;i<u.length;i+=32768)bin+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return {b64:btoa(bin),peak:pk}}
+};
 window.__render=(t)=>{T=t;lastT=-9;draw()};
 })();
 </script>
