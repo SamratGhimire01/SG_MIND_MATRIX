@@ -1,0 +1,21 @@
+{
+  "version": "1.1",
+  "colors": {
+    "matrix_green": "#00E676",
+    "void_black": "#050807",
+    "signal_white": "#F2F5F3",
+    "deep_forest": "#0B3D2E",
+    "archive_amber": "#FFB547",
+    "fog": "#7C8A84"
+  },
+  "story_code": { "THEN": "#FFB547", "NOW": "#F2F5F3", "NEXT": "#00E676" },
+  "flow_field_palette": ["#050807","#0B3D2E","#116B4A","#1FA86B","#00E676","#7DF2B5","#F2F5F3","#FFB547","#8A5A1E"],
+  "fonts": { "title": "Space Grotesk Bold", "mono": "JetBrains Mono" },
+  "logo": {
+    "master_svg": "01_brand/logo/svg/SGMM_mark_green.svg",
+    "allowed_fills": ["#00E676","#F2F5F3","#050807"],
+    "clear_space": "25% of mark width on all sides",
+    "min_size_px": 24,
+    "forbidden": ["glow","gradient","outline","rotation","stretch","busy footage without void panel"]
+  }
+}

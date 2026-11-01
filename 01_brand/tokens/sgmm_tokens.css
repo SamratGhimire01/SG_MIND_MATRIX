@@ -1,0 +1,14 @@
+/* SG MIND MATRIX — brand tokens (v1.1, 1 Nov 2026). Do not add hues. */
+:root{
+  --sgmm-matrix-green:#00E676;  /* logo, the ONE element being explained, NEXT */
+  --sgmm-void-black:#050807;    /* backgrounds */
+  --sgmm-signal-white:#F2F5F3;  /* text, structure, NOW */
+  --sgmm-deep-forest:#0B3D2E;   /* panels, secondary fills, lower-thirds */
+  --sgmm-archive-amber:#FFB547; /* THEN, the past, previous state */
+  --sgmm-fog:#7C8A84;           /* captions, dates, secondary text */
+  --sgmm-then:var(--sgmm-archive-amber);
+  --sgmm-now:var(--sgmm-signal-white);
+  --sgmm-next:var(--sgmm-matrix-green);
+  --sgmm-font-title:"Space Grotesk",system-ui,sans-serif; /* Bold 700 */
+  --sgmm-font-mono:"JetBrains Mono",ui-monospace,monospace;
+}

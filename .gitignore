@@ -1,0 +1,7 @@
+.DS_Store
+__MACOSX/
+# raw media stays out of git (too large); keep it on the Mac / Drive
+04_video_projects/*/footage/**
+!04_video_projects/*/footage/.gitkeep
+05_audio/voice/**
+*.mov
