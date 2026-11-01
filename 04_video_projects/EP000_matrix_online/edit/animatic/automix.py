@@ -4,7 +4,7 @@ def rd(p):
   return (a.reshape(-1,c) if c>1 else np.repeat(a[:,None],2,1)),sr
 v,sr=rd('vo_final2.wav');b,_=rd('bg_raw.wav');be,_=rd('bg_eq.wav');n=min(len(v),len(b),len(be));v,b,be=v[:n],b[:n],be[:n]
 W=[(0.05,1.13),(6.9,8.07),(8.7,9.29),(10.8,11.5),(15.8,16.77),(19.3,20.46),(24.6,25.48),(28.0,29.9),(31.0,32.99),(33.8,35.43),(36.0,37.24),(37.71,38.04),(39.45,39.85),(40.04,41.62),(41.7,43.37),(44.5,45.9)]
-TARGET=13.0;PRE,POST,RAMP=.12,.10,.08
+TARGET=15.0;PRE,POST,RAMP=.12,.10,.08
 db=lambda x:10*np.log10(np.mean(x**2)+1e-12)
 g=np.ones(n);k=np.zeros(n)
 for a,e in W:
