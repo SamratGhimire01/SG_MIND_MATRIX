@@ -1,0 +1,55 @@
+1
+00:00:00,150 --> 00:00:01,100
+This is the Matrix.
+
+2
+00:00:06,900 --> 00:00:08,400
+A generation ago…
+
+3
+00:00:08,700 --> 00:00:10,200
+you searched.
+
+4
+00:00:10,800 --> 00:00:12,700
+And you waited.
+
+5
+00:00:15,800 --> 00:00:18,000
+Today, you just ask.
+
+6
+00:00:19,300 --> 00:00:21,600
+And something answers.
+
+7
+00:00:24,600 --> 00:00:27,400
+What comes next…
+
+8
+00:00:28,000 --> 00:00:29,900
+is already being written.
+
+9
+00:00:31,000 --> 00:00:33,400
+I'm going to document all of it.
+
+10
+00:00:33,800 --> 00:00:35,600
+Every shift. Every tool.
+
+11
+00:00:36,000 --> 00:00:38,600
+Everything I build, in public.
+
+12
+00:00:41,000 --> 00:00:42,300
+This is SG Mind Matrix.
+
+13
+00:00:42,400 --> 00:00:43,350
+The world is being rewritten.
+
+14
+00:00:45,000 --> 00:00:45,900
+Let's build it together.
