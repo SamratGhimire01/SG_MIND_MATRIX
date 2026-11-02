@@ -1,7 +1,7 @@
-# X001 "The End of the Click" — posting kit (SGMM_X001_build_v001)
+# X001 "The End of the Click" — posting kit (SGMM_X001_build_v002)
 
-**Upload this file:** `SGMM_X001_build_v001_1080x1920_60fps.mp4` (32.758 s, vertical → YouTube treats it as a Short).
-Captions file for YouTube: `SGMM_X001_build_v001_captions_en.srt`. QC: `SGMM_X001_build_v001_qc.md` (run `sgmm qc` before posting).
+**Upload this file:** `SGMM_X001_build_v002_1080x1920_60fps.mp4` (31.212 s, vertical → YouTube treats it as a Short).
+Captions file for YouTube: `SGMM_X001_build_v002_captions_en.srt`. QC: `SGMM_X001_build_v002_qc.md` (run `sgmm qc` before posting).
 
 ---
 
@@ -35,11 +35,11 @@ AI, artificial intelligence, future of AI, how AI is changing the world, AI expl
 ```
 
 ### Thumbnails
-Recommended **A**. Files: `SGMM_X001_build_v001_thumb_A_whogetspaid_1280x720.png` · `SGMM_X001_build_v001_thumb_B_olddeal_1280x720.png` · `SGMM_X001_build_v001_thumb_C_minus40traffic_1280x720.png` · `SGMM_X001_build_v001_cover_vertical_1080x1920.png`. Phone-size check: `SGMM_X001_build_v001_thumbs_phone_preview.png`.
+Recommended **A**. Files: `SGMM_X001_build_v002_thumb_A_whogetspaid_1280x720.png` · `SGMM_X001_build_v002_thumb_B_olddeal_1280x720.png` · `SGMM_X001_build_v002_thumb_C_minus40traffic_1280x720.png` · `SGMM_X001_build_v002_cover_vertical_1080x1920.png`. Phone-size check: `SGMM_X001_build_v002_thumbs_phone_preview.png`.
 Shorts can't take a custom thumbnail from Studio on every account; in the app pick the frame: the green −40.2% (~0:14).
 
 ### Settings
-- Category: **Science & Technology** · Language: **English** · Captions: upload `SGMM_X001_build_v001_captions_en.srt` (subtitles → upload file → with timing).
+- Category: **Science & Technology** · Language: **English** · Captions: upload `SGMM_X001_build_v002_captions_en.srt` (subtitles → upload file → with timing).
 - Altered or synthetic content: **No** (stylised animation, nothing realistic that could mislead).
 - Audience: not made for kids.
 - Comments: on. Remix: on.

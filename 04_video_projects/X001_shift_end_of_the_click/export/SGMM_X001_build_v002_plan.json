@@ -9,7 +9,7 @@
   1080,
   1920
  ],
- "duration": 32.758,
+ "duration": 31.212,
  "score": "sufi_tension",
  "style_files": [
   "04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js"
@@ -44,16 +44,16 @@
    "type": "x001_now_answer",
    "t": [
     8.8,
-    22.358000000000004
+    20.812
    ],
    "hold": [
     [
      15.5,
-     1.963
+     0.416
     ],
     [
-     20.463,
-     0.795
+     18.916,
+     0.796
     ]
    ]
   },
@@ -61,24 +61,24 @@
    "id": "next",
    "type": "x001_next_voxel",
    "t": [
-    22.158,
-    27.558000000000003
+    20.612,
+    26.012
    ]
   },
   {
    "id": "logo",
    "type": "logo_from_dark",
    "t": [
-    27.358000000000004,
-    30.158
+    25.812,
+    28.612
    ]
   },
   {
    "id": "tease",
    "type": "blackout_tease",
    "t": [
-    30.158,
-    32.758
+    28.612,
+    31.212
    ],
    "text": {
     "tease": "NEXT SHIFT · TOMORROW MORNING"
@@ -97,15 +97,15 @@
   {
    "t": [
     8.9,
-    22.158
+    20.612
    ],
    "num": "02",
    "label": "NOW"
   },
   {
    "t": [
-    22.258000000000003,
-    27.258000000000003
+    20.712,
+    25.712
    ],
    "num": "03",
    "label": "NEXT"
@@ -123,7 +123,7 @@
   {
    "t": [
     3.0,
-    4.07
+    4.95
    ],
    "text": "The old deal was simple.",
    "kind": "line"
@@ -131,15 +131,15 @@
   {
    "t": [
     5.0,
-    8.74
+    8.66
    ],
    "text": "You searched. Ten blue links.\nOne click paid the website.",
    "kind": "line"
   },
   {
    "t": [
-    8.8,
-    10.76
+    8.71,
+    11.15
    ],
    "text": "But now AI answers on top.",
    "kind": "line"
@@ -147,15 +147,15 @@
   {
    "t": [
     11.2,
-    12.42
+    12.11
    ],
    "text": "So you don’t click.",
    "kind": "line"
   },
   {
    "t": [
-    12.47,
-    18.143
+    12.16,
+    16.596
    ],
    "text": "One study: Google traffic to\npublishers fell 40% in a year.",
    "kind": "fact",
@@ -163,8 +163,8 @@
   },
   {
    "t": [
-    18.193,
-    22.008
+    16.646,
+    20.462
    ],
    "text": "Condé Nast told its teams:\nplan as if search is zero.",
    "kind": "fact",
@@ -172,16 +172,16 @@
   },
   {
    "t": [
-    22.058,
-    25.048
+    20.512,
+    23.502
    ],
    "text": "So websites may write for AIs…\nnot for you.",
    "kind": "forecast"
   },
   {
    "t": [
-    25.098,
-    27.708
+    23.552,
+    26.162
    ],
    "text": "And when no one clicks…\nwho gets paid?",
    "kind": "line"
@@ -189,8 +189,8 @@
  ],
  "silences": [
   [
-   30.258000000000003,
-   30.758000000000003
+   28.912,
+   29.312
   ]
  ],
  "sources": {
@@ -277,11 +277,11 @@
  "warp": [
   [
    15.5,
-   1.963
+   0.416
   ],
   [
    18.5,
-   0.795
+   0.796
   ]
  ]
 }

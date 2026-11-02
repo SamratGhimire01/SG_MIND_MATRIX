@@ -101,6 +101,44 @@ def group_runs(runs, sizes):
     return lines[::-1]
 
 
+def _mel_feats(x, sr=16000):
+    from scipy.signal import stft
+    x = np.append(x[0], x[1:] - 0.97 * x[:-1]); _, _, Z = stft(x, sr, nperseg=400, noverlap=240, nfft=512)
+    m = lambda f: 2595 * np.log10(1 + f / 700); im = lambda v: 700 * (10 ** (v / 2595) - 1)
+    bins = np.floor(513 * im(np.linspace(m(80), m(7600), 42)) / sr).astype(int); fb = np.zeros((40, 257))
+    for k in range(1, 41):
+        l, c, r = bins[k - 1], bins[k], bins[k + 1]; fb[k - 1, l:c] = (np.arange(l, c) - l) / max(1, c - l); fb[k - 1, c:r] = (r - np.arange(c, r)) / max(1, r - c)
+    M = np.log(fb @ (np.abs(Z) ** 2) + 1e-8).T
+    return ((M - M.mean(0)) / (M.std(0) + 1e-6)).astype(np.float32)
+
+
+def align_lines(take, texts):
+    """line boundaries in a take read straight through: macOS `say` reads the script, DTW maps it onto the take,
+    each boundary snaps to the nearest pause; leftover speech bursts with a syllable join the nearest line (no cut words)"""
+    import shutil
+    if not shutil.which('say'): return None
+    with tempfile.TemporaryDirectory() as d:
+        ref, marks, pos = [], [], 0
+        for i, t in enumerate(texts):
+            t = t.replace('Condé', 'Con day').replace('AIs', 'A eyes').replace('%', ' percent')
+            sh('say', '-v', 'Samantha', '-r', 170, '-o', os.path.join(d, f'{i}.aiff'), t)
+            y = load(os.path.join(d, f'{i}.aiff'))[::3]; r = speech_runs(np.repeat(y, 3)); y = y[int(r[0][0] * 16000):int(r[-1][1] * 16000)]
+            marks.append((pos / 16000, (pos + len(y)) / 16000)); ref += [y, np.zeros(4800)]; pos += len(y) + 4800
+        A, B = _mel_feats(np.concatenate(ref)), _mel_feats(take[::3])
+        A.tofile(os.path.join(d, 'a')); B.tofile(os.path.join(d, 'b'))
+        sh('node', os.path.join(HERE, 'align_dtw.mjs'), os.path.join(d, 'a'), os.path.join(d, 'b'), len(A), len(B), 40, os.path.join(d, 'p'))
+        path = np.array(json.load(open(os.path.join(d, 'p'))))
+    at = lambda t, first: (lambda m: (m.min() if first else m.max()) / 100)(path[path[:, 0] == min(int(round(t * 100)), len(A) - 1)][:, 1])
+    runs = speech_runs(take)
+    snap = lambda t, edges: (lambda e: e if abs(e - t) <= .35 else t)(min(edges, key=lambda x: abs(x - t)))
+    lines = [[snap(at(a, True), [r[0] for r in runs]), snap(at(b, False), [r[1] for r in runs])] for a, b in marks]
+    for a, b in runs:   # a speech burst outside every line: join the nearest line if it holds a syllable (> 0.2 s)
+        if b - a > .2 and not any(s - .05 <= a and b <= e + .05 for s, e in lines):
+            i = min(range(len(lines)), key=lambda k: min(abs(a - lines[k][1]), abs(lines[k][0] - b)))
+            lines[i] = [min(lines[i][0], a), max(lines[i][1], b)]
+    return [tuple(round(x, 3) for x in l) for l in lines]
+
+
 # ---------------- 2. re-time the plan to the real voice ----------------
 def shift_plan(plan, T, dt):
     """insert dt seconds at plan time T: everything from T on moves later; a scene running across T holds its picture at T for dt"""
@@ -231,7 +269,7 @@ def build(plan_path, voice_path, chain=True, audio_only=False, lines_path=None, 
 
     take = load(voice_path)
     if lines_path: cuts = [tuple(x) for x in json.load(open(lines_path))]
-    else: cuts = group_runs(speech_runs(take), [len(re.sub(r'[^A-Za-z0-9]', '', t)) for t in texts])
+    else: cuts = align_lines(take, texts) or group_runs(speech_runs(take), [len(re.sub(r'[^A-Za-z0-9]', '', t)) for t in texts])
     json.dump([[round(a, 3), round(b, 3)] for a, b in cuts], open(P('_voice_lines.json'), 'w'))
     durs = [b - a for a, b in cuts]
     placed = retime(plan, durs)
