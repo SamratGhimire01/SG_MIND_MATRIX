@@ -72,6 +72,9 @@ Samrat added 8 explainer looks (Editorial Collage, Constructivist, Manim, Paperc
 - **Never reuse EP000's topic** (library → search → ask). Every SHIFT needs a new topic. X001 = "The End of the Click".
 - Verify every number at its original source before scripting; list sources in the video's `research/` folder; flag mis-attributions to Samrat (the 65% → high 20s figure is People Inc., not Condé Nast).
 
+## Music direction (Samrat, 3 Nov 2026)
+"Not the spooky one — interesting, energetic, motivating music people engage with." The Sufi tension bed is retired for SHIFT/TIP/LOG. He gave three references (freetouse.com: Aetheric "Snap Crackle" ~112 BPM B♭m 808/snaps; Damtaro "Start" ~141 BPM F♯ major bright/building; Pufino "Stadium Rock" ~85 BPM C♯m big drums/power chords). We **write original tracks in those styles** (tempo, key, groove, sound) — never copy, sample or lightly alter the reference audio (Content ID / copyright). Scores: `08_templates/styles/music/sgmm_music.js` — `sgmm_snap`, `sgmm_startline`, `sgmm_arena`, `sgmm_signal` (+ earlier `pulse_drive`, `pulse_lofi`, `pulse_rise`). Keep them bright (air band near the references) with the low end under control; the build keeps the voice ≥ +13 dB over music + effects. Reference audio stays out of git.
+
 ## Beats (Samrat, 2 Nov 2026, X001)
 Retention dies when nothing moves or clicks. Every 1.5–2 s a component must move with its own sound (scan + ticks, count-up + ticks, bars + slides, stamp + thud, blocks + key clicks, blink + click). Held frames get a slow push-in, never a freeze. Run `python3 08_templates/engine/beats.py <build prefix>` and fix every dead stretch before sending; QC checks it.
 
