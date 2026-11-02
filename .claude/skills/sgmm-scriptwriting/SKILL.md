@@ -31,7 +31,7 @@ Samrat's brief: scripts must be **engaging enough that people watch from the fir
 
 **Body**
 4. **Every beat links with "but" or "therefore/so", never "and then".** [Trey Parker & Matt Stone, NYU 2014] Write the link words into the script margin to check.
-5. **Something new every 2–3 s**: a new line, image, number, cut or sound. One idea per line; short, staccato sentences.
+5. **Something new every 1.5–2 s, seen *and* heard**: a component moves (a box lands, a number counts, a bar drains, a stamp hits) and each move has its own sound (click, tick, slide, thud). A held or static frame is a swipe. `sgmm qc` fails any stretch ≥ 2.5 s with no motion and no sound hit (`08_templates/engine/beats.py` prints the timeline). One idea per line; short, staccato sentences.
 6. **Context in small pulses after a visual**, never a block of explanation. [Harris]
 7. **One hero number per video**, shown big (the one green element), spoken rounded ("40%"), exact on screen ("−40.2%"), with "one study" / source label.
 8. Talk to **you** (the viewer's search, the viewer's click), not "people".

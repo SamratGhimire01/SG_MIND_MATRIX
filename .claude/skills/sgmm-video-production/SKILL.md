@@ -72,6 +72,9 @@ Samrat added 8 explainer looks (Editorial Collage, Constructivist, Manim, Paperc
 - **Never reuse EP000's topic** (library → search → ask). Every SHIFT needs a new topic. X001 = "The End of the Click".
 - Verify every number at its original source before scripting; list sources in the video's `research/` folder; flag mis-attributions to Samrat (the 65% → high 20s figure is People Inc., not Condé Nast).
 
+## Beats (Samrat, 2 Nov 2026, X001)
+Retention dies when nothing moves or clicks. Every 1.5–2 s a component must move with its own sound (scan + ticks, count-up + ticks, bars + slides, stamp + thud, blocks + key clicks, blink + click). Held frames get a slow push-in, never a freeze. Run `python3 08_templates/engine/beats.py <build prefix>` and fix every dead stretch before sending; QC checks it.
+
 ## Not wanted (rejected during EP000)
 Stick-like finger · hands from above · long fingers · bald/3D figure · plain rectangle monitors · keyboard sliding across the screen · tick sounds on page turns · static logo ending · generic tech-glow look.
 

@@ -700,7 +700,9 @@ function load(plan){
   const trailK=t=>{for(const [a,b,k] of TRAIL){if(t>=a&&t<b)return k*Math.min(seg(t,a,a+.15),1-seg(t,b-.15,b))}return 0};
   /* hold: [[T, dt]] from sgmm build — the scene freezes at plan time T for dt seconds (time inserted for a long voice line) */
   const local=(s,t)=>{for(let i=s.hold.length-1;i>=0;i--){const [T,dt]=s.hold[i];if(t>=T+dt)t-=dt;else if(t>=T)t=T}return t+s.off};
-  const draw=(c,s,t)=>{TX=s.tx;c.save();s.fn(c,local(s,t));c.restore()};
+  /* a held picture never freezes: a slow push-in while the hold runs, kept afterwards (no jump) */
+  const pushIn=(s,t)=>{let h=0;for(const [T,dt] of s.hold)if(t>T)h+=Math.min(dt,t-T);return 1+Math.min(.06,.03*h)};
+  const draw=(c,s,t)=>{TX=s.tx;c.save();const z=s.hold.length?pushIn(s,t):1;if(z!==1){c.translate(540,960);c.scale(z,z);c.translate(-540,-960)}s.fn(c,local(s,t));c.restore()};
   function render(ctx,W,H,t,caps=true){const S=W/1080;ctx.setTransform(S,0,0,H/1920,0,0);ctx.globalAlpha=1;ctx.filter='none';ctx.globalCompositeOperation='source-over';ctx.fillStyle=C.void;ctx.fillRect(0,0,1080,1920);
     const act=scenes.filter(s=>t>=s.a&&t<s.b);
     act.forEach((s,i)=>{if(i===0){draw(ctx,s,t);return}const al=ss(seg(t,s.a,act[i-1].b));const oc2=offFor(W,H),o=oc2.getContext('2d');o.setTransform(S,0,0,H/1920,0,0);o.globalAlpha=1;o.filter='none';o.fillStyle=C.void;o.fillRect(0,0,1080,1920);draw(o,s,t);

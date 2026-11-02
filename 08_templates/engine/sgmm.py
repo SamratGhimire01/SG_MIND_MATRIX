@@ -401,6 +401,10 @@ def qc(prefix):
         s = db(mix[int(a * SR):int(b * SR)])
         chk(f'silence {a:.2f}–{b:.2f} s', s <= SILENT, f'{s:.1f} dBFS (≤ {SILENT:.0f})')
 
+    import beats   # a beat (picture change or sound hit) at least every 2 s, up to the blackout (sgmm-scriptwriting rule 5)
+    end = next((s['t'][0] for s in plan['scenes'] if s['type'] == 'blackout_tease'), dur)
+    gaps = [(a, b) for a, b in beats.dead(prefix)[0] if a < end - 0.5]
+    chk('dead stretches (no motion, no sound hit ≥ 2 s)', (not gaps) or (None if max(b - a for a, b in gaps) <= 2.5 else False), ', '.join(f'{a:.1f}–{b:.1f} s' for a, b in gaps) or 'none')
     joins = [(0.0, 'first frame')] + [(s['t'][0] + .05, s.get('id', s['type'])) for s in plan['scenes'][1:]] + [((round(dur * fps) - 1) / fps, 'last frame')]
     sheet = prefix + '_contact.png'
     contact_sheet(final, [(t, f'{t:5.2f}s {lab}') for t, lab in joins], sheet)

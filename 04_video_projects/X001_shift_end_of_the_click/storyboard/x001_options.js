@@ -134,7 +134,7 @@ window.X001_OPT = (() => {
   // ============================== HOOK (2.6 s) ==============================
   function hookA(c, t) { // dark link: cursor hovers, drifts away, a coin drops past
     c.fillStyle = C.void; c.fillRect(0, 0, 1080, 1920);
-    const la = sm(0.15, 0.5, t), hov = sm(0.95, 1.15, t) * (1 - sm(1.45, 1.6, t));
+    const la = sm(0, 0.2, t), hov = sm(0.95, 1.15, t) * (1 - sm(1.45, 1.6, t));
     c.save(); c.globalAlpha = la; c.font = `500 46px ${FAM.mono}`; c.textAlign = 'center'; c.fillStyle = mixc(C.fog, C.white, hov); c.fillText(LINK, 540, 860);
     const w = c.measureText(LINK).width; c.fillRect(540 - w / 2, 876, w, 3 + 3 * hov); c.restore();
     const into = sm(0.35, 1.0, t), away = sm(1.5, 2.2, t), cx = lerp(lerp(900, 640, into), 1100, away), cy = lerp(lerp(1250, 885, into), 760, away);
@@ -200,7 +200,8 @@ window.X001_OPT = (() => {
   function nowIntro(c, t) { // 0–3.8: answer box writes on above the links, links shrink and fade ("so you don't click")
     const fade = sm(2.4, 3.4, t), gone = sm(3.4, 3.9, t);
     ROWS.forEach((R, i) => { const p = sm(0.05 + i * 0.05, 0.45 + i * 0.05, t), k = 1 - 0.55 * fade, a = (1 - 0.75 * fade) * (1 - gone); if (p > 0) { dot(c, 180, R.y - 4, 6, C.fog, a); strokePts(c, [[210, R.y - 8], [210 + R.w * k, R.y - 8]], C.white, 6, 0, p, a * 0.9); strokePts(c, [[210, R.y + 10], [210 + R.w * 0.6 * k, R.y + 10]], C.fog, 3, 0, p, a * 0.8); } });
-    const bp = sm(0.5, 1.1, t), ba = 1 - gone; if (bp > 0) strokePts(c, rectPts(150, 540, 930, 760), C.white, 4, 0, bp, ba);
+    const scan = seg(0.5, 1.4, t); if (scan > 0 && scan < 1) { const y = lerp(ROWS[0].y, ROWS[9].y, scan); c.save(); c.globalAlpha = 0.16 * (1 - gone); c.fillStyle = C.white; c.fillRect(160, y - 26, 760, 44); c.restore(); }   // a highlight scans the links
+    const bp = sm(0.5, 1.1, t), ba = 1 - gone, pop = 1 + 0.025 * tab(1.1, 1.35, t); if (bp > 0) { c.save(); c.translate(540, 650); c.scale(pop, pop); c.translate(-540, -650); strokePts(c, rectPts(150, 540, 930, 760), C.white, 4, 0, bp, ba); c.restore(); }
     const lab = layout(c, [T('AI answer', {f: 'mono', sz: 0.8})], 30, 180, 590); drawTex(c, lab, {p: seg(0.8, 1.2, t), alpha: ba, col: C.fog});
     const a1 = layout(c, [T('Here’s the answer,', {f: 'sg'})], 48, 180, 660), a2 = layout(c, [T('in plain sentences.', {f: 'sg'})], 48, 180, 720);
     drawTex(c, a1, {p: seg(1.0, 1.8, t), alpha: ba}); drawTex(c, a2, {p: seg(1.3, 2.1, t), alpha: ba});
@@ -211,14 +212,26 @@ window.X001_OPT = (() => {
     const pre = layout(c, [T('Condé Nast: plan as if', {f: 'sg'})], 44, 540, y - 120, 'center'); drawTex(c, pre, {p: seg(a, a + 0.6, t)});
     const eq = layout(c, [T('search', {it: true}), T(' = '), T('0')], 120, 540, y + 20, 'center'); drawTex(c, eq, {p: seg(a + 0.4, a + 1.3, t)});
     const ind = tab(a + 1.4, a + 1.9, t); if (ind > 0) { const z = eq.gl[eq.gl.length - 1]; P.glyph(c, z, 1, ind, C.amber, z.x - z.sz * 0.05 * ind, z.y, 1 + 0.2 * ind); }
-    const gz = layout(c, [T('“Google Zero”', {f: 'mono'})], 30, 540, y + 100, 'center'); drawTex(c, gz, {p: seg(a + 1.2, a + 1.6, t), col: C.fog});
   }
-  function nowA(c, t) { // answer on top -> hero −40.2% writes on -> "search = 0"
+  function nowA(c, t) { // answer on top -> −40.2% counts up, two bars, moves up as a header -> "search = 0" while a traffic bar drains, "Google Zero" stamps in
     c.fillStyle = C.void; c.fillRect(0, 0, 1080, 1920); actTag(c, t, '02', 'NOW', C.white); nowIntro(c, t);
-    const out = sm(7.1, 7.5, t), hp = seg(4.1, 5.1, t);
-    const hero = layout(c, [T('−', {f: 'stix'}), T('40.2', {f: 'stix'}), T('%', {f: 'stix'})], 230, 540, 900, 'center');
-    if (hp > 0) { const ind = tab(5.3, 5.8, t); drawTex(c, hero, {p: hp, col: C.green, alpha: 1 - out, scale: 1 + 0.12 * ind}); studyLabel(c, t, 5.0, 1000, 1 - out); }
-    if (t > 7.4) zeroEq(c, t, 7.5, 900);
+    const up = sm(7.1, 7.6, t), hp = seg(4.1, 4.3, t);
+    if (hp > 0) {   // DecimalNumber: counts 0.0 -> 40.2, Indicate pulse, then rides up to a header
+      const v = 40.2 * SM(seg(4.1, 5.0, t)), ind = tab(5.3, 5.8, t), s = lerp(1, 0.42, up) * (1 + 0.12 * ind);
+      const hero = layout(c, [T('\u2212' + v.toFixed(1) + '%', {f: 'stix'})], 230, 540, lerp(900, 560, up), 'center');
+      drawTex(c, hero, {p: hp, col: C.green, scale: s});
+      const ba = 1 - sm(7.0, 7.4, t), b1 = sm(5.4, 5.8, t), b2 = sm(5.9, 6.4, t), W = 600;   // Jul '25 = 100, Jul '26 = 59.8
+      if (b1 > 0) { const l1 = layout(c, [T('Jul \u201925', {f: 'mono'})], 26, 150, 1120), l2 = layout(c, [T('Jul \u201926', {f: 'mono'})], 26, 150, 1200); drawTex(c, l1, {alpha: ba * b1, col: C.fog}); drawTex(c, l2, {alpha: ba * b1, col: C.fog});
+        strokePts(c, [[330, 1112], [330 + W, 1112]], C.white, 22, 0, b1, ba * 0.85); strokePts(c, [[330, 1192], [330 + W * 0.598, 1192]], C.white, 22, 0, b2, ba * 0.85);
+        if (b2 >= 1) { c.save(); c.setLineDash([10, 9]); strokePts(c, rectPts(330 + W * 0.598 + 6, 1180, 330 + W, 1204), C.amber, 3, 0, sm(6.4, 6.7, t), ba); c.restore(); } }
+      studyLabel(c, t, 6.4, 1290, 1 - sm(7.0, 7.4, t));
+    }
+    if (t > 7.4) {
+      zeroEq(c, t, 7.5, 1000);
+      const dr = sm(8.0, 8.9, t), da = sm(7.9, 8.1, t);   // search traffic drains from 59.8 to 0
+      if (da > 0) { const lab = layout(c, [T('search traffic', {f: 'mono'})], 26, 150, 1190); drawTex(c, lab, {alpha: da, col: C.fog}); strokePts(c, [[390, 1182], [390 + 1 + 540 * 0.598 * (1 - dr), 1182]], C.white, 20, 0, 1, da * 0.85); }
+      const st = seg(9.2, 9.35, t); if (st > 0) { c.save(); c.translate(540, 1300); c.rotate(-0.06); const k = lerp(1.6, 1, SM(st)); c.scale(k, k); c.globalAlpha = SM(st); c.strokeStyle = C.amber; c.lineWidth = 6; c.strokeRect(-230, -48, 460, 96); c.font = `700 52px ${FAM.mono}`; c.fillStyle = C.amber; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('GOOGLE ZERO', 0, 4); c.restore(); }
+    }
     caption(c, t, CAPS.now);
   }
   function nowB(c, t) { // the two real data points as a Manim chart; a dashed line to zero = Condé Nast's plan (not data)
@@ -258,16 +271,20 @@ window.X001_OPT = (() => {
   }
 
   // ============================== NEXT (5.2 s, green act) ==============================
-  function nextA(c, t) { // voxel: two web pages break into blocks that rain into a machine with one green eye; the amber coin hangs, unclaimed
+  const QM = ['.XXX.', 'X...X', '....X', '...X.', '..X..', '.....', '..X..'];   // the question mark, in voxels
+  function nextA(c, t) { // voxel: pages break into blocks that rain into a machine; the eye blinks; a "?" builds; the amber coin spins, then stops
     voxGround(c); actTag(c, t, '03', 'NEXT', C.green);
-    const pr = proj(540, 1180, 34), list = [];
+    const yaw = YAW + 0.07 * t, pr = proj(540, 1180, 34, yaw), list = [];   // slow orbit: never a still frame
     const pages = [...pageVox(-9, -2, 2), ...pageVox(-9, 4, 2)], mach = machineVox(4, -1);
-    const k = sm(0.6, 2.4, t);
     pages.forEach((v, i) => { const d = ((i * 37) % 23) / 23, q = sm(0.6 + d * 1.2, 1.2 + d * 1.2, t); if (q >= 1) return; list.push({...v, x: Math.round(lerp(v.x, 5 + (i % 2), q)), y: Math.round(lerp(v.y, 1 + (i % 3) % 2, q)), z: Math.round(lerp(v.z, 6 + (i % 4), q * q)), fall: q > 0}); });
-    list.push(...fallIn(mach, t, (v) => 0.1 + v.z * 0.08 + (v.x + v.y) * 0.02));
+    const blink = t > 2.6 && t < 2.72;
+    list.push(...fallIn(mach, t, (v) => 0.1 + v.z * 0.08 + (v.x + v.y) * 0.02).map((v) => (v.e && blink ? {...v, c: '#0B3D2E', e: false} : v)));
+    const qm = []; QM.forEach((row, r) => [...row].forEach((ch, x) => { if (ch === 'X') qm.push({x: 3 + x, y: 1, z: 15 - r, c: C.amber}); }));
+    list.push(...fallIn(qm, t, (v) => 3.0 + (15 - v.z) * 0.12 + v.x * 0.03));
     for (let x = -11; x < 10; x++) for (let y = -4; y < 7; y++) list.push({x, y, z: -1, c: (x + y) % 2 ? '#0B3D2E' : '#0E4636'});
     voxels(c, list, pr);
-    const cpr = proj(540, 640, 26, 0.62 + t * 0.9); voxels(c, coinVox(0, 0, 0), cpr);
+    const spin = t < 3.0 ? 0.9 * t : t < 4.6 ? 2.7 + 3.2 * (t - 3.0) : 2.7 + 3.2 * 1.6;   // the coin spins up on the question, stops on "paid?"
+    const cpr = proj(270, 640, 22, 0.62 + spin); voxels(c, coinVox(0, 0, 0), cpr);
     caption(c, t, CAPS.next);
   }
   function nextB(c, t) { // the engine's NEXT flow field, with the flat amber coin hanging over it
@@ -296,12 +313,20 @@ window.X001_OPT = (() => {
       for (let i = 0; i < 10; i++) P('paper', c(1.0 + i * 0.1), {dur: 0.18, g: 0.35 + 0.03 * i, pan: i % 2 ? 0.2 : -0.2});
       P('stroke', c(3.0), {material: 'marker', dur: 0.4, g: 0.8}); P('click', c(3.72), {f: 2200, g: 0.9}); P('stroke', c(3.75), {material: 'marker', dur: 0.45, g: 0.9, pan: 0.2});
       P('put', c(4.0), {g: 0.9, pan: 0.4}); P('tear', c(4.05), {g: 0.5, pan: 0.4}); coinDrop(k, P, c(4.6)); },
-    now: (k, P, c) => { for (let i = 0; i < 10; i++) P('tick', c(0.05 + i * 0.05), {f: 1800, g: 0.2, pan: -0.2}); P('stroke', c(1.0), {material: 'pen', dur: 1.0, g: 0.35});
+    now: (k, P, c) => { for (let i = 0; i < 10; i++) P('tick', c(0.05 + i * 0.05), {f: 1800, g: 0.2, pan: -0.2});
+      for (let i = 0; i < 10; i++) P('tick', c(0.5 + i * 0.09), {f: 2400 + i * 60, g: 0.22, pan: 0.1});          // the scan
+      P('click', c(1.1), {f: 2000, g: 0.7}); P('stroke', c(1.0), {material: 'pen', dur: 1.0, g: 0.35});
       P('tick', c(2.45), {f: 2600, g: 0.4}); P('whoosh', c(2.5), {dur: 0.9, top: 1300, g: 0.4});
-      P('stroke', c(4.1), {material: 'pen', dur: 0.9, g: 0.45}); k.daf(c(5.3), 'tek', 0.6); k.ney([[c(5.1), 587.33, 0.9, 1]], {gain: 0.06});
-      P('whoosh', c(7.1), {dur: 0.5, top: 1100, g: 0.3}); P('stroke', c(7.6), {material: 'pen', dur: 1.2, g: 0.4}); k.daf(c(9.2), 'tek', 0.7); },
+      for (let i = 0; i < 16; i++) P('tick', c(4.1 + i * 0.056), {f: 2200 + i * 40, g: 0.3});              // the count-up
+      k.ney([[c(5.0), 587.33, 0.9, 1]], {gain: 0.06}); k.daf(c(5.3), 'tek', 0.6);
+      P('slide', c(5.4), {dur: 0.35, g: 0.6}); P('slide', c(5.9), {dur: 0.45, g: 0.6}); P('put', c(6.4), {g: 0.5}); P('stroke', c(6.45), {material: 'pen', dur: 0.6, g: 0.3});
+      P('whoosh', c(7.1), {dur: 0.5, top: 1100, g: 0.35}); P('stroke', c(7.5), {material: 'pen', dur: 1.2, g: 0.4});
+      k.tone(c(8.0), {f: [[0, 520], [0.9, 130]], type: 'triangle', dur: 0.95, gain: 0.08, a: 0.05, bus: 'sfx'});           // the drain
+      k.daf(c(8.9), 'tek', 0.7); P('put', c(9.2), {g: 1.0}); P('thud', c(9.22), {f: 110, g: 0.35}); },
     next: (k, P, c) => { for (let i = 0; i < 18; i++) P('key', c(0.6 + i * 0.1), {g: 0.3 + 0.02 * (i % 4), pan: -0.3 + (i % 5) * 0.15}); P('click', c(1.3), {f: 3000, g: 0.4});
-      P('ding', c(3.0), {f: 1318.5, g: 0.12}); },
+      P('click', c(2.6), {f: 3400, g: 0.5});                                                                      // the eye blinks
+      for (let i = 0; i < 12; i++) P('key', c(3.0 + i * 0.11), {g: 0.35, pan: 0.2});                             // the "?" builds
+      P('whoosh', c(3.0), {dur: 1.4, top: 1600, g: 0.25}); P('ding', c(4.6), {f: 1975, g: 0.2}); P('ding', c(4.75), {f: 1975, g: 0.07}); },
   };
   window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {
     x001_hook_link: engineScene(hookA, SND.hook), x001_then_search: engineScene(thenA, SND.then), x001_now_answer: engineScene(nowA, SND.now), x001_next_voxel: engineScene(nextA, SND.next)});
