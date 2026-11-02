@@ -10,7 +10,7 @@
   1920
  ],
  "duration": 29.86,
- "score": null,
+ "score": "sufi_tension",
  "cues": [],
  "text": {
   "question": "How did people find answers before the internet?",
@@ -247,7 +247,6 @@
   }
  },
  "notes": [
-  "No music bed yet: the Sufi tension score is timed to EP000's 46 s, so new formats need a score made from scene cues (step 4b) before the render. The preview is silent either way.",
   "Scenes reuse EP000's choreography except the NOW beat, which is the new Manim scene (option A, approved 2 Nov 2026). The search beat uses the typing-hands shot; the turn to the right still shows EP000's chat on the top screen.",
   "Voice: 9 lines, about 17 s spoken. Record one take with 2 s pauses."
  ],

@@ -348,5 +348,15 @@ window.SGMM_MANIM = (() => {
 /* scene types this style gives the engine (sgmm_scenes.js picks up window.SGMM_STYLE_SCENES; load this file first).
    at = 0: the scene's own clock starts at 0. Samrat picked option A on 2 Nov 2026. */
 window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {
-  manim_links_answer: {at: 0, draw: (ctx, t, tx) => SGMM_MANIM.options.A.draw(ctx, t, tx, false)},
+  manim_links_answer: {at: 0, draw: (ctx, t, tx) => SGMM_MANIM.options.A.draw(ctx, t, tx, false),
+    /* Sufi palette mapped onto Manim moves: Write = soft pen ticks, the Amber box = marker + a daf tek, collapse = a breath whoosh,
+       the answer written = pen, the green answer = one ney note (D5) */
+    sound: (k, P, c) => {
+      for (let i = 0; i < 6; i++) P('tick', c(0.1 + i * 0.14), {f: 1300, g: 0.45});
+      for (let i = 0; i < 10; i++) P('tick', c(0.62 + i * 0.09), {f: 1800, g: 0.25, pan: -0.2});
+      P('stroke', c(2.15), {material: 'marker', dur: 0.5, g: 0.55}); k.daf(c(2.15), 'tek', 0.5);
+      P('whoosh', c(2.9), {dur: 0.7, top: 1300, g: 0.4});
+      P('stroke', c(3.5), {material: 'pen', dur: 1.2, g: 0.4});
+      k.ney([[c(4.75), 587.33, 0.9, 1]], {gain: 0.06}); P('put', c(4.78), {g: 0.35});
+    }},
 });

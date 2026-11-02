@@ -565,6 +565,74 @@ function score(k){const P=(n,t,o)=>k.play(n,t,o);
   k.ney([[45.0,D4,.95,1]],{gain:.05});
 }
 
+/* ================= the Sufi tension score for any plan ("score": "sufi_tension") =================
+   Same palette as EP000 (ney in Hijaz on D, daf 6/8, tanpura drone, breath choir, D/Eb dissonance, silence as the hit).
+   Each scene type brings its EP000 sounds on its own clock (c = EP000 clock -> plan time), kept to the scene's window;
+   the beds (drones, opening choir + ney, the daf pulse that builds through NOW, the dead stops) follow the plan's anchors. */
+const HZ={D2:73.42,A2:110,D3:146.83,Eb3:155.56,A3:220,D4:293.66,Eb4:311.13,Fs4:369.99,G4:392,A4:440,Bb4:466.16,C5:523.25,D5:587.33,Eb5:622.25};
+const PAT6=['dum',0,'tek','dum','tek',0],EIGHTH=.2;
+const N=(c,ph)=>ph.map(([t,f,d,g])=>[c(t),f,d,g]);
+const SCENE_SOUND={
+  enter_in_dark:(k,P,c)=>{k.noise(c(0),{dur:PRESS+.05,color:'brown',filter:'lowpass',f:260,gain:.1,a:.2,hold:PRESS-.3,bus:'amb'});
+    [.18,.46,.86].forEach((x,i)=>k.tone(c(x),{f:[[0,60],[.2,40]],dur:.3,gain:i===1?.42:.6,bus:'music'}));
+    k.noise(c(.5),{dur:.62,color:'pink',filter:'bandpass',f:[[0,700],[.6,1700]],q:.8,gain:.12,a:.58,hold:0,bus:'music'});
+    P('key',c(PRESS),{g:1.6});P('impact',c(PRESS),{f:70,g:1});k.daf(c(PRESS+.02),'dum',1.1);[1.35,1.5,1.65].forEach((x,i)=>P('click',c(x),{f:2200+i*200,g:.7}))},
+  studio_reveal:(k,P,c)=>P('whoosh',c(1.95),{dur:.95,top:1400,g:.45}),
+  push_screen:(k,P,c)=>{P('whoosh',c(5.5),{dur:.9,top:1800,g:.4});P('put',c(O3+.02),{g:.7})},
+  collage_library:(k,P,c,end)=>{const o=x=>c(O3+x);
+    k.ney(N(c,[[6.6,HZ.C5,.55,.9],[7.15,HZ.Bb4,.5,.85],[7.65,HZ.A4,1.15,1],[8.85,HZ.G4,.5,.8],[9.35,HZ.Fs4,.6,.95],[9.95,HZ.Eb4,1.25,1.1],[11.25,HZ.D4,1.6,1]]).filter(n=>n[0]<end-.3),{gain:.06,pan:-.15});
+    P('tear',o(.05),{g:.6,pan:-.5});P('tear',o(.12),{g:.55,pan:.5});P('slide',o(.25),{dur:.3,g:.9,pan:.2});P('put',o(.25+3/12),{g:.5,pan:.2});P('paper',o(1.1),{dur:.25,g:.6,pan:.1});
+    k.noise(o(1.45),{dur:.6,color:'brown',filter:'bandpass',f:[[0,300],[.6,700]],q:1.4,gain:.3,a:.06,pan:.1});P('slide',o(1.5),{dur:.5,g:.8});
+    P('paper',o(2.1),{dur:.4,g:.7});P('put',o(2.9),{g:1.1});P('paper',o(3.0),{dur:.42,g:.9});P('put',o(3.0+1/12),{g:.9,pan:-.2});P('stroke',o(3.15),{material:'sharpie',dur:.45,g:.5,pan:-.2});
+    [3.6,4.0,4.4].forEach(x=>P('paper',o(x),{dur:.4,g:1}));P('put',o(4.4+1/12),{g:.8,pan:.4});P('put',o(4.6+1/12),{g:.9,pan:.4});P('stroke',o(4.95),{material:'marker',dur:.75,g:1.1,pan:.4});
+    for(let x=o(5.0);x<end-.05;x+=.5)P('tick',x,{f:2800,g:.45,pan:.4})},
+  type_hands:(k,P,c,end)=>{P('key',c(13.0),{g:1.3});k.daf(c(13.0),'dum',.5);KEYT.forEach(x=>{if(c(x)<end)P('key',c(x),{g:.75})})},
+  ots_screen:(k,P,c,end,start)=>{KEYT.filter(x=>x<18.6).forEach(x=>{if(c(x)>=start)P('key',c(x),{g:.75})});P('key',c(18.9),{g:1.4});P('ding',c(19.5),{f:1046.5,g:.3})},
+  /* the turn to NEXT: whoosh, then a rising D/Eb/A cluster and the D-Eb choir that run until the dead stop before the hit */
+  look_right:(k,P,c,end,start,A)=>{P('whoosh',c(22.2),{dur:1.1,top:1200,g:.3});const t1=A.cut??end;
+    const t0=Math.min(c(23.4),t1-1.2);[[HZ.D3],[HZ.Eb3],[HZ.A2]].forEach(([f])=>k.tone(t0,{f,type:'triangle',dur:t1-t0,gain:.05,a:(t1-t0)*.95,hold:.05,bus:'music',verb:.3,filter:'lowpass',f2:1800}));
+    k.choir(Math.min(c(24.4),t1-.9),t1,[HZ.D4,HZ.Eb4],.9,true)},
+  /* NEXT: silence, then the hit (cut 0.52 s before it, as in EP000) */
+  field_push:(k,P,c,end)=>{P('whoosh',c(27.6)-.9,{dur:1.0,top:2200,g:.4});k.cut(c(27.48),c(28.0));
+    P('impact',c(28.0),{f:80,g:1.2});k.daf(c(28.0),'dum',1.3);k.choir(c(28.0),Math.min(c(31.0),end+.5),[HZ.D3,HZ.A3,HZ.D4,HZ.Fs4],1);
+    k.ney(N(c,[[28.1,HZ.A4,.4,1],[28.5,HZ.Bb4,.5,1.2],[29.0,HZ.A4,1.3,1]]),{gain:.09,bright:3200})},
+  build_log:(k,P,c,end)=>{P('click',c(30.6),{g:.8});for(let i=0;i<24;i++)P('key',c(31.2+i*.066),{g:.45});
+    for(let t=c(30.4),i=0;t<Math.min(c(39.2),end);t+=EIGHTH,i++){const kind=PAT6[i%6];if(kind)k.daf(t,kind,.42,(i%2?.15:-.15))}
+    k.ney(N(c,[[33.0,HZ.D5,.75,.9],[33.75,HZ.C5,.5,.8],[34.25,HZ.A4,1.4,1],[36.0,HZ.Fs4,.55,.9],[36.55,HZ.G4,.55,.9],[37.1,HZ.A4,1.7,1]]).filter(n=>n[0]<end-.3),{gain:.06});
+    CARDS.forEach(([a],i)=>{P('slide',c(a-.05),{dur:.2,g:.55,pan:-.4+i*.4});P('put',c(a+.12),{g:.85,pan:-.4+i*.4})});P('put',c(37.05),{g:.6});P('whoosh',c(38.4),{dur:1.0,top:900,g:.55})},
+  end_push_dark:(k,P,c)=>{[39.6,39.9,40.25].forEach((x,i)=>k.tone(c(x),{f:[[0,60],[.2,40]],dur:.3,gain:i===1?.4:.55,bus:'music'}));
+    k.noise(c(40.1),{dur:.55,color:'pink',filter:'bandpass',f:[[0,700],[.5,1700]],q:.8,gain:.1,a:.5,hold:0,bus:'music'})},
+  /* the mark: boom, drum, choir; then the drum accelerates and the cluster tightens until the blackout cuts everything */
+  logo_from_dark:(k,P,c,end,start,A)=>{const B=A.blackout;k.tone(c(40.65),{f:[[0,2400],[.3,2000]],dur:.35,gain:.03,verb:.3});
+    P('impact',c(41.0),{f:65,g:1.35});k.daf(c(41.0),'dum',1.3);P('thud',c(41.25),{f:60,g:.35});k.choir(c(41.0),B,[HZ.D3,HZ.A3,HZ.D4,HZ.Eb4],1.1,true);
+    const r0=Math.min(c(41.9),B-.8),rd=B-r0;P('riser',r0,{dur:rd,g:.8});
+    {let t=r0,step=.22;while(t<B-.04){k.daf(t,'tek',.4+.8*(t-r0)/rd);t+=step;step=Math.max(.045,step*.86)}}
+    k.ney([[r0,HZ.D5,rd*.6,.8],[r0+rd*.6,HZ.Eb5,rd*.4,1.15]],{gain:.08,bright:3600,hard:true});
+    [[HZ.D3],[HZ.Eb3]].forEach(([f])=>k.tone(r0,{f,type:'sawtooth',dur:rd,gain:.03,a:rd*.97,hold:.03,bus:'music',filter:'lowpass',f2:2400}))},
+  blackout_tease:(k,P,c,end,start)=>{k.cut(start,c(44.9));P('key',start,{g:1.8});P('thud',start,{f:90,g:.5});
+    P('click',c(44.0),{f:3000,g:.5});P('click',c(44.1),{f:3200,g:.4});for(let i=0;i<28;i++)P('key',c(44.15)+i*.8/28,{g:.45});
+    k.tone(c(45.0),{f:[[0,60],[1,38]],dur:1.6,gain:.18,verb:.2});k.ney([[c(45.0),HZ.D4,.95,1]],{gain:.05})},
+};
+/* a kit that only plays what starts inside [a, b) (cuts always pass) */
+const inWindow=(k,a,b)=>{const ok=t=>t>=a-.05&&t<b;return{...k,play:(n,t,o)=>{if(ok(t))k.play(n,t,o)},tone:(t,p)=>{if(ok(t))k.tone(t,p)},noise:(t,p)=>{if(ok(t))k.noise(t,p)},
+  daf:(t,...r)=>{if(ok(t))k.daf(t,...r)},ney:(ph,o)=>{if(ph.length&&ok(ph[0][0]))k.ney(ph,o)},choir:(t0,...r)=>{if(ok(t0))k.choir(t0,...r)},drone:(t0,...r)=>{if(ok(t0))k.drone(t0,...r)}}};
+function sufiTension(k,plan,scenes){
+  const D=plan.duration,find=ty=>scenes.find(s=>s.type===ty),clock=s=>x=>x-s.off;
+  const hook=find('enter_in_dark'),field=find('field_push'),logo=find('logo_from_dark'),tease=find('blackout_tease');
+  const press=hook?clock(hook)(PRESS):0,hit=field?clock(field)(28.0):null;
+  const A={press,hit,cut:hit!=null?hit-.52:null,logoHit:logo?clock(logo)(41.0):null,blackout:tease?tease.a:logo?clock(logo)(BLACKOUT):D};
+  for(const s of scenes){const f=SCENE_SOUND[s.type]||(TYPES[s.type]||{}).sound;if(!f)continue;const kk=inWindow(k,s.a,s.b);f(kk,(n,t,o)=>kk.play(n,t,o),clock(s),s.b,s.a,A)}
+  /* beds: drone from the Enter press to the dead stop (or the mark), a brighter drone from the hit to the blackout */
+  const d1=A.cut??(A.logoHit!=null?A.logoHit-.4:A.blackout);k.drone(press,d1,[HZ.D2,HZ.A2,HZ.D3],520,1);
+  if(hit!=null)k.drone(hit,A.blackout-.02,[HZ.D2,HZ.A2,HZ.D3],900,1);
+  /* opening: breath choir and two ney notes, until the first act (THEN) takes over */
+  const then=find('collage_library')||find('build_log')||find('ots_screen')||scenes[1],open=then?Math.min(then.a,press+4.05):press+4.05;
+  if(open-press>1.2){k.choir(press+.15,open,[HZ.D3,HZ.A3],.8);k.ney([[press+.6,HZ.A4,Math.min(1.5,open-press-.7),1]].concat(open-press>3.6?[[press+2.1,HZ.G4,1.5,.9]]:[]),{gain:.075,pan:.15})}
+  /* NOW: the daf enters (dum . tek dum tek .) and builds until the dead stop / the mark */
+  const now=scenes.find(s=>['type_hands','ots_screen'].includes(s.type)||/^manim_/.test(s.type)),end=A.cut??(A.logoHit!=null?A.logoHit-.5:A.blackout-.5);
+  if(now&&end-now.a>1.5){const t0=now.a+.6,span=end-t0;for(let t=t0,i=0;t<end-.02;t+=EIGHTH,i++){const kind=PAT6[i%6];if(!kind)continue;const u=(t-t0)/span;k.daf(t,kind,.28+.62*u*u,(i%2?.15:-.15))}}
+}
+
 /* ================= scene types =================
    at    = the type's canonical start (its EP000 time); the scene clock is at + (t - plan start)
    trail = motion-blur windows on that clock (used by frame()) */
@@ -604,7 +672,7 @@ ST('blackout_tease',BLACKOUT,[],(ctx,t)=>{ctx.fillStyle='#000';ctx.fillRect(0,0,
    if(t>45.85){ctx.fillStyle=`rgba(0,0,0,${seg(t,45.85,46)})`;ctx.fillRect(0,0,1080,1920)}});
 
 /* scene types from style modules (08_templates/styles/<style>/*.js, loaded before this file): {name: {at, trail, draw(ctx, t, text)}} */
-for(const [name,s] of Object.entries(window.SGMM_STYLE_SCENES||{}))ST(name,s.at||0,s.trail||[],(ctx,t)=>s.draw(ctx,t,TX));
+for(const [name,s] of Object.entries(window.SGMM_STYLE_SCENES||{})){ST(name,s.at||0,s.trail||[],(ctx,t)=>s.draw(ctx,t,TX));TYPES[name].sound=s.sound}
 
 /* ================= captions + act tags (from the plan) ================= */
 const ACTCOL={THEN:C.amber,NOW:C.white,NEXT:C.green};
@@ -620,7 +688,7 @@ function drawCaps(ctx,t,CAPS){for(const [a,b,parts] of CAPS){if(t<a||t>b)continu
 /* ================= a plan -> a playable episode ================= */
 function load(plan){
   const scenes=plan.scenes.map(s=>{const ty=TYPES[s.type];if(!ty)throw new Error(`unknown scene type "${s.type}" (have: ${Object.keys(TYPES).join(', ')})`);
-    const [a,b]=s.t,off=ty.at-a;return{a,b,off,fn:ty.fn,tx:{...plan.text,...s.text},trail:ty.trail.map(([x,y,k])=>[x-off,y-off,k])}});
+    const [a,b]=s.t,off=ty.at-a;return{type:s.type,a,b,off,fn:ty.fn,tx:{...plan.text,...s.text},trail:ty.trail.map(([x,y,k])=>[x-off,y-off,k])}});
   const CAPS=(plan.captions||[]).map(c=>[c.t[0],c.t[1],capParts(c.text)]);
   const TAGS=(plan.act_tags||[]).map(g=>[g.t[0],g.t[1],g.num,g.label,ACTCOL[g.label]||C.white]);
   const TRAIL=scenes.flatMap(s=>s.trail),DUR=plan.duration;
@@ -642,7 +710,7 @@ function load(plan){
     audio:async(mute)=>{const sc=plan.score==null?()=>{}:SCORES[plan.score];if(!sc)throw new Error(`unknown score "${plan.score}"`);const sr=48000,off=new OfflineAudioContext(2,sr*DUR,sr);
     /* warp: [[t, +seconds],...] from sgmm build when the real voice needed more time; the cue sheet's times move with the picture */
     const WP=plan.warp||[],warp=t=>{let d=0;for(const [p,dt] of WP)if(t>=p)d+=dt;return t+d};
-    const kk=makeKit(off,0,mute,WP.length?warp:null);sc(kk);
+    const kk=makeKit(off,0,mute,WP.length?warp:null);sc(kk,plan,scenes);
     /* cues from the plan: {"t":28,"cue":"impact","g":1.2} (one-shots: key tick click thud impact whoosh riser paper slide put tear stroke ding) | {"cue":"daf","kind":"dum"} | {"cue":"cut","reopen":28} */
     for(const {t,cue,...o} of plan.cues||[]){if(cue==='daf')kk.daf(t,o.kind||'dum',o.g??1,o.pan||0);else if(cue==='cut')kk.cut(t,o.reopen);else kk.play(cue,t,o)}const buf=await off.startRendering();
     const L=buf.getChannelData(0),R=buf.getChannelData(1),N=L.length;let pk=0;for(let i=0;i<N;i++)pk=Math.max(pk,Math.abs(L[i]),Math.abs(R[i]));const g=mute?1:(pk>0?.891/pk:1);
@@ -652,6 +720,6 @@ function load(plan){
     const u=new Uint8Array(ab);let bin='';for(let i=0;i<u.length;i+=32768)bin+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return{b64:btoa(bin),peak:pk}}};
 }
 /* named scores (hand-written cue sheets); a plan adds its own `cues` on top, or uses "score": null for cues only */
-const SCORES={sufi_tension_ep000:score};
+const SCORES={sufi_tension_ep000:score,sufi_tension:sufiTension};
 return{load,types:Object.keys(TYPES)};
 })();

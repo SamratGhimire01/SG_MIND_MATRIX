@@ -75,8 +75,12 @@ EP000 test (2 Nov 2026): thumbnails regenerate the approved set (PSNR 42–50 dB
 ## `sgmm preview` (step 4a)
 Writes `../storyboard/<name>_storyboard_v###.html` next to the plan's `edit/` folder (one self-contained page: scene library + plan inline; silent animatic with scrubber, a key frame at the middle of every scene and every voice line, on-screen text, act tags, script table with fact/forecast + sources, open items from `notes`) and the same cards as `…_storyboard_v###.png`. Publish the HTML as an Artifact so Samrat can approve it on the phone. Template: `storyboard_page.html`. Daily format templates: `08_templates/formats/`.
 
+## Scores
+- `"score": "sufi_tension_ep000"` — EP000's hand-written cue sheet (46 s, unchanged, byte-identical).
+- `"score": "sufi_tension"` — **any plan** (2 Nov 2026): every scene type brings its EP000 sounds on its own clock (`SCENE_SOUND` in `sgmm_scenes.js`; a style scene brings its own `sound`), kept inside the scene's window; the beds follow the plan: drone from the Enter press to the dead stop before the NEXT hit (`field_push`, cut 0.52 s before it), a brighter drone from the hit to the blackout, the opening breath choir + ney until the first act, the 6/8 daf that builds through NOW, the accelerating drum and cluster into the blackout, music dead after it. Section levels match EP000's (NOW is the quiet act, for the voice).
+- `"cues"` still add one-shots on top; `null` = cues only.
+
 ## Not yet
-- No generative music bed for new lengths: a new plan uses a named score (EP000's, warped) and/or its own cues. Add a bed when the SHIFT/TIP/LOG templates are built (step 4).
 - Scene choreography plays at EP000 speed; a `speed` field is the first thing to add when a new plan needs it.
 - No `real_clip` / `mask_host` / `setup_tour` types yet (v002 analysis §3).
 

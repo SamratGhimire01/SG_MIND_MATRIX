@@ -50,6 +50,7 @@ Samrat added 8 explainer looks (Editorial Collage, Constructivist, Manim, Paperc
 - Palette: **ney** (breathy reed flute) in **Hijaz on D** (D Eb F# G A Bb C) · **daf** frame drum in 6/8 (`dum . tek dum tek .`, eighth = 0.2 s) that builds · tanpura-style **drone** D2/A2/D3 · breath **choir** ("ah" formants) on big moments · **D/Eb dissonance** that never resolves · **heartbeat** in the dark · **silence as the hit** (cut the music bus and its reverb tail dead).
 - Sound design must match the material: **real paper sounds for page turns (never tick-tick)**, book scrape, tape tear, marker stroke, keys, a clock tick only under "waited".
 - Keep effects in front, music under, max ~3 layers, silence around the key hit.
+- New formats (2 Nov 2026): `"score": "sufi_tension"` builds the same score for any plan from its scenes (scene sounds + beds). Manim moves map onto the palette: Write = pen ticks, Amber box = marker + daf tek, collapse = breath whoosh, green answer = one ney note. A voice line should land on the NEXT hit, not run through the dead stop.
 
 ## Samrat's kit (decided 2 Nov 2026)
 - Phone: **realme 11 Pro 5G** (Android), camera app **Open Camera** (lock exposure + WB, 4K 30 fps, beauty/AI/HDR off). He records himself his own way — adapt to his clips; shot lists are suggestions only.

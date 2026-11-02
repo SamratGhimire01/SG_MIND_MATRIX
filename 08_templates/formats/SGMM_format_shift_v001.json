@@ -9,12 +9,11 @@
   1080,
   1920
  ],
- "score": null,
+ "score": "sufi_tension",
  "cues": [],
  "silences": [],
  "sources": {},
  "notes": [
-  "No music bed yet: new formats need a score from scene cues (step 4b) before the render.",
   "Scenes reuse EP000's choreography; keep each scene near its EP000 length (README table) or check the cut in the storyboard.",
   "One caption = one voice line. Every fact line gets \"kind\": \"fact\" and a \"src\"; a forecast is marked \"forecast\"."
  ],
