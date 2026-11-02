@@ -343,7 +343,9 @@ window.SGMM_MANIM = (() => {
     B: {name: 'One word at a time', dur: 6.4, draw: drawB, keys: [1.6, 2.15, 3.3, 4.6, 6.1]},
     C: {name: 'How it learned', dur: X.D, draw: drawC, keys: [1.5, 3.4, 4.9, 5.8, 7.1]},
   };
-  return {C, FONTS, options: OPT};
+  // primitives other drafts reuse (X001 options, later scene styles)
+  const P = {T, layout, drawTex, morphTex, glyph, strokePts, flash, arrow, arcPts, curvedArrow, rectPts, ghost, dot, circle, checkPts, axes, ax2s, graphPts, cumLen, SM, seg, sm, tab, mixc, rng, fnt, FAM, lerp, cl};
+  return {C, FONTS, options: OPT, P};
 })();
 /* scene types this style gives the engine (sgmm_scenes.js picks up window.SGMM_STYLE_SCENES; load this file first).
    at = 0: the scene's own clock starts at 0. Samrat picked option A on 2 Nov 2026. */
