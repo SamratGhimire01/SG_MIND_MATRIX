@@ -15,7 +15,7 @@ python3 08_templates/engine/sgmm.py build <plan.json> <voice take>   # only afte
 
 Plan keys added for this step (the engine ignores them): `format`, `version`, `status`, `notes` (open items shown on the storyboard), `sources` (`{id: {title, url, note}}`), and per caption `kind` (`line` · `fact` · `forecast`) and `src` (a source id). Every fact line needs a `src`; a forecast is always marked.
 
-Previews of the empty templates: `preview/`. First filled plan: `04_video_projects/X001_shift_finding_answers/` (storyboard https://claude.ai/artifact/CRpVWcRroWzYrrGRQeBHa8).
+Previews of the empty templates: `preview/`. First filled plan (a test on EP000's topic, archived): `04_video_projects/_archive/X000_shift_finding_answers_draft/`. The real X001 is "The End of the Click": `04_video_projects/X001_shift_end_of_the_click/`.
 
 ## Before the first render of these formats
 - Music: done — the templates use `"score": "sufi_tension"` (fits any plan; see the engine README).
