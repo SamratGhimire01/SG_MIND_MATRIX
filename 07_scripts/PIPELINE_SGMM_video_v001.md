@@ -43,7 +43,7 @@ Status: **design only.** Build when Samrat approves (see "Build plan" at the end
 | 3 | **Scene plan** — Claude picks scene types from the library + Samrat's style picks, writes on-screen text, timings, camera, sound cues | Claude | script → `scenes.json` (Short ≈ 1–3k tokens; long-form ≈ 10–25k) | ~5–30k |
 | 4 | **Record** — voice (one file), optional setup footage (shot list generated from the plan), OBS captures, collage photos | Samrat | phone/OBS → `footage/`, `voice/` | 0 |
 | 5 | **Auto-build** — find & place each voice line → re-time scenes to the real voice → render scenes (4 workers) → composite real footage → score from cues → voice chain → automix | machine | plan + recordings → `final.mp4`, `clean.mp4`, stems | ~0 (scripts) |
-| 6 | **QC** — frame count, loudness −14 LUFS, voice ≥ +12 dB over background on every line, intended silences, stills at every join, caption sync | machine, Claude looks at the contact sheet | → `qc_report.md` | ~3–5k |
+| 6 | **QC** — frame count, loudness −14 LUFS, voice +15 dB over background on every line, intended silences, stills at every join, caption sync | machine, Claude looks at the contact sheet | → `qc_report.md` | ~3–5k |
 | 7 | **Package** — final + clean + stems + SRT + 3 thumbnails + vertical cover + posting kit (title, description, tags, hashtags, X post, pinned comment) | machine + Claude (copy) | → `09_exports/` | ~3–5k |
 | 8 | **Post** — YouTube schedule 7:45 pm NPT, X 15 min later, first reply with link | Samrat (Studio app later) | | 0 |
 | 9 | **Learn** — fill `06_research/analytics.md` at 24 h; Claude updates the skills with what worked | Samrat + Claude | | ~2k |
@@ -111,6 +111,7 @@ sgmm qc EP001 && sgmm package EP001          # 6–7
 1. Extract the EP000 scenes into a **scene library** (one module per scene type) + `scenes.json` loader. Re-render EP000 from a JSON plan to prove it matches.
    **Done 2 Nov 2026** → `08_templates/engine/` (12 scene types, `render.mjs`); EP000 plan `04_video_projects/EP000_matrix_online/edit/SGMM_EP000_scenes_v001.json` renders byte-identical to storyboard v008.
 2. `sgmm build`: voice split → retime → render → score from cues → chain → automix (all exist; wire them together).
+   **Done 2 Nov 2026** → `08_templates/engine/sgmm.py build`; tested on EP000 against final v004 (`04_video_projects/EP000_matrix_online/export/SGMM_EP000_build_v001_report.md`).
 3. `sgmm qc` + `sgmm package` (thumbnail + posting kit generation).
 4. Make the **3 X videos** (shift / tip / log) with it as the first real test.
 5. Long-form: segment rendering at 30 fps + assembled master + numbered clips for CapCut.

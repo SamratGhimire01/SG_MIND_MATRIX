@@ -2,7 +2,8 @@
 /* SGMM render engine v001 — scenes.json -> MP4 (and a parity check against an old storyboard).
    No npm installs: drives headless Chrome over the DevTools protocol (Node's built-in WebSocket), pipes frames into ffmpeg.
 
-   node 08_templates/engine/render.mjs <plan.json> <out.mp4> [--workers 4] [--clean] [--from 0] [--to <duration>]
+   node 08_templates/engine/render.mjs <plan.json> <out.mp4> [--workers 4] [--clean] [--from 0] [--to <duration>] [--audio mix.wav]
+   node 08_templates/engine/render.mjs <plan.json> --score-out <prefix>        (writes <prefix>_mix/_music/_sfx.wav)
    node 08_templates/engine/render.mjs <plan.json> --compare <storyboard.html> [--every 0.25]
 
    Chrome: $SGMM_CHROME, else Google Chrome in /Applications. */
@@ -21,7 +22,7 @@ const FONT_SPECS = ['500 40px "JetBrains Mono"', '700 40px "JetBrains Mono"', '7
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i < 0 ? d : (args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : true); };
 const [planPath, outPath] = args;
-if (!planPath) { console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 7).join('\n')); process.exit(1); }
+if (!planPath) { console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 8).join('\n')); process.exit(1); }
 const plan = JSON.parse(fs.readFileSync(planPath, 'utf8'));
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'sgmm-'));
 
@@ -95,6 +96,13 @@ async function compare(htmlPath, every) {
   return same === n && lsb <= 2;
 }
 
+/* ---------- score: {mute: file} with mute '' (full mix) | 'music' (-> sfx stem) | 'sfx' (-> music stem) ---------- */
+async function scoreOut(files) {
+  const br = await browser(); await br.open(enginePage());
+  for (const [mute, f] of Object.entries(files)) fs.writeFileSync(f, Buffer.from(await br.evaluate(`ep.audio(${mute ? `'${mute}'` : ''}).then(a=>a.b64)`), 'base64'));
+  await br.close();
+}
+
 /* ---------- render ---------- */
 async function render(out) {
   const fps = plan.fps, W = +opt('workers', 4), caps = !opt('clean', false);
@@ -116,16 +124,16 @@ async function render(out) {
     await br.close();
   }));
   console.log(`\nframes ${f1 - f0} in ${((Date.now() - t0) / 1000).toFixed(0)} s`);
-  const br = await browser(); await br.open(page);
-  const wav = path.join(TMP, 'score.wav');
-  fs.writeFileSync(wav, Buffer.from(await br.evaluate('ep.audio().then(a=>a.b64)'), 'base64')); await br.close();
+  const wav = opt('audio', false) ? path.resolve(opt('audio')) : path.join(TMP, 'score.wav');
+  if (!opt('audio', false)) await scoreOut({'': wav});
   const list = path.join(TMP, 'segs.txt'); fs.writeFileSync(list, segs.filter(Boolean).map(s => `file '${s}'`).join('\n'));
-  await run('ffmpeg', ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', list, '-ss', f0 / fps, '-i', wav, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', '-movflags', '+faststart', '-t', (f1 - f0) / fps, out].map(String));
+  await run('ffmpeg', ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', list, '-ss', f0 / fps, '-i', wav, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '320k', '-ar', '48000', '-movflags', '+faststart', '-t', (f1 - f0) / fps, out].map(String));
   await run('ffprobe', ['-v', 'error', '-count_frames', '-show_entries', 'stream=codec_name,width,height,r_frame_rate,pix_fmt,nb_read_frames,sample_rate,channels', '-show_entries', 'format=duration', '-of', 'compact', out]);
 }
 
 try {
-  if (opt('compare')) process.exitCode = (await compare(opt('compare'), +opt('every', 0.25))) ? 0 : 2;
+  if (opt('score-out')) { const p = path.resolve(opt('score-out')); await scoreOut({'': p + '_mix.wav', sfx: p + '_music.wav', music: p + '_sfx.wav'}); }
+  else if (opt('compare')) process.exitCode = (await compare(opt('compare'), +opt('every', 0.25))) ? 0 : 2;
   else if (outPath) await render(outPath);
 } finally { fs.rmSync(TMP, {recursive: true, force: true}); }
 process.exit(); // a stray CDP/fetch handle can keep node alive after the work is done

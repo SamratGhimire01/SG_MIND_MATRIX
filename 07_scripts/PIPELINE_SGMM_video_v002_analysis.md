@@ -42,7 +42,7 @@ IDEA ─┤G1├─ SCRIPT ─┤G2├─ SCENE PLAN + STORYBOARD ─┤G3├─
 | G3 | storyboard page (playable animatic, like EP000) | brand rules, one-act-one-style, one green element, variety vs last videos |
 | G4 | recordings: the voice line split + footage clips | Whisper line match, audio levels, noise, **anonymity scan**, exposure/flicker, frame rate |
 | G5 | first full render | frame count, joins, caption sync, logo rules |
-| G6 | final sound | −14 LUFS, voice ≥ +12 dB over background on every line, intended silences, no clipping |
+| G6 | final sound | −14 LUFS, voice +15 dB over background on every line, intended silences, no clipping |
 | G7 | title, description, tags, thumbnails, schedule | posting-kit rules, ≤60-char title, 3–5 hashtags, settings checklist |
 
 ## 3. What changes for each format

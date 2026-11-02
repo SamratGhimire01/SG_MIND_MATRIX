@@ -6,10 +6,15 @@
 |---|---|
 | `sgmm_scenes.js` | Scene library: studio, hands/keyboard, collage, field, build log, logo from the dark, captions, act tags, the Sufi tension sound kit + EP000 cue sheet. `SGMM.load(plan)` → `render / frame / audio` |
 | `render.mjs` | Renders a plan (headless Chrome over DevTools, frames piped to ffmpeg, 4 workers) or checks it against an old storyboard (`--compare`). No npm installs. |
+| `sgmm.py` | **`sgmm build`** (pipeline step 2): voice take + plan → final + clean MP4, mastered mix, voice/music/sfx stems, re-timed plan, report |
+| `voice_chain.txt` | the approved crisp-and-big voice chain (ffmpeg graph, EP000 v004) |
 | `04_video_projects/EP000_matrix_online/edit/SGMM_EP000_scenes_v001.json` | EP000 as a plan, the reference example |
 
 ```
-node 08_templates/engine/render.mjs <plan.json> <out.mp4> [--workers 4] [--clean] [--from s] [--to s]
+python3 08_templates/engine/sgmm.py build <plan.json> <voice take> [--lines lines.json] [--no-chain] [--audio-only] [--name N] [--out DIR]
+python3 08_templates/engine/sgmm.py selftest
+node 08_templates/engine/render.mjs <plan.json> <out.mp4> [--workers 4] [--clean] [--from s] [--to s] [--audio mix.wav]
+node 08_templates/engine/render.mjs <plan.json> --score-out <prefix>
 node 08_templates/engine/render.mjs <plan.json> --compare <storyboard.html> [--every 0.25]
 ```
 Needs Google Chrome (or `SGMM_CHROME=/path/to/chrome`), ffmpeg and network access to Google Fonts.
@@ -36,8 +41,19 @@ Each type keeps its EP000 choreography on its own clock. `at` is where it starts
 
 Captions: `"is already [being written.]"` — brackets are the one green element, `\n` breaks the line. Act tags take their colour from the label (THEN amber, NOW white, NEXT green).
 
-## Not in v001
-- Score is EP000's fixed cue sheet (`"score": "sufi_tension_ep000"`); cues from the plan, voice placement, retiming to the real voice, chain and automix come with `sgmm build` (step 2).
+## `sgmm build` (step 2)
+1. **Split** — finds speech in the take (one file, ~2 s pauses) and matches it to the plan's captions (one caption = one line) by text length, so a pause inside a line stays inside it. Writes `<name>_voice_lines.json`; fix a wrong boundary there and pass it back with `--lines`.
+2. **Re-time** — each line starts at its caption; if it runs past the caption end (+0.1 s tail allowed): move it earlier (keeping 0.15 s after the previous line), then speed it up ≤10 % (pitch kept), then insert time — everything after moves later, the scene across the point plays longer, and the plan gets `"warp"` so the score's cue sheet moves with the picture. Words are never cut. Captions follow the voice (end = voice end + 0.25 s).
+3. **Score** — the plan's named score, warped, plus the plan's own `"cues"` (`{"t":28,"cue":"impact","g":1.2}`; one-shots `key tick click thud impact whoosh riser paper slide put tear stroke ding`, `{"cue":"daf","kind":"dum"}`, `{"cue":"cut","reopen":28}` = music stops dead). `"score": null` = cues only.
+4. **Voice chain** — `voice_chain.txt` (skip with `--no-chain` when the take is already processed).
+5. **Automix** — per line, the background dips just enough for the voice to sit **+15 dB** over it (4–18 dB dips, voice-pocket EQ on the background while he speaks).
+6. **Master** — −14 LUFS, true peak ≤ −1.5 dBTP (limiter at 4× rate).
+7. **Render** — final (captions) and clean MP4 with the master, AAC 320k. `--audio-only` stops before this.
+
+Output in the episode's `export/`: `<name>_1080x1920_60fps.mp4`, `_clean_…mp4`, `_mix.wav` (master, 24-bit), `_voice.wav`, `_music.wav`, `_sfx.wav` (score stems, not ducked), `_plan.json` (re-timed plan), `_voice_lines.json`, `_report.md` (per-line voice-over-background, loudness, video check).
+
+## Not yet
+- No generative music bed for new lengths: a new plan uses a named score (EP000's, warped) and/or its own cues. Add a bed when the SHIFT/TIP/LOG templates are built (step 4).
 - Scene choreography plays at EP000 speed; a `speed` field is the first thing to add when a new plan needs it.
 - No `real_clip` / `mask_host` / `setup_tour` types yet (v002 analysis §3).
 

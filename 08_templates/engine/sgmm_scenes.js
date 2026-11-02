@@ -442,7 +442,7 @@ const FULLFLOW=()=>{const R=icen('right'),w=1920*R.w/R.h;return{x:540-w/2,y:0,w,
 const OFF=new Map();const offFor=(W,H)=>{const k=W+'x'+H;if(!OFF.has(k))OFF.set(k,layer(W,H));return OFF.get(k)};
 
 /* ================= sound: a compact kit (ideas from the reference kit: buses, compressor, room reverb, seeded noise, paper/stroke/key primitives) ================= */
-function makeKit(ctx,start,mute){const T0=start||0,base=ctx.currentTime+.03,SR=ctx.sampleRate,TINY=1e-4,at=t=>(Math.round((base+(t-T0))*SR)+.25)/SR;
+function makeKit(ctx,start,mute,warp){const T0=start||0,base=ctx.currentTime+.03,SR=ctx.sampleRate,TINY=1e-4,W=warp||(t=>t),at=t=>(Math.round((base+(W(t)-T0))*SR)+.25)/SR;
   const master=ctx.createGain();master.gain.value=.9;const comp=ctx.createDynamicsCompressor();comp.threshold.value=-16;comp.knee.value=8;comp.ratio.value=3;comp.attack.value=.004;comp.release.value=.18;comp.connect(master);master.connect(ctx.destination);
   const bus={};for(const [n,g] of Object.entries({sfx:.85,amb:.5,music:.5})){bus[n]=ctx.createGain();bus[n].gain.value=g;const z=ctx.createGain();z.gain.value=(mute==='music'&&n==='music')||(mute==='sfx'&&n!=='music')?0:1;bus[n].connect(z);z.connect(comp)}
   const verb=ctx.createConvolver();{const n=Math.floor(1.6*SR),ir=ctx.createBuffer(2,n,SR);for(let c=0;c<2;c++){const r=rng(77+c),d=ir.getChannelData(c);let lp=0;for(let i=0;i<n;i++){const u=i/n;lp+=(.6-.45*u)*((r()*2-1)-lp);d[i]=lp*Math.pow(1-u,3)}}verb.buffer=ir}
@@ -636,14 +636,19 @@ function load(plan){
         for(let i=0;i<n;i++){const ti=Math.max(0,t-sh*(i/(n-1))*(k/.45));render(tc,1080,1920,ti,false);ctx.globalAlpha=1/(i+1);ctx.drawImage(tmp,0,0)}ctx.globalAlpha=1;ctx.setTransform(1,0,0,1,0,0);if(caps){drawActTag(ctx,t,TAGS);drawCaps(ctx,t,CAPS)}}
       return cv.toDataURL(type,.96)},
     /* the score as 16-bit stereo 48 kHz WAV (base64); mute = 'music' | 'sfx' for stems */
-    audio:async(mute)=>{const sc=SCORES[plan.score];if(!sc)throw new Error(`unknown score "${plan.score}"`);const sr=48000,off=new OfflineAudioContext(2,sr*DUR,sr);const kk=makeKit(off,0,mute);sc(kk);const buf=await off.startRendering();
+    audio:async(mute)=>{const sc=plan.score==null?()=>{}:SCORES[plan.score];if(!sc)throw new Error(`unknown score "${plan.score}"`);const sr=48000,off=new OfflineAudioContext(2,sr*DUR,sr);
+    /* warp: [[t, +seconds],...] from sgmm build when the real voice needed more time; the cue sheet's times move with the picture */
+    const WP=plan.warp||[],warp=t=>{let d=0;for(const [p,dt] of WP)if(t>=p)d+=dt;return t+d};
+    const kk=makeKit(off,0,mute,WP.length?warp:null);sc(kk);
+    /* cues from the plan: {"t":28,"cue":"impact","g":1.2} (one-shots: key tick click thud impact whoosh riser paper slide put tear stroke ding) | {"cue":"daf","kind":"dum"} | {"cue":"cut","reopen":28} */
+    for(const {t,cue,...o} of plan.cues||[]){if(cue==='daf')kk.daf(t,o.kind||'dum',o.g??1,o.pan||0);else if(cue==='cut')kk.cut(t,o.reopen);else kk.play(cue,t,o)}const buf=await off.startRendering();
     const L=buf.getChannelData(0),R=buf.getChannelData(1),N=L.length;let pk=0;for(let i=0;i<N;i++)pk=Math.max(pk,Math.abs(L[i]),Math.abs(R[i]));const g=mute?1:(pk>0?.891/pk:1);
     const ab=new ArrayBuffer(44+N*4),v=new DataView(ab),ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
     ws(0,'RIFF');v.setUint32(4,36+N*4,true);ws(8,'WAVE');ws(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,2,true);v.setUint32(24,sr,true);v.setUint32(28,sr*4,true);v.setUint16(32,4,true);v.setUint16(34,16,true);ws(36,'data');v.setUint32(40,N*4,true);
     let o=44;for(let i=0;i<N;i++){v.setInt16(o,Math.round(clamp(L[i]*g,-1,1)*32767),true);v.setInt16(o+2,Math.round(clamp(R[i]*g,-1,1)*32767),true);o+=4}
     const u=new Uint8Array(ab);let bin='';for(let i=0;i<u.length;i+=32768)bin+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return{b64:btoa(bin),peak:pk}}};
 }
-/* scores: for now one hand-written cue sheet; cues from the plan come with `sgmm build` (pipeline step 2) */
+/* named scores (hand-written cue sheets); a plan adds its own `cues` on top, or uses "score": null for cues only */
 const SCORES={sufi_tension_ep000:score};
 return{load,types:Object.keys(TYPES)};
 })();
