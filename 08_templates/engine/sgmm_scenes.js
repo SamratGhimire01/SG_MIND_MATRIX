@@ -624,14 +624,18 @@ function sufiTension(k,plan,scenes){
   const A={press,hit,cut:hit!=null?hit-.52:null,logoHit:logo?clock(logo)(41.0):null,blackout:tease?tease.a:logo?clock(logo)(BLACKOUT):D};
   for(const s of scenes){const f=SCENE_SOUND[s.type]||(TYPES[s.type]||{}).sound;if(!f)continue;const kk=inWindow(k,s.a,s.b);f(kk,(n,t,o)=>kk.play(n,t,o),clock(s),s.b,s.a,A)}
   /* beds: drone from the Enter press to the dead stop (or the mark), a brighter drone from the hit to the blackout */
-  const d1=A.cut??(A.logoHit!=null?A.logoHit-.4:A.blackout);k.drone(press,d1,[HZ.D2,HZ.A2,HZ.D3],520,1);
-  if(hit!=null)k.drone(hit,A.blackout-.02,[HZ.D2,HZ.A2,HZ.D3],900,1);
+  /* "bed": "light" (talking formats: the voice runs most of the video): two steady pure drone notes (no detuned saws = no wobble), daf without the deep dum */
+  const light=plan.bed==='light';
+  const drone=(t0,t1,cut)=>{if(t1-t0<.3)return;if(!light){k.drone(t0,t1,[HZ.D2,HZ.A2,HZ.D3],cut,1);return}
+    const d=t1-t0,a=Math.min(1.5,d*.3);[[HZ.D3,.05],[HZ.A3,.03]].forEach(([f,g])=>k.tone(t0,{f,type:'sine',dur:d,gain:g,a,hold:d-a-.4,bus:'music',verb:.35}))};
+  const d1=A.cut??(A.logoHit!=null?A.logoHit-.4:A.blackout);drone(press,d1,520);
+  if(hit!=null)drone(hit,A.blackout-.02,900);
   /* opening: breath choir and two ney notes, until the first act (THEN) takes over */
   const then=find('collage_library')||find('build_log')||find('ots_screen')||scenes[1],open=then?Math.min(then.a,press+4.05):press+4.05;
   if(open-press>1.2){k.choir(press+.15,open,[HZ.D3,HZ.A3],.8);k.ney([[press+.6,HZ.A4,Math.min(1.5,open-press-.7),1]].concat(open-press>3.6?[[press+2.1,HZ.G4,1.5,.9]]:[]),{gain:.075,pan:.15})}
   /* NOW: the daf enters (dum . tek dum tek .) and builds until the dead stop / the mark */
   const now=scenes.find(s=>['type_hands','ots_screen'].includes(s.type)||/^manim_|_now_/.test(s.type)),end=A.cut??(A.logoHit!=null?A.logoHit-.5:A.blackout-.5);
-  if(now&&end-now.a>1.5){const t0=now.a+.6,span=end-t0;for(let t=t0,i=0;t<end-.02;t+=EIGHTH,i++){const kind=PAT6[i%6];if(!kind)continue;const u=(t-t0)/span;k.daf(t,kind,.28+.62*u*u,(i%2?.15:-.15))}}
+  if(now&&end-now.a>1.5){const t0=now.a+.6,span=end-t0;for(let t=t0,i=0;t<end-.02;t+=EIGHTH,i++){const kind=PAT6[i%6];if(!kind||(light&&kind==='dum'))continue;const u=(t-t0)/span;k.daf(t,kind,.28+.62*u*u,(i%2?.15:-.15))}}
 }
 
 /* ================= scene types =================

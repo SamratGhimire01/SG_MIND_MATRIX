@@ -1,0 +1,287 @@
+{
+ "episode": "X001",
+ "format": "shift",
+ "version": "v001",
+ "title": "The End of the Click",
+ "status": "Picks approved (hook A, THEN A, NOW A, NEXT A) · waiting for the voice take · no MP4 rendered",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "duration": 32.758,
+ "score": "sufi_tension",
+ "style_files": [
+  "04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js"
+ ],
+ "cues": [
+  {
+   "t": 24.74,
+   "cue": "cut",
+   "reopen": 25.0
+  }
+ ],
+ "text": {},
+ "scenes": [
+  {
+   "id": "hook",
+   "type": "x001_hook_link",
+   "t": [
+    0,
+    3.1
+   ]
+  },
+  {
+   "id": "then",
+   "type": "x001_then_search",
+   "t": [
+    3.0,
+    9.0
+   ]
+  },
+  {
+   "id": "now",
+   "type": "x001_now_answer",
+   "t": [
+    8.8,
+    22.358000000000004
+   ],
+   "hold": [
+    [
+     15.5,
+     1.963
+    ],
+    [
+     20.463,
+     0.795
+    ]
+   ]
+  },
+  {
+   "id": "next",
+   "type": "x001_next_voxel",
+   "t": [
+    22.158,
+    27.558000000000003
+   ]
+  },
+  {
+   "id": "logo",
+   "type": "logo_from_dark",
+   "t": [
+    27.358000000000004,
+    30.158
+   ]
+  },
+  {
+   "id": "tease",
+   "type": "blackout_tease",
+   "t": [
+    30.158,
+    32.758
+   ],
+   "text": {
+    "tease": "NEXT SHIFT · TOMORROW MORNING"
+   }
+  }
+ ],
+ "act_tags": [
+  {
+   "t": [
+    3.1,
+    8.9
+   ],
+   "num": "01",
+   "label": "THEN"
+  },
+  {
+   "t": [
+    8.9,
+    22.158
+   ],
+   "num": "02",
+   "label": "NOW"
+  },
+  {
+   "t": [
+    22.258000000000003,
+    27.258000000000003
+   ],
+   "num": "03",
+   "label": "NEXT"
+  }
+ ],
+ "captions": [
+  {
+   "t": [
+    0.0,
+    2.95
+   ],
+   "text": "Every time you don’t click a link…\nsomeone loses money.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    3.0,
+    4.07
+   ],
+   "text": "The old deal was simple.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    5.0,
+    8.74
+   ],
+   "text": "You searched. Ten blue links.\nOne click paid the website.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    8.8,
+    10.76
+   ],
+   "text": "But now AI answers on top.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    11.2,
+    12.42
+   ],
+   "text": "So you don’t click.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    12.47,
+    18.143
+   ],
+   "text": "One study: Google traffic to\npublishers fell 40% in a year.",
+   "kind": "fact",
+   "src": "chartbeat"
+  },
+  {
+   "t": [
+    18.193,
+    22.008
+   ],
+   "text": "Condé Nast told its teams:\nplan as if search is zero.",
+   "kind": "fact",
+   "src": "conde"
+  },
+  {
+   "t": [
+    22.058,
+    25.048
+   ],
+   "text": "So websites may write for AIs…\nnot for you.",
+   "kind": "forecast"
+  },
+  {
+   "t": [
+    25.098,
+    27.708
+   ],
+   "text": "And when no one clicks…\nwho gets paid?",
+   "kind": "line"
+  }
+ ],
+ "silences": [
+  [
+   30.258000000000003,
+   30.758000000000003
+  ]
+ ],
+ "sources": {
+  "chartbeat": {
+   "title": "Search Engine Journal (24 Sep 2026) on Chartbeat's 2026 Publisher Playbook: Google Search −40.2% YoY, Jul 2025 → Jul 2026",
+   "url": "https://www.searchenginejournal.com/google-search-decline-publishers-chartbeat/590681/",
+   "note": "one study; report itself is gated"
+  },
+  "conde": {
+   "title": "Editor & Publisher (30 Jul 2026): Roger Lynch, Condé Nast — \"You have to have your businesses planned as if search is zero\"",
+   "url": "https://www.editorandpublisher.com/stories/approaching-google-zero-as-search-referrals-plunge-news-publishers-must-anticipate-theyll,262684"
+  }
+ },
+ "notes": [
+  "Script v003 (option A). Scenes are the drafts Samrat picked; they get polished in the build.",
+  "Music: the Sufi tension bed; a dead stop right after \"who gets paid?\" (cue at 24.55 s), then the logo.",
+  "Voice: 9 lines, one take, 2 s pauses. The build re-times to the real voice."
+ ],
+ "publish": {
+  "day": 1,
+  "titles": [
+   "The End of the Click: Who Gets Paid Now?",
+   "AI Answers on Top. So Who Pays the Web?",
+   "Google Traffic to Publishers Fell 40%. Now What?"
+  ],
+  "why": "the topic phrase comes first, it ends on the video's open question, and it stays under 60 characters",
+  "summary": "Every time you don't click a link, someone loses money. AI now answers on top of search, and one study found Google traffic to publishers fell 40.2% in a year. Condé Nast told its teams to plan as if search is zero. When no one clicks, who gets paid?",
+  "hashtags": [
+   "#AI",
+   "#FutureOfAI",
+   "#ArtificialIntelligence",
+   "#Shorts"
+  ],
+  "tags": [
+   "AI search",
+   "Google AI Overviews",
+   "Google Zero",
+   "zero click search",
+   "future of the web"
+  ],
+  "pinned": "When did you last click past an AI answer? Tell me what made you click. The best answers go into a future episode.",
+  "x_post": "Every time you don't click a link, someone loses money.\nOne study: Google traffic to publishers fell 40% in a year.\nCondé Nast told its teams to plan as if search is zero.\n\nWhen no one clicks, who gets paid? #AI",
+  "shorts_frame": "the green −40.2% (~0:14)",
+  "thumbs": {
+   "A": {
+    "small": "WHEN NO ONE CLICKS,",
+    "big": "WHO GETS PAID?"
+   },
+   "B": {
+    "t": 5.8,
+    "y": 500,
+    "lines": [
+     "THE OLD",
+     "[DEAL.]"
+    ]
+   },
+   "C": {
+    "t": 10.6,
+    "y": 420,
+    "lines": [
+     "−40%",
+     "[TRAFFIC.]"
+    ]
+   },
+   "vertical": {
+    "lines": [
+     "WHEN NO",
+     "ONE CLICKS,",
+     "WHO GETS"
+    ],
+    "big": [
+     "PAID?"
+    ]
+   },
+   "names": {
+    "A": "whogetspaid",
+    "B": "olddeal",
+    "C": "minus40traffic"
+   },
+   "pick": "A"
+  }
+ },
+ "bed": "light",
+ "warp": [
+  [
+   15.5,
+   1.963
+  ],
+  [
+   18.5,
+   0.795
+  ]
+ ]
+}

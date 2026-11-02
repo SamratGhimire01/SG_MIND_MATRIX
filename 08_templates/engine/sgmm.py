@@ -24,7 +24,10 @@ TAIL_OK = .10                # a line may run this far past its slot (breath / r
 CAP_TAIL = .25               # caption stays this long after the voice ends
 HOLD_BEFORE = .5            # inserted time goes this far before the line's slot end
 TARGET, DIP_MIN, DIP_MAX = 15.0, 4.0, 18.0   # automix: voice over background per line (approved v004)
+DUCK_HOLD = 1.0             # lines closer than this share one dip (no music swell in short gaps)
 LUFS, TP = -14.0, -1.5
+VOICE_IN = -26.0            # speech RMS (dBFS) fed into the chain; a hot phone take made the de-esser add 20 dB of sub rumble
+VOICE_CURVE = {(2000, 4000): -13.0, (4000, 8000): -18.5}   # approved narration balance (band power re total, dB)
 
 
 def sh(*a, out=False):
@@ -136,6 +139,30 @@ def retime(plan, durs):
 
 
 # ---------------- 3–6. voice track, chain, automix, master ----------------
+def bands(x, edges):
+    from scipy.signal import welch
+    x = x[np.abs(x) > np.abs(x).max() * 0.01]; fr, p = welch(x, SR, nperseg=8192); tot = p.sum()
+    return [10 * np.log10(p[(fr >= a) & (fr < b)].sum() / tot) for a, b in edges]
+
+
+def voice_chain(v):
+    """the approved crisp+big chain, with gain staging and the presence/treble boosts fitted to the take (VOICE_CURVE)"""
+    act = v[np.abs(v) > np.abs(v).max() * 0.02]
+    v = v * 10 ** ((VOICE_IN - 20 * np.log10(np.sqrt(np.mean(act ** 2)) + 1e-12)) / 20)
+    base = open(os.path.join(HERE, 'voice_chain.txt')).read().strip()
+    pres, treb, exc = 13.0, 7.0, 2.2   # exciter amount drops when treble alone can't tame a take that is already bright
+    for _ in range(6):
+        ch = (base.replace('equalizer=f=3000:t=q:w=1.2:g=13', f'equalizer=f=3000:t=q:w=1.2:g={pres:.1f}')
+              .replace('treble=g=7:', f'treble=g={treb:.1f}:').replace('amount=2.2', f'amount={exc:.2f}'))
+        y = ffilter(v, ch)[:len(v)]
+        b24, b48 = bands(y, list(VOICE_CURVE))
+        dp, dt = VOICE_CURVE[(2000, 4000)] - b24, VOICE_CURVE[(4000, 8000)] - b48
+        if abs(dp) < .7 and abs(dt) < .7: break
+        if treb <= -5.9 and dt < -.7: exc = max(0.0, exc * 0.4)
+        pres, treb = float(np.clip(pres + dp, -4, 13)), float(np.clip(treb + dt - .5 * dp, -6, 9))
+    return y, (pres, treb, exc)
+
+
 def place(take, cuts, placed, dur):
     out = np.zeros(int(round(dur * SR)) + SR)
     for (a, b), (t0, tempo) in zip(cuts, placed):
@@ -155,13 +182,18 @@ def automix(v, b, be, windows, pre=.12, post=.10, ramp=.08):
     for a, e in windows:
         i0, i1 = int(a * SR), int(e * SR)
         was = db(v[i0:i1]) - db(be[i0:i1])
-        need = min(DIP_MAX, max(DIP_MIN, TARGET - was)); lin = 10 ** (-need / 20)
+        rows.append((a, e, was, min(DIP_MAX, max(DIP_MIN, TARGET - was))))
+    groups = []   # lines closer than DUCK_HOLD share one dip, as deep as the deepest line in it
+    for a, e, was, need in rows:
+        if groups and a - groups[-1][1] < DUCK_HOLD: groups[-1] = (groups[-1][0], e, max(groups[-1][2], need))
+        else: groups.append((a, e, need))
+    for a, e, need in groups:
+        lin = 10 ** (-need / 20)
         s0, s1 = max(0, int((a - pre) * SR)), min(n, int((e + post) * SR))
         env = np.ones(n); env[s0:s1] = lin; kk = np.zeros(n); kk[s0:s1] = 1
         u = max(0, s0 - r); env[u:s0] = np.linspace(1, lin, s0 - u); kk[u:s0] = np.linspace(0, 1, s0 - u)
         w = min(r, n - s1); env[s1:s1 + w] = np.linspace(lin, 1, w); kk[s1:s1 + w] = np.linspace(1, 0, w)
         g = np.minimum(g, env); k = np.maximum(k, kk)
-        rows.append((a, e, was, need))
     bg = (b * (1 - k[:, None]) + be * k[:, None]) * g[:, None]
     return v[:, None] + bg, bg, rows
 
@@ -206,14 +238,14 @@ def build(plan_path, voice_path, chain=True, audio_only=False, lines_path=None, 
     json.dump(plan, open(P('_plan.json'), 'w'), indent=1, ensure_ascii=False)
 
     voice = place(take, cuts, placed, plan['duration'])
-    if chain: voice = ffilter(voice, open(os.path.join(HERE, 'voice_chain.txt')).read().strip())[:len(voice)]
+    if chain: voice, eq = voice_chain(voice); print(f'voice chain: input {VOICE_IN:.0f} dBFS speech, presence {eq[0]:+.1f} dB @3 kHz, treble {eq[1]:+.1f} dB @6.5 kHz, exciter {eq[2]:.2f}')
     save(P('_voice.wav'), voice)
 
     sh('node', os.path.join(HERE, 'render.mjs'), P('_plan.json'), '--score-out', P(''))
     os.replace(P('_mix.wav'), P('_score.wav'))
     bg = load(P('_score.wav'), 2)
     n = min(len(voice), len(bg)); voice, bg = voice[:n], bg[:n]
-    be = ffilter(bg, 'equalizer=f=2600:t=q:w=1:g=-7,equalizer=f=1200:t=q:w=1:g=-4', 2)[:n]
+    be = ffilter(bg, 'bass=g=-9:f=160:w=0.7,equalizer=f=2600:t=q:w=1:g=-7,equalizer=f=1200:t=q:w=1:g=-4', 2)[:n]   # voice pocket: low end out, 1.2 + 2.6 kHz down
     windows = [(t0, t0 + d / tempo) for (t0, tempo), d in zip(placed, durs)]
     mix, bga, rows = automix(voice, bg, be, windows)
     _, I, tp = master(mix, P('_mix.wav'))
