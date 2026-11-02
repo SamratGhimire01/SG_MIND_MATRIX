@@ -61,7 +61,7 @@ function enginePage() {
   const file = path.join(TMP, 'engine.html');
   fs.writeFileSync(file, `<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="${FONTS}">
 <svg width="0" height="0" style="position:absolute"><path id="markpath" d="${d}"/></svg>
-${STYLE_FILES.map(f => `<script src="file://${path.join(ROOT, f)}"></script>`).join('')}
+${STYLE_FILES.concat(plan.style_files || []).map(f => `<script src="file://${path.join(ROOT, f)}"></script>`).join('')}
 <script src="file://${path.join(HERE, 'sgmm_scenes.js')}"></script>
 <script>window.ep=SGMM.load(${JSON.stringify(plan)});
 Promise.all(${JSON.stringify(FONT_SPECS)}.map(f=>document.fonts.load(f))).catch(()=>{}).then(()=>window.__ready=true);

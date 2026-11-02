@@ -489,7 +489,7 @@ def preview(plan_path, out=None):
     page = open(os.path.join(HERE, 'storyboard_page.html')).read()
     title = f"{plan.get('episode', '')} {plan.get('format', '').upper()} storyboard".strip()
     for k, v in (('__TITLE__', title), ('__MARK__', mark), ('__PLAN__', json.dumps(plan, ensure_ascii=False).replace('</', '<\\/')),
-                 ('__ENGINE__', '\n'.join(open(os.path.join(ROOT, f)).read() for f in STYLE_FILES + ['08_templates/engine/sgmm_scenes.js']))):
+                 ('__ENGINE__', '\n'.join(open(os.path.join(ROOT, f)).read() for f in STYLE_FILES + plan.get('style_files', []) + ['08_templates/engine/sgmm_scenes.js']))):
         page = page.replace(k, v)
     open(out, 'w').write(page)
     with tempfile.TemporaryDirectory() as d:   # the same cards as one PNG

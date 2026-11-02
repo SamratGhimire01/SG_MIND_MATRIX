@@ -11,13 +11,16 @@ window.X001_OPT = (() => {
   const ANTON = '"Anton", Impact, sans-serif', SERIF = '"Libre Baskerville", Georgia, serif';
 
   // ---------------- shared: act tag + caption, as the engine draws them
+  let CHROME = true; // false inside the engine: it draws act tags and captions itself
   function actTag(c, t, num, label, col) {
+    if (!CHROME) return;
     const inn = sm(0, 0.45, t), x = 72, y = 330; if (inn <= 0) return;
     c.save(); c.fillStyle = col; c.beginPath(); c.arc(x + 18, y, 18 * inn, 0, TAU); c.fill();
     c.beginPath(); c.rect(x + 48, y - 34, 360 * inn, 68); c.clip(); c.fillStyle = 'rgba(5,8,7,.55)'; c.fillRect(x + 48, y - 30, 360, 60);
     c.font = `500 26px ${FAM.mono}`; c.fillStyle = C.fog; c.textBaseline = 'middle'; c.fillText(num, x + 62, y + 1); c.font = `700 38px ${FAM.mono}`; c.fillStyle = col; c.fillText(label, x + 112, y + 2); c.restore();
   }
   function caption(c, t, caps) {
+    if (!CHROME) return;
     for (const [a, b, txt] of caps) {
       if (t < a || t > b) continue; const al = Math.min(sm(a, a + 0.2, t), 1 - sm(b - 0.2, b, t));
       c.save(); c.globalAlpha = al; c.font = `500 44px ${FAM.mono}`; c.textBaseline = 'middle';
@@ -283,6 +286,10 @@ window.X001_OPT = (() => {
     caption(c, t, CAPS.next);
   }
 
+  /* Samrat's picks (2 Nov 2026): hook A, THEN A, NOW A, NEXT A -> engine scene types (each on its own clock from 0) */
+  const engineScene = (fn) => ({at: 0, draw: (ctx, t) => { CHROME = false; try { fn(ctx, t); } finally { CHROME = true; } }});
+  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {
+    x001_hook_link: engineScene(hookA), x001_then_search: engineScene(thenA), x001_now_answer: engineScene(nowA), x001_next_voxel: engineScene(nextA)});
   return {CAPS, scenes: [
     {id: 'hook', label: 'Hook', act: 'cold open', lines: 'L01', dur: 2.6, options: [
       {name: 'Dark link', draw: hookA, keys: [0.6, 1.2, 1.9], note: 'Pitch black; one link fades in, the cursor hovers, then drifts away; a coin falls past. Most literal match to the line; Manim-clean.'},
