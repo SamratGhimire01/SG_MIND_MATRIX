@@ -4,7 +4,7 @@ Builds on `PIPELINE_SGMM_video_v001.md`. New inputs from Samrat:
 - **Shorts** may include a setup guide or **Samrat on camera wearing a mask**.
 - **Long-form** mixes his real recordings (neck-down / hands, screen, full studio) with **mostly AI-generated** visuals.
 - **Not fully automatic.** He approves every step; the system checks that everything is right.
-- He'll shoot on an **iPhone** for both formats (model to confirm — affects Apple Log and frame rates).
+- Phone for both formats: **realme 11 Pro 5G (Android)** — not an iPhone.
 
 ---
 
@@ -18,7 +18,7 @@ Builds on `PIPELINE_SGMM_video_v001.md`. New inputs from Samrat:
 | 4 | **Line detection is weak here** — the cloud session blocks Hugging Face, so I used pocketsphinx (rough). | Wrong line split = wrong sync. | On the **Mac** use **Whisper** (mlx-whisper on Apple Silicon) — accurate word timings. Always show Samrat the line split for approval. |
 | 5 | **Files live in two places** — renders happen in this cloud session; footage/voice live on the iPhone/Mac; big MP4s bloat the GitHub repo (each export 40–80 MB). | Slow transfers, repo gets huge. | Run the pipeline **on the Mac** (Claude Code in the repo, or Remote Control so a session can use the folder). Raw footage + exports stay **out of git** (external SSD / iCloud); git keeps only scripts, plans, source and small files. Use **Git LFS** if exports must be in git. |
 | 6 | **Connectors failing here** (Canva, Figma, marketing tools: proxy 403 in this cloud session). | Can't automate those from the cloud. | They work from the Mac / claude.ai. Not needed for the core pipeline. |
-| 7 | **Real footage problems** — LCD moiré, auto-exposure flicker, white-balance shift on the green LEDs, colour mismatch with rendered scenes, iPhone clips in variable frame rate. | Footage looks cheap next to the rendered parts. | **Blackmagic Camera** with locked exposure / WB / focus / shutter, fixed frame rate; consistent profile (Rec.709, or Apple Log + LUT on Pro iPhones). Pipeline **auto-grades** footage to the SGMM look (lift blacks, shadows to Deep Forest) and conforms frame rate. Shot list says distance/angle to avoid moiré. |
+| 7 | **Real footage problems** — LCD moiré, auto-exposure flicker, white-balance shift on the green LEDs, colour mismatch with rendered scenes, phone clips in variable frame rate. | Footage looks cheap next to the rendered parts. | A manual camera app (Blackmagic Camera if it supports the realme, otherwise **Open Camera**) with locked exposure / WB / focus / shutter and a fixed frame rate. Pipeline **auto-grades** footage to the SGMM look (lift blacks, shadows to Deep Forest) and conforms frame rate. Shot list says distance/angle to avoid moiré. |
 | 8 | **Anonymity leaks** — reflections in screens/glass, lanyard, name on screen, mail, window views; a mask can still leak (eyes, tattoos, rings, room). | One frame unmasks a faceless channel. | **Automatic anonymity check**: Claude inspects sampled frames of every clip and flags faces, reflections, readable names, documents, identifiable windows. Samrat approves before use. |
 | 9 | **Mask persona** — a cliché mask (e.g. Guy Fawkes) reads "hacker/Matrix fan", is someone else's design, and fights the premium brand. | Brand damage, possible rights issues. | A **plain, matte, consistent mask** (black or Deep Forest balaclava / simple matte face mask, no logos), back-lit silhouette from the LED wall, never shown in sharp close-up. Keep it rare: setup guides, reactions, the outro. Every video must still work without it. |
 | 10 | **Render size/time** — 60 fps frames as JPEGs: ~1 GB per 46 s Short; a 12-min long-form at 60 fps would be ~45k frames. | Disk and hours. | Shorts 60 fps; **long-form 30 fps**; render frames **straight into ffmpeg** (no frame files) on the Mac; render only the AI segments, not the whole episode. |
@@ -54,24 +54,27 @@ IDEA ─┤G1├─ SCRIPT ─┤G2├─ SCENE PLAN + STORYBOARD ─┤G3├─
 
 ## 4. What to get / download
 
-### iPhone (both formats)
+### Phone: realme 11 Pro 5G (Android) — both formats
 | App / item | Why | Cost |
 |---|---|---|
-| **Blackmagic Camera** | Locked exposure/WB/focus, fixed frame rate, pro codecs, Apple Log on Pro models | free |
-| **Voice Memos** (built-in) → Settings → Voice Memos → **Audio Quality: Lossless** | Voice recording until a mic arrives | free |
-| **YouTube Studio** | Upload checks, comments, analytics on the go | free |
-| **X** | Posting, replies | free |
-| **Claude** app | Approve gates / follow sessions from the phone | free |
-| **Tailscale** (later, for the Studio app) | Open the Mac's Studio from anywhere, privately | free |
-| Mic app (only if you buy a mic: **DJI Mimo** or **RØDE Central**) | Mic firmware/settings | free |
-| Transfer: **AirDrop** to the Mac (best, full quality) | Footage + voice → Mac inbox folder | free |
+| **Blackmagic Camera** — *check Google Play first*; realme is **not** on its published device list (Samsung, Pixel, OnePlus, Xiaomi), so it may not install | Best manual control if it works | free |
+| **Open Camera** (fallback, open source) — manual ISO/shutter, **exposure lock + white-balance lock**, fixed 30 fps, 4K if the phone exposes it | Stops exposure/colour flicker on the green LEDs | free |
+| Or the realme camera's **Pro/manual video mode**, if your build has one — lock ISO, shutter (1/60 at 30 fps), WB, focus | Same goal as above | free |
+| **ASR Voice Recorder** (or the built-in Recorder) — record **WAV 48 kHz**, turn **noise suppression / AI enhance OFF** | Clean voice until a mic arrives | free |
+| **YouTube Studio**, **X**, **Claude** app | Uploads, comments, approving gates from the phone | free |
+| **LocalSend** (phone ↔ Mac over Wi-Fi, full quality) — or a **USB-C cable**; avoid WhatsApp/Telegram (they compress) | Footage + voice → Mac inbox | free |
+| **Tailscale** (later, for the Studio app) | Open the Mac's Studio from anywhere | free |
+| Mic app (only if you buy one: **DJI Mimo** / **RØDE Central**) | Mic settings | free |
 
-**Hardware (recommended order):** 1) wireless lav mic that works with iPhone and Mac (DJI Mic Mini / DJI Mic 2 class, or RØDE Wireless GO class) — biggest quality jump; 2) small phone tripod with a bendable arm + a phone clamp; 3) later, an external SSD for footage/renders. (Check current prices/compatibility before buying.)
+Phone video notes: shoot **4K 30 fps** (the pipeline conforms it to the 60 fps Shorts timeline and 30 fps long-form), horizontal for long-form and vertical for Shorts; turn off beauty/AI scene/HDR auto modes; lock everything before each take. Apple Log/ProRes advice in the iPhone guides does not apply.
+
+**Hardware (recommended order):** 1) wireless lav mic with a **USB-C receiver** (works on the realme and on the Mac) — DJI Mic Mini / DJI Mic 2 class or RØDE Wireless GO class; 2) phone tripod with a bendable arm + clamp; 3) external SSD later. (Check current prices/compatibility before buying.)
 
 ### Mac mini M4 (what the pipeline needs)
 - **Homebrew**, then `brew install ffmpeg node git python` (+ `git-lfs` if exports go in git).
 - **Claude Code** (desktop app or CLI) — open it **in the `SG_MIND_MATRIX` folder** so it reads CLAUDE.md and the skills.
 - **Whisper for Apple Silicon** (`pip install mlx-whisper`) for accurate line timing.
+- **LocalSend** for Mac (receives phone files)
 - **Playwright + Chromium** (`npx playwright install chromium`) for the render engine.
 - **Fonts:** Space Grotesk, JetBrains Mono, Anton, Libre Baskerville, Oswald.
 - **DaVinci Resolve 21** (long-form finishing), **OBS** (screen capture), CapCut optional.
@@ -84,12 +87,12 @@ IDEA ─┤G1├─ SCRIPT ─┤G2├─ SCENE PLAN + STORYBOARD ─┤G3├─
 - Keys (Anthropic, Google, X) go in a local `.env`, never in git.
 
 ## 5. Open questions for Samrat
-1. **Which iPhone model?** (Apple Log needs iPhone 15 Pro or newer; frame rates differ.)
+1. ~~Which iPhone?~~ → realme 11 Pro 5G. Check if Blackmagic Camera installs from Google Play; if not, use Open Camera.
 2. Mask: **balaclava-style or a simple matte face mask?** Black or Deep Forest?
 3. Long-form finishing in **DaVinci Resolve** (recommended) or CapCut?
 4. Mic: buy one now, or keep the phone for the next few videos?
 
 ## Sources (2 Nov 2026)
 - YouTube inauthentic-content policy: techcrunch.com/2026/07/20/youtube-clarifies-policies-around-ai-slop-and-upsetting-videos · creatorblade.com/blog/youtube-inauthentic-content-policy-2026-stay-monetized · scenema.ai/articles/monetize-your-youtube-channel-with-ai-video · vexub.com/blog/ai-generated-video-monetization-policies
-- iPhone video: blackmagicdesign.com (Blackmagic Camera tech specs) · primalvideo.com (Blackmagic Camera app tutorial) · nofilmschool.com/blackmagic-camera-app-settings · petapixel.com (iPhone video gear, 2024)
+- iPhone video: blackmagicdesign.com (Blackmagic Camera tech specs) · androidcentral.com / phonearena.com / gsmarena.com (Blackmagic Camera Android device support) · primalvideo.com (Blackmagic Camera app tutorial) · nofilmschool.com/blackmagic-camera-app-settings · petapixel.com (iPhone video gear, 2024)
 - Claude Code on Mac: support.claude.com/en/articles/14554922 (Claude Code FAQ) · claudecodeguides.com (Mac setup 2026) · uvm.edu (permissions and sandboxing)
