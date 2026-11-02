@@ -54,7 +54,7 @@ Brand rules live in `01_brand/SGMM_Brand_Bible.md` and the `sg-mind-matrix-brand
 ## Workflow Samrat expects
 1. Storyboard first as an artifact (playable animatic + shot cards with options + timeline lanes), wait for OK.
 2. Apply notes exactly and only what was asked ("only change these two things" means only those).
-3. Render frames headless at 60 fps in 4 parallel processes (`edit/animatic/export_frames.js`), score via `render_score.js` (OfflineAudioContext), encode with `edit/animatic/encode.sh`.
+3. Write a `scenes.json` plan from the scene library and render it with `node 08_templates/engine/render.mjs <plan> <out.mp4>` (60 fps, 4 workers, frames piped to ffmpeg, score included). See `08_templates/engine/README.md` for scene types and text keys. (EP000's old `edit/animatic/*.js` scripts are history.)
 4. Check the decoded MP4 (frame count, loudness, stills at every join, silence where intended) before sending.
 5. Commit and push everything; keep `.html` source beside renders.
 6. Record every new preference in this file.
