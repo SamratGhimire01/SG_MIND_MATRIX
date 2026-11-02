@@ -75,6 +75,9 @@ Samrat added 8 explainer looks (Editorial Collage, Constructivist, Manim, Paperc
 ## Beats (Samrat, 2 Nov 2026, X001)
 Retention dies when nothing moves or clicks. Every 1.5–2 s a component must move with its own sound (scan + ticks, count-up + ticks, bars + slides, stamp + thud, blocks + key clicks, blink + click). Held frames get a slow push-in, never a freeze. Run `python3 08_templates/engine/beats.py <build prefix>` and fix every dead stretch before sending; QC checks it.
 
+## Effects level (Samrat, 2 Nov 2026, X001)
+"The clicks and the coin are too quiet — raise them, but never over the voice." `sgmm build` mixes music and effects separately: the **music** ducks for the voice (+15 dB); the **effects** are raised +6 dB and only turned down inside a line as far as needed so that (1) every effect peak stays ≥ 6 dB under the voice's peak and (2) the voice stays ≥ +13 dB over music + effects together. The boost stops at the blackout (the approved ending keeps its balance). The limiter aims 0.6 dB under the true-peak ceiling (sharp clicks overshoot after AAC).
+
 ## Not wanted (rejected during EP000)
 Stick-like finger · hands from above · long fingers · bald/3D figure · plain rectangle monitors · keyboard sliding across the screen · tick sounds on page turns · static logo ending · generic tech-glow look.
 

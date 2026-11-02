@@ -25,6 +25,9 @@ CAP_TAIL = .25               # caption stays this long after the voice ends
 HOLD_BEFORE = .5            # inserted time goes this far before the line's slot end
 TARGET, DIP_MIN, DIP_MAX = 15.0, 4.0, 18.0   # automix: voice over background per line (approved v004)
 DUCK_HOLD = 1.0             # lines closer than this share one dip (no music swell in short gaps)
+SFX_BOOST = 6.0             # sound effects (clicks, coin, ticks, stamps) sit this much above the score's own balance...
+SFX_UNDER = 6.0             # ...but an effect's peak stays at least this far under the voice's peak in the same line
+VOICE_OVER_ALL = 13.0       # and the voice stays at least this far over music + effects together (Samrat's EP000 rule: >= +12, target +13)
 LUFS, TP = -14.0, -1.5
 VOICE_IN = -26.0            # speech RMS (dBFS) fed into the chain; a hot phone take made the de-esser add 20 dB of sub rumble
 VOICE_CURVE = {(2000, 4000): -13.0, (4000, 8000): -18.5}   # approved narration balance (band power re total, dB)
@@ -214,6 +217,21 @@ def place(take, cuts, placed, dur):
     return out[:int(round(dur * SR))]
 
 
+def sfx_under_voice(v, fx, windows, music, ramp=.03):
+    """effects keep their level; inside a line they are turned down just enough that (1) every effect peak is SFX_UNDER under the
+    voice's peak and (2) the voice stays VOICE_OVER_ALL over music + effects (fast ramps, nothing else changes)"""
+    n = len(v); g = np.ones(n); r = int(ramp * SR); rows = []
+    for a, e in windows:
+        i0, i1 = int(a * SR), min(n, int(e * SR)); vp = 20 * np.log10(np.abs(v[i0:i1]).max() + 1e-9); fp = 20 * np.log10(np.abs(fx[i0:i1]).max() + 1e-9)
+        cut = max(0.0, fp - (vp - SFX_UNDER))
+        while cut < 30 and db(v[i0:i1]) - db((music[i0:i1] + fx[i0:i1] * 10 ** (-cut / 20)).mean(1)) < VOICE_OVER_ALL: cut += 0.5
+        rows.append((a, e, fp - vp, cut))
+        if cut > 0:
+            lin = 10 ** (-cut / 20); env = np.ones(n); env[i0:i1] = lin
+            u = max(0, i0 - r); env[u:i0] = np.linspace(1, lin, i0 - u); w = min(r, n - i1); env[i1:i1 + w] = np.linspace(lin, 1, w); g = np.minimum(g, env)
+    return fx * g[:, None], rows
+
+
 def automix(v, b, be, windows, pre=.12, post=.10, ramp=.08):
     """EP000 automix.py: per line, dip the background just enough for TARGET dB, crossfade to the voice-pocket EQ'd background"""
     n = len(v); g = np.ones(n); k = np.zeros(n); r = int(ramp * SR); rows = []
@@ -244,7 +262,7 @@ def loudness(path):
 
 def master(mix, path):
     """gain to LUFS, true-peak limit at TP (limiter at 4x rate), re-check once"""
-    lim = f'aresample=192000,alimiter=limit={10 ** ((TP - .2) / 20):.4f}:attack=1:release=60:level=false:latency=1,aresample={SR}'
+    lim = f'aresample=192000,alimiter=limit={10 ** ((TP - .6) / 20):.4f}:attack=1:release=60:level=false:latency=1,aresample={SR}'
     gain = 0.0
     for _ in range(3):
         y = ffilter(mix * 10 ** (gain / 20), lim, 2); save(path, y, 24)
@@ -281,11 +299,17 @@ def build(plan_path, voice_path, chain=True, audio_only=False, lines_path=None, 
 
     sh('node', os.path.join(HERE, 'render.mjs'), P('_plan.json'), '--score-out', P(''))
     os.replace(P('_mix.wav'), P('_score.wav'))
-    bg = load(P('_score.wav'), 2)
-    n = min(len(voice), len(bg)); voice, bg = voice[:n], bg[:n]
+    score, mus, sfx = load(P('_score.wav'), 2), load(P('_music.wav'), 2), load(P('_sfx.wav'), 2)
+    n = min(len(voice), len(score), len(mus), len(sfx)); voice = voice[:n]
+    G = np.sqrt(np.mean(score[:n] ** 2) / (np.mean((mus[:n] + sfx[:n]) ** 2) + 1e-12))   # stems back to the score's level
+    bg, fx = mus[:n] * G, sfx[:n] * G * 10 ** (SFX_BOOST / 20)
+    bo = next((s['t'][0] for s in plan['scenes'] if s['type'] == 'blackout_tease'), None)   # the approved ending keeps its own balance
+    if bo is not None: fx[int(bo * SR):] /= 10 ** (SFX_BOOST / 20)
     be = ffilter(bg, 'bass=g=-9:f=160:w=0.7,equalizer=f=2600:t=q:w=1:g=-7,equalizer=f=1200:t=q:w=1:g=-4', 2)[:n]   # voice pocket: low end out, 1.2 + 2.6 kHz down
     windows = [(t0, t0 + d / tempo) for (t0, tempo), d in zip(placed, durs)]
-    mix, bga, rows = automix(voice, bg, be, windows)
+    mix, bga, rows = automix(voice, bg, be, windows)   # the music ducks under the voice
+    fx, fxrows = sfx_under_voice(voice, fx, windows, bga)   # the effects stay up, capped under the voice
+    mix = mix + fx; bga = bga + fx
     _, I, tp = master(mix, P('_mix.wav'))
     os.remove(P('_score.wav'))
 
@@ -296,7 +320,8 @@ def build(plan_path, voice_path, chain=True, audio_only=False, lines_path=None, 
     for i, ((a, e, was, need), (s0, s1), (t0, tempo)) in enumerate(zip(rows, cuts, placed)):
         now = db(voice[int(a * SR):int(e * SR)]) - db(bga[int(a * SR):int(e * SR)].mean(1)); worst = min(worst, now)
         rep.append(f'| L{i + 1:02d} | {texts[i]} | {s0:.2f}–{s1:.2f} | {a:.2f}–{e:.2f} | ×{tempo:.2f} | {was:+.1f} → **{now:+.1f} dB** |')
-    rep += ['', f'- voice over background: worst line **{worst:+.1f} dB** (target +{TARGET:.0f})',
+    rep += ['', '| line | effects peak vs voice peak (cap −%.0f dB) |' % SFX_UNDER, '|---|---|'] + [f'| L{i + 1:02d} | {d - c:+.1f} dB{f" (turned down {c:.1f} dB)" if c > 0 else ""} |' for i, (a, e, d, c) in enumerate(fxrows)]
+    rep += ['', f'- voice over music + effects: worst line **{worst:+.1f} dB** (music ducked for +{TARGET:.0f}; with the effects at least +{VOICE_OVER_ALL:.0f})',
             f'- master: **{I:.1f} LUFS**, true peak **{tp:.1f} dBTP** (target {LUFS:.0f} / {TP})',
             f'- duration {plan["duration"]} s' + (f' · time inserted {plan["warp"]} (look at those frames)' if plan.get('warp') else ' · no time inserted')]
     print('\n'.join(rep))
@@ -396,7 +421,7 @@ def qc(prefix):
     for i, (c, r) in enumerate(zip(caps, ratios)):
         off = min((o - c['t'][0] for o in onsets), key=abs) if onsets else 99
         sync = f'caption vs voice {off:+.2f} s (±{CAP_SYNC})' if abs(off) <= .3 else 'no pause before this line (it runs on from the last one), so its start can\'t be measured — **listen**'
-        chk(f'L{i + 1:02d} {texts[i]}', r >= TARGET - .5 and (abs(off) <= CAP_SYNC or None), f'voice over background **{r:+.1f} dB** (≥ +{TARGET - .5:.1f}) · {sync}')
+        chk(f'L{i + 1:02d} {texts[i]}', r >= VOICE_OVER_ALL - .5 and (abs(off) <= CAP_SYNC or None), f'voice over music + effects **{r:+.1f} dB** (≥ +{VOICE_OVER_ALL - .5:.1f}) · {sync}')
     for a, b in plan.get('silences', []):
         s = db(mix[int(a * SR):int(b * SR)])
         chk(f'silence {a:.2f}–{b:.2f} s', s <= SILENT, f'{s:.1f} dBFS (≤ {SILENT:.0f})')
