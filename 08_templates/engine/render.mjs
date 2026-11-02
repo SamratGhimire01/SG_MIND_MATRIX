@@ -4,6 +4,7 @@
 
    node 08_templates/engine/render.mjs <plan.json> <out.mp4> [--workers 4] [--clean] [--from 0] [--to <duration>] [--audio mix.wav]
    node 08_templates/engine/render.mjs <plan.json> --score-out <prefix>        (writes <prefix>_mix/_music/_sfx.wav)
+   node 08_templates/engine/render.mjs <page.html> --canvas <dir>              (writes each {name: PNG dataURL} of window.outputs() to <dir>/<name>.png)
    node 08_templates/engine/render.mjs <plan.json> --compare <storyboard.html> [--every 0.25]
 
    Chrome: $SGMM_CHROME, else Google Chrome in /Applications. */
@@ -22,8 +23,8 @@ const FONT_SPECS = ['500 40px "JetBrains Mono"', '700 40px "JetBrains Mono"', '7
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i < 0 ? d : (args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : true); };
 const [planPath, outPath] = args;
-if (!planPath) { console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 8).join('\n')); process.exit(1); }
-const plan = JSON.parse(fs.readFileSync(planPath, 'utf8'));
+if (!planPath) { console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 9).join('\n')); process.exit(1); }
+const plan = planPath.endsWith('.json') ? JSON.parse(fs.readFileSync(planPath, 'utf8')) : null;
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'sgmm-'));
 
 /* ---------- a tiny CDP client ---------- */
@@ -132,7 +133,11 @@ async function render(out) {
 }
 
 try {
-  if (opt('score-out')) { const p = path.resolve(opt('score-out')); await scoreOut({'': p + '_mix.wav', sfx: p + '_music.wav', music: p + '_sfx.wav'}); }
+  if (opt('canvas')) {
+    const br = await browser(); await br.open(path.resolve(planPath));
+    for (const [k, u] of Object.entries(await br.evaluate('window.outputs()'))) fs.writeFileSync(path.join(opt('canvas'), k + '.png'), Buffer.from(u.slice(u.indexOf(',') + 1), 'base64'));
+    await br.close();
+  } else if (opt('score-out')) { const p = path.resolve(opt('score-out')); await scoreOut({'': p + '_mix.wav', sfx: p + '_music.wav', music: p + '_sfx.wav'}); }
   else if (opt('compare')) process.exitCode = (await compare(opt('compare'), +opt('every', 0.25))) ? 0 : 2;
   else if (outPath) await render(outPath);
 } finally { fs.rmSync(TMP, {recursive: true, force: true}); }

@@ -113,6 +113,7 @@ sgmm qc EP001 && sgmm package EP001          # 6–7
 2. `sgmm build`: voice split → retime → render → score from cues → chain → automix (all exist; wire them together).
    **Done 2 Nov 2026** → `08_templates/engine/sgmm.py build`; tested on EP000 against final v004 (`04_video_projects/EP000_matrix_online/export/SGMM_EP000_build_v001_report.md`).
 3. `sgmm qc` + `sgmm package` (thumbnail + posting kit generation).
+   **Done 2 Nov 2026** → `sgmm.py qc` / `sgmm.py package`; EP000 test regenerates the approved thumbnails and posting kit.
 4. Make the **3 X videos** (shift / tip / log) with it as the first real test.
 5. Long-form: segment rendering at 30 fps + assembled master + numbered clips for CapCut.
 6. Add Samrat's 3–4 styles.

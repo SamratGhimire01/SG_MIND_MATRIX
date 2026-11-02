@@ -6,15 +6,18 @@
 |---|---|
 | `sgmm_scenes.js` | Scene library: studio, hands/keyboard, collage, field, build log, logo from the dark, captions, act tags, the Sufi tension sound kit + EP000 cue sheet. `SGMM.load(plan)` → `render / frame / audio` |
 | `render.mjs` | Renders a plan (headless Chrome over DevTools, frames piped to ffmpeg, 4 workers) or checks it against an old storyboard (`--compare`). No npm installs. |
-| `sgmm.py` | **`sgmm build`** (pipeline step 2): voice take + plan → final + clean MP4, mastered mix, voice/music/sfx stems, re-timed plan, report |
+| `sgmm.py` | **`sgmm build`** (step 2): voice take + plan → final + clean MP4, mastered mix, voice/music/sfx stems, re-timed plan, report · **`sgmm qc`** + **`sgmm package`** (step 3) |
 | `voice_chain.txt` | the approved crisp-and-big voice chain (ffmpeg graph, EP000 v004) |
 | `04_video_projects/EP000_matrix_online/edit/SGMM_EP000_scenes_v001.json` | EP000 as a plan, the reference example |
 
 ```
 python3 08_templates/engine/sgmm.py build <plan.json> <voice take> [--lines lines.json] [--no-chain] [--audio-only] [--name N] [--out DIR]
+python3 08_templates/engine/sgmm.py qc <build prefix>
+python3 08_templates/engine/sgmm.py package <build prefix> [--out DIR]     (default 09_exports)
 python3 08_templates/engine/sgmm.py selftest
 node 08_templates/engine/render.mjs <plan.json> <out.mp4> [--workers 4] [--clean] [--from s] [--to s] [--audio mix.wav]
 node 08_templates/engine/render.mjs <plan.json> --score-out <prefix>
+node 08_templates/engine/render.mjs <page.html> --canvas <dir>
 node 08_templates/engine/render.mjs <plan.json> --compare <storyboard.html> [--every 0.25]
 ```
 Needs Google Chrome (or `SGMM_CHROME=/path/to/chrome`), ffmpeg and network access to Google Fonts.
@@ -51,6 +54,18 @@ Captions: `"is already [being written.]"` — brackets are the one green element
 7. **Render** — final (captions) and clean MP4 with the master, AAC 320k. `--audio-only` stops before this.
 
 Output in the episode's `export/`: `<name>_1080x1920_60fps.mp4`, `_clean_…mp4`, `_mix.wav` (master, 24-bit), `_voice.wav`, `_music.wav`, `_sfx.wav` (score stems, not ducked), `_plan.json` (re-timed plan), `_voice_lines.json`, `_report.md` (per-line voice-over-background, loudness, video check).
+
+## `sgmm qc` (step 3)
+Reads `<prefix>_plan.json`, both MP4s and `_voice.wav`; writes `<prefix>_qc.md` and `<prefix>_contact.png`; exit 1 on FAIL.
+- both MP4s: H.264 yuv420p, plan size and fps, exact frame count, AAC 48 kHz stereo; decoded loudness −14 ±0.5 LUFS, true peak ≤ −1.5 dBTP
+- every line: voice over background ≥ +14.5 dB (target +15), measured from the delivered mix; caption starts within ±0.1 s of the voice (⚠️ "listen" when a line runs on from the last one with no pause, so its start can't be measured)
+- intended silences: the plan's `"silences": [[a, b], ...]` stay under −40 dBFS (e.g. the dead stop after "rewritten.")
+- contact sheet: a still at every scene join + first and last frame — look at it before sending
+
+## `sgmm package` (step 3)
+Into `09_exports/` (or `--out`): `<name>_captions_en.srt` (captions = voice timing), `_thumb_A/B/C_<name>_1280x720.png` + `_cover_vertical_1080x1920.png` (the approved template `08_templates/thumbnail/sgmm_thumbnail_template.html`, rendered 3× and downsampled), `_thumbs_phone_preview.png` (168×94, as YouTube shows them), `_POSTING_KIT.md` (sgmm-publishing skill). Words and frames come from the plan's `"publish"` block (Claude writes it with the script): `titles`, `why`, `summary`, `hashtags`, `tags`, `pinned`, `x_post`, `day`, `shorts_frame`, `thumbs` (`A {small, big}`, `B/C {t, y, lines}`, `vertical {lines, big}`, `names`, `pick`; `[word]` = the one green). Copy checks in the kit: titles ≤ 60 chars and no hashtags, 3–5 hashtags with #Shorts, no #viral/#fyp, ≤ 2 hashtags and no YouTube link on X, no hype words, no TODOs left.
+
+EP000 test (2 Nov 2026): thumbnails regenerate the approved set (PSNR 42–50 dB), the kit matches the approved kit plus a thumbnails section and the QC line, the SRT follows the real voice.
 
 ## Not yet
 - No generative music bed for new lengths: a new plan uses a named score (EP000's, warped) and/or its own cues. Add a bed when the SHIFT/TIP/LOG templates are built (step 4).

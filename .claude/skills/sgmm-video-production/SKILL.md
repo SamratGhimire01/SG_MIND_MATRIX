@@ -61,7 +61,7 @@ Samrat added 8 explainer looks (Editorial Collage, Constructivist, Manim, Paperc
 1. Storyboard first as an artifact (playable animatic + shot cards with options + timeline lanes), wait for OK.
 2. Apply notes exactly and only what was asked ("only change these two things" means only those).
 3. Write a `scenes.json` plan from the scene library. With Samrat's voice take: `python3 08_templates/engine/sgmm.py build <plan> <voice>` (split → re-time → score → chain → automix +15 dB → −14 LUFS → final + clean MP4, stems, report). Picture only: `node 08_templates/engine/render.mjs <plan> <out.mp4>`. See `08_templates/engine/README.md`. (EP000's old `edit/animatic/*` scripts are history.)
-4. Check the decoded MP4 (frame count, loudness, stills at every join, silence where intended) before sending.
+4. `python3 08_templates/engine/sgmm.py qc <build prefix>` (frame count, loudness, voice +15 dB per line, caption sync, intended silences, contact sheet) — look at the contact sheet and any ⚠️ before sending. After Samrat's final OK: `sgmm.py package <build prefix>` (SRT, thumbnails, cover, posting kit into `09_exports/`).
 5. Commit and push everything; keep `.html` source beside renders.
 6. Record every new preference in this file.
 

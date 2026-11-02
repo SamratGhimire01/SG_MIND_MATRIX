@@ -13,6 +13,7 @@ git checkout claude/trusting-keller-uztrn7 && git pull, then read CLAUDE.md, the
 ```
 
 ## 1. Until the pipeline is finished (do these once, in order)
+Steps 2 and 3 are **done** (2 Nov 2026); start with the third box.
 ```
 Build pipeline step 2 (sgmm build): voice split, re-time scenes to my real voice, score from the plan's cues, the approved voice chain, automix +15 dB, −14 LUFS master. Test it on EP000 with 05_audio/voice_final. Ask before installing anything. Commit and push.
 ```

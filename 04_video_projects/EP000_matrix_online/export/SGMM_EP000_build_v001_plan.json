@@ -252,5 +252,74 @@
    ],
    "text": "Let’s build it together."
   }
- ]
+ ],
+ "silences": [
+  [
+   27.55,
+   27.95
+  ],
+  [
+   43.5,
+   43.95
+  ]
+ ],
+ "publish": {
+  "day": 1,
+  "titles": [
+   "AI Is Rewriting the World. I'll Document All of It.",
+   "How AI Changed the Way We Learn: Then, Now, Next",
+   "You Used to Search. Now You Just Ask. What's Next?"
+  ],
+  "why": "the keyword \"AI\" comes first, it states the channel's promise, it is under 60 characters (no cut-off on phones), and no hype words",
+  "summary": "AI is rewriting how we learn, work and build. A generation ago you searched and waited. Today you just ask. What comes next is already being written.",
+  "hashtags": [
+   "#AI",
+   "#FutureOfAI",
+   "#ArtificialIntelligence",
+   "#Shorts"
+  ],
+  "tags": [],
+  "pinned": "What part of your life has AI already changed the most? The best answers go into episode 1.",
+  "x_post": "A generation ago, you searched. And you waited.\nToday, you just ask.\nWhat comes next is already being written.\n\nI'm going to document all of it. Then. Now. Next.\n\nThis is SG Mind Matrix. Day 1. #AI",
+  "shorts_frame": "the SG mark rising out of the dark (~0:41.5) or the 3D NEXT field (~0:29)",
+  "thumbs": {
+   "A": {
+    "small": "THE WORLD IS BEING",
+    "big": "REWRITTEN."
+   },
+   "B": {
+    "t": 39.4,
+    "y": 500,
+    "lines": [
+     "[RE]",
+     "[WRITTEN.]"
+    ]
+   },
+   "C": {
+    "t": 29.0,
+    "y": 656,
+    "lines": [
+     "WHAT",
+     "[NEXT?]"
+    ]
+   },
+   "vertical": {
+    "lines": [
+     "THE",
+     "WORLD",
+     "IS BEING"
+    ],
+    "big": [
+     "RE-",
+     "WRITTEN."
+    ]
+   },
+   "names": {
+    "A": "rewritten",
+    "B": "studio",
+    "C": "whatnext"
+   },
+   "pick": "A"
+  }
+ }
 }

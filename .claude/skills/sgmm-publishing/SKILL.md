@@ -50,11 +50,11 @@ Script and voice are human. Visuals and music are original. AI tools assist rese
 **X post**: the script's THEN / NOW / NEXT lines as short separate lines, then the promise, then "This is SG Mind Matrix." + Day count; 0–2 hashtags; YouTube link in the first reply.
 
 ## Thumbnail (approved system, EP000)
-- Template: `08_templates/thumbnail/sgmm_thumbnail_template.html` + `render_thumbnails.js` (renders at 3× and downsamples; frames passed in as data URIs).
+- Template: `08_templates/thumbnail/sgmm_thumbnail_template.html`, rendered by **`sgmm package`** (3× then downsampled; words + frames from the plan's `publish.thumbs`, logo path read from the official SVG). `sgmm package` also writes the SRT, the 168×94 phone preview and the posting kit with copy checks — fill the plan's `publish` block, then run it.
 - Bible style: Void, faint Swiss grid, one bleeding Matrix Green disc, huge flush-left Space Grotesk headline (max 3 lines, one word in green), mono kicker `THEN · NOW · NEXT` top-left, SG mark bottom-left on Void. 1280×720 (+ 1080×1920 cover for Shorts).
 - **Thumbnail shows, title tells — never repeat.** 0–4 words. Must read at 168×94 (always check a phone-size preview). No clickbait: it must keep the video's promise.
 - Make 3 different concepts; for long-form run YouTube **Test & Compare** (judged by watch-time share; not available for Shorts). Log results in `06_research/analytics.md`.
-- EP000: A "THE WORLD IS BEING / REWRITTEN." (type-only, recommended) · B studio frame + "REWRITTEN." · C 3D NEXT frame + "WHAT NEXT?".
+- EP000: A "THE WORLD IS BEING / REWRITTEN." (type-only, recommended) · B studio frame (39.4 s, screens switching off) + "REWRITTEN." · C 3D NEXT frame (29.0 s) + "WHAT NEXT?".
 
 ## Settings checklist
 Category Science & Technology · English · captions SRT uploaded · Altered/synthetic content = No for stylised animation (Yes only if something realistic could mislead) · not made for kids · Shorts frame/thumbnail = the strongest brand moment (logo from the dark, or the act's hero frame) · post at **7:45 pm Nepal time** (Saturday for episodes) · be online for the first hour and answer every comment.

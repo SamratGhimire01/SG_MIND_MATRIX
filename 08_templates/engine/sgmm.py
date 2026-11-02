@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""SGMM pipeline step 2 — `sgmm build`: one voice take + scenes.json -> final MP4, clean MP4, stems, report.
+"""SGMM pipeline — `sgmm build` (step 2): one voice take + scenes.json -> final MP4, clean MP4, stems, report.
+`sgmm qc` / `sgmm package` (step 3): checks + contact sheet / SRT, 3 thumbnails + vertical cover, posting kit.
 
   python3 08_templates/engine/sgmm.py build <plan.json> <voice> [--no-chain] [--audio-only] [--lines lines.json] [--name NAME] [--out DIR]
+  python3 08_templates/engine/sgmm.py qc <build prefix>                 e.g. 04_video_projects/EP000_matrix_online/export/SGMM_EP000_build_v001
+  python3 08_templates/engine/sgmm.py package <build prefix> [--out DIR] (default 09_exports)
   python3 08_templates/engine/sgmm.py selftest
 
 voice split -> re-time to the real voice -> score from the plan (+ its cues, warped with the picture) -> approved crisp+big
 voice chain -> per-line automix (voice +15 dB over the background) -> master -14 LUFS / -1.5 dBTP -> render final + clean.
 Lines are the plan's captions, in order. Needs ffmpeg, node, numpy. --no-chain: the take is already processed (EP000 v004).
 """
-import json, math, os, re, subprocess, sys, tempfile
+import json, math, os, re, shutil, subprocess, sys, tempfile
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -99,6 +102,7 @@ def shift_plan(plan, T, dt):
         s['t'] = [x + dt if x >= T else x for x in s['t']]
     for k in ('captions', 'act_tags'):
         for c in plan.get(k, []): c['t'] = [x + dt if x >= T else x for x in c['t']]
+    plan['silences'] = [[x + dt if x >= T else x for x in w] for w in plan.get('silences', [])]
     plan['duration'] = round(plan['duration'] + dt, 4)
 
 
@@ -234,6 +238,243 @@ def build(plan_path, voice_path, chain=True, audio_only=False, lines_path=None, 
     return P('')
 
 
+# ---------------- step 3: qc ----------------
+ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
+SILENT = -40.0               # dBFS: an intended silence (plan "silences") must stay under this
+CAP_SYNC = .10               # a caption must start within this of its voice line
+
+
+def probe(mp4):
+    r = json.loads(sh('ffprobe', '-v', 'error', '-count_frames', '-show_entries', 'stream=codec_type,codec_name,pix_fmt,width,height,r_frame_rate,nb_read_frames,sample_rate,channels:format=duration', '-of', 'json', mp4, out=True))
+    v = next(s for s in r['streams'] if s['codec_type'] == 'video'); a = next(s for s in r['streams'] if s['codec_type'] == 'audio')
+    return v, a, float(r['format']['duration'])
+
+
+def voice_over_bg(mix, v, wins):
+    """per-line voice over background from the delivered mix: align the voice stem, fit the master gain, background = mix/g - voice"""
+    a, b = mix[int(min(w[0] for w in wins) * SR):][:2 * SR], v[int(min(w[0] for w in wins) * SR):][:2 * SR]
+    from scipy.signal import correlate
+    lag = int(np.argmax(correlate(a, b, 'full', method='fft')) - (len(b) - 1)) if len(a) == len(b) else 0
+    v = np.r_[np.zeros(lag), v] if lag > 0 else v[-lag:]
+    n = min(len(mix), len(v)); mix, v = mix[:n], v[:n]
+    wins = [(x, min(y, n / SR)) for x, y in wins]
+    idx = np.concatenate([np.arange(int(x * SR), int(y * SR)) for x, y in wins])
+    bg = mix / (mix[idx] @ v[idx] / (v[idx] @ v[idx])) - v
+    return [db(v[int(x * SR):int(y * SR)]) - db(bg[int(x * SR):int(y * SR)]) for x, y in wins]
+
+
+def canvas(html, outdir):
+    """draw a page in headless Chrome (render.mjs --canvas): writes each window.outputs() image to outdir/<name>.png"""
+    page = os.path.join(outdir, 'page.html'); open(page, 'w').write('<meta charset="utf-8">\n' + html)
+    sh('node', os.path.join(HERE, 'render.mjs'), page, '--canvas', outdir)
+
+
+def data_uri(path):
+    import base64
+    return 'data:image/jpeg;base64,' + base64.b64encode(open(path, 'rb').read()).decode()
+
+
+def still(mp4, t, path):
+    sh('ffmpeg', '-v', 'error', '-y', '-ss', f'{t:.3f}', '-i', mp4, '-frames:v', '1', '-q:v', '3', path)
+
+
+def contact_sheet(mp4, shots, out):
+    """stills (t, label) in a labelled grid, 7 across"""
+    with tempfile.TemporaryDirectory() as d:
+        imgs = []
+        for i, (t, lab) in enumerate(shots):
+            still(mp4, t, os.path.join(d, f'{i}.jpg')); imgs.append([data_uri(os.path.join(d, f'{i}.jpg')), lab])
+        canvas(f'''<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=block">
+<script>const S={json.dumps(imgs)},C=7,w=216,h=384,p=10,lh=34;
+window.outputs=async()=>{{const cv=document.createElement('canvas'),R=Math.ceil(S.length/C);cv.width=C*(w+p)+p;cv.height=R*(h+lh+p)+p;const c=cv.getContext('2d');
+ c.fillStyle='#050807';c.fillRect(0,0,cv.width,cv.height);c.font='500 15px "JetBrains Mono"';c.textBaseline='middle';
+ for(let i=0;i<S.length;i++){{const im=await new Promise(r=>{{const x=new Image();x.onload=()=>r(x);x.src=S[i][0]}}),x=p+(i%C)*(w+p),y=p+Math.floor(i/C)*(h+lh+p);
+  c.drawImage(im,x,y,w,h);c.fillStyle='#7C8A84';c.fillText(S[i][1],x,y+h+lh/2)}}
+ return{{sheet:cv.toDataURL('image/png')}}}};
+document.fonts.load('500 15px "JetBrains Mono"').then(()=>window.__ready=true)</script>''', d)
+        shutil.move(os.path.join(d, 'sheet.png'), out)
+
+
+def qc(prefix):
+    plan = json.load(open(prefix + '_plan.json'))
+    final, clean = prefix + '_1080x1920_60fps.mp4', prefix + '_clean_1080x1920_60fps.mp4'
+    W, H = plan['size']; fps, dur = plan['fps'], plan['duration']
+    rows = []
+    chk = lambda name, ok, detail: rows.append((name, ok if ok is None else bool(ok), detail))   # None = look/listen
+
+    for mp4 in (final, clean):
+        v, a, d = probe(mp4)
+        frames, want = int(v['nb_read_frames']), round(dur * fps)
+        chk(f'video `{os.path.basename(mp4)}`', v['codec_name'] == 'h264' and v['pix_fmt'] == 'yuv420p' and (v['width'], v['height']) == (W, H) and v['r_frame_rate'] == f'{fps}/1' and frames == want,
+            f"{v['codec_name']} {v['pix_fmt']} {v['width']}×{v['height']} {v['r_frame_rate']} fps · {frames}/{want} frames · {d:.2f} s")
+        chk('audio stream', a['codec_name'] == 'aac' and a['sample_rate'] == str(SR) and a['channels'] == 2, f"{a['codec_name']} {a['sample_rate']} Hz {a['channels']} ch")
+        I, tp = loudness(mp4)
+        chk('loudness (decoded)', abs(I - LUFS) <= .5 and tp <= TP + .05, f'{I:.1f} LUFS (target {LUFS:.0f} ±0.5) · {tp:.1f} dBTP (≤ {TP})')
+
+    mix, voice = load(final, 2).mean(1), load(prefix + '_voice.wav')
+    caps = plan['captions']
+    wins = [(c['t'][0], c['t'][1] - CAP_TAIL) for c in caps]
+    ratios = voice_over_bg(mix, voice, wins)
+    texts = [re.sub(r'[\[\]]', '', c['text']).replace('\n', ' ') for c in caps]
+    onsets = [a for a, _ in speech_runs(voice)]
+    for i, (c, r) in enumerate(zip(caps, ratios)):
+        off = min((o - c['t'][0] for o in onsets), key=abs) if onsets else 99
+        sync = f'caption vs voice {off:+.2f} s (±{CAP_SYNC})' if abs(off) <= .3 else 'no pause before this line (it runs on from the last one), so its start can\'t be measured — **listen**'
+        chk(f'L{i + 1:02d} {texts[i]}', r >= TARGET - .5 and (abs(off) <= CAP_SYNC or None), f'voice over background **{r:+.1f} dB** (≥ +{TARGET - .5:.1f}) · {sync}')
+    for a, b in plan.get('silences', []):
+        s = db(mix[int(a * SR):int(b * SR)])
+        chk(f'silence {a:.2f}–{b:.2f} s', s <= SILENT, f'{s:.1f} dBFS (≤ {SILENT:.0f})')
+
+    joins = [(0.0, 'first frame')] + [(s['t'][0] + .05, s.get('id', s['type'])) for s in plan['scenes'][1:]] + [(dur - 1 / fps, 'last frame')]
+    sheet = prefix + '_contact.png'
+    contact_sheet(final, [(t, f'{t:5.2f}s {lab}') for t, lab in joins], sheet)
+
+    ok = all(r[1] is not False for r in rows)
+    md = [f'# QC {os.path.basename(prefix)} — {"FAIL" if not ok else "PASS, with things to check" if any(r[1] is None for r in rows) else "PASS"}\n', f'Contact sheet (every scene join + first/last frame): `{os.path.basename(sheet)}` — look at it before sending.\n',
+          '| check | | detail |', '|---|---|---|'] + [f'| {n} | {"⚠️" if o is None else "✅" if o else "❌"} | {d} |' for n, o, d in rows]
+    open(prefix + '_qc.md', 'w').write('\n'.join(md) + '\n')
+    print('\n'.join(md))
+    return ok
+
+
+# ---------------- step 3: package ----------------
+HYPE = re.compile(r'\b(shocking|insane|mind-?blowing|crazy|unbelievable|you won.t believe|game.?changer)\b', re.I)
+BANNED_TAGS = {'#viral', '#trending', '#fyp', '#foryou', '#foryoupage'}
+CORE_TAGS = ['AI', 'artificial intelligence', 'future of AI', 'how AI is changing the world', 'AI explained', 'then vs now', 'AI documentary', 'AI tools', 'learn AI', 'Claude AI', 'technology', 'future technology', 'SG Mind Matrix']
+ABOUT = ('SG Mind Matrix documents the AI shift — then, now, next — with honest explainers, practical AI tips and real builds made in public.\n\n'
+         'New episode every Saturday. Subscribe and join the Matrix.\n\n'
+         'Script and voice are human. Visuals and music are original. AI tools assist research and production.')
+
+
+def srt(caps):
+    ts = lambda t: f'{int(t // 3600):02d}:{int(t % 3600 // 60):02d}:{int(t % 60):02d},{int(round(t % 1 * 1000)) % 1000:03d}'
+    return '\n'.join(f"{i + 1}\n{ts(c['t'][0])} --> {ts(c['t'][1])}\n{re.sub(r'[\[\]]', '', c['text']).replace(chr(10), ' ')}\n" for i, c in enumerate(caps))
+
+
+def package(prefix, out=None):
+    plan = json.load(open(prefix + '_plan.json')); pub = plan.get('publish', {})
+    ep, name = plan.get('episode', 'EP000'), os.path.basename(prefix)
+    out = out or os.path.join(ROOT, '09_exports'); os.makedirs(out, exist_ok=True)
+    final, clean = prefix + '_1080x1920_60fps.mp4', prefix + '_clean_1080x1920_60fps.mp4'
+    texts = [re.sub(r'[\[\]]', '', c['text']).replace('\n', ' ') for c in plan['captions']]
+    srt_path = os.path.join(out, f'{name}_captions_en.srt'); open(srt_path, 'w').write(srt(plan['captions']))
+
+    # thumbnails: the approved template, words + frames from the plan, rendered at 3x and downsampled (lanczos)
+    th = pub.get('thumbs', {}); names = th.get('names', {})
+    files = {k: os.path.join(out, f'{name}_thumb_{k}' + (f'_{names[k]}' if k in names else '') + '_1280x720.png') for k in 'ABC'}
+    files['vertical'] = os.path.join(out, f'{name}_cover_vertical_1080x1920.png')
+    with tempfile.TemporaryDirectory() as d:
+        img, spec = {}, {k: dict(v) for k, v in th.items() if k in ('A', 'B', 'C', 'vertical')}
+        for k in ('B', 'C'):
+            t = spec.get(k, {}).get('t', {'B': 39.4, 'C': 29.0}[k])
+            still(clean, t, os.path.join(d, k + '.jpg')); img[k] = data_uri(os.path.join(d, k + '.jpg')); spec.setdefault(k, {})['frame'] = k
+        mark = re.search(r' d="([^"]+)"', open(os.path.join(ROOT, '01_brand/logo/svg/SGMM_mark_green.svg')).read()).group(1)
+        tpl = open(os.path.join(ROOT, '08_templates/thumbnail/sgmm_thumbnail_template.html')).read()
+        canvas(f'<script>window.MARK_D={json.dumps(mark)};window.IMG={json.dumps(img)};window.SPEC={json.dumps(spec)}</script>\n' + tpl, d)
+        for k, f in files.items():
+            w, h = (1080, 1920) if k == 'vertical' else (1280, 720)
+            sh('ffmpeg', '-v', 'error', '-y', '-i', os.path.join(d, k + '.png'), '-vf', f'scale={w}:{h}:flags=lanczos', f)
+    # phone-size check: the three thumbnails at 168×94 (+ cover at 94×168), as YouTube shows them
+    preview = os.path.join(out, f'{name}_thumbs_phone_preview.png')
+    sh('ffmpeg', '-v', 'error', '-y', *sum((['-i', files[k]] for k in ('A', 'B', 'C', 'vertical')), []), '-filter_complex',
+       '[0]scale=168:94[a];[1]scale=168:94[b];[2]scale=168:94[c];[3]scale=53:94[v];[a]pad=176:94[a2];[b]pad=176:94[b2];[c]pad=176:94[c2];[a2][b2][c2][v]hstack=4', preview)
+
+    # posting kit (sgmm-publishing skill)
+    titles = pub.get('titles') or ['TODO: title (keyword first, ≤60 chars)']
+    tags = pub.get('hashtags') or ['#AI', '#FutureOfAI', '#ArtificialIntelligence', '#Shorts']
+    desc = f"{pub.get('summary') or ' '.join(texts[:6])}\n\n{ABOUT}\n\n{' '.join(tags)}"
+    xpost = pub.get('x_post') or '\n'.join(texts) + f"\n\nThis is SG Mind Matrix. Day {pub.get('day', '?')}. #AI"
+    xreply = 'Full episodes on YouTube, every Saturday → [paste your YouTube Short link]'
+    pinned = pub.get('pinned') or 'TODO: one open question that invites a personal answer'
+    warn = []
+    for t in titles:
+        if len(t) > 60: warn.append(f'title over 60 chars: "{t}" ({len(t)})')
+        if '#' in t: warn.append(f'hashtag in title: "{t}"')
+    if '#Shorts' not in tags: warn.append('description hashtags miss #Shorts')
+    if not 3 <= len(tags) <= 5: warn.append(f'{len(tags)} description hashtags (3–5)')
+    if BANNED_TAGS & {t.lower() for t in tags}: warn.append('banned hashtag (#viral/#trending/#fyp)')
+    if len(re.findall(r'#\w+', xpost)) > 2: warn.append('X post has more than 2 hashtags')
+    if 'youtu' in xpost.lower(): warn.append('X post has a YouTube link (put it in the first reply)')
+    for label, txt in (('titles', ' '.join(titles)), ('description', desc), ('X post', xpost), ('pinned', pinned)):
+        if HYPE.search(txt): warn.append(f'hype word in {label}: "{HYPE.search(txt).group(0)}"')
+    if any('TODO' in x for x in titles + [pinned]): warn.append('copy still has TODOs — write titles / pinned comment into the plan\'s "publish" block')
+
+    pick = th.get('pick', 'A'); b = os.path.basename
+    kit = f"""# {ep} "{plan.get('title', '')}" — posting kit ({name})
+
+**Upload this file:** `{b(final)}` ({plan['duration']:g} s, vertical → YouTube treats it as a Short).
+Captions file for YouTube: `{b(srt_path)}`. QC: `{name}_qc.md` (run `sgmm qc` before posting).
+
+---
+
+## YouTube Short
+
+### Title (pick one — A is recommended)
+| | Title | Chars |
+|---|---|---|
+""" + '\n'.join(f"| {'**' + 'ABC'[i] + '**' if i == 0 else 'ABC'[i]} | {'**' + t + '**' if i == 0 else t} | {len(t)} |" for i, t in enumerate(titles)) + f"""
+
+{'Why A: ' + pub['why'] + '. No hashtags in the title.' if pub.get('why') else 'No hashtags in the title.'}
+
+### Description (paste as-is)
+```
+{desc}
+```
+
+### Tags (Studio → Tags field)
+```
+{', '.join(CORE_TAGS + pub.get('tags', []))}
+```
+
+### Thumbnails
+Recommended **{pick}**. Files: {' · '.join(f'`{b(f)}`' for f in files.values())}. Phone-size check: `{b(preview)}`.
+Shorts can't take a custom thumbnail from Studio on every account; in the app pick the frame: {pub.get('shorts_frame', 'the strongest brand moment (logo from the dark)')}.
+
+### Settings
+- Category: **Science & Technology** · Language: **English** · Captions: upload `{b(srt_path)}` (subtitles → upload file → with timing).
+- Altered or synthetic content: **No** (stylised animation, nothing realistic that could mislead).
+- Audience: not made for kids.
+- Comments: on. Remix: on.
+
+### Pinned comment (post it yourself, pin it)
+```
+{pinned}
+```
+
+---
+
+## X (Twitter)
+
+Upload the **same MP4 natively** (do not post a YouTube link in the main post).
+
+### Main post
+```
+{xpost}
+```
+
+### First reply (right after posting)
+```
+{xreply}
+```
+
+### Then
+- Pin the post to your profile.
+- Spend 30–60 minutes replying to mid-size AI accounts (5K–100K followers) with real insight, and reply to everyone who replies to you.
+
+---
+
+## When
+**7:45 pm Nepal time** (9:00 am US Eastern, 2:00 pm UK); Saturday for episodes. Be around for the first hour to answer every comment.
+
+## Check before you press publish
+- [ ] Brand Gmail/YouTube account, not personal · [ ] QC report says PASS · [ ] title {pick} pasted · [ ] description pasted · [ ] tags pasted · [ ] SRT uploaded · [ ] pinned comment posted · [ ] X post uses native video, link only in the reply.
+"""
+    if warn: kit += '\n## ⚠️ Copy checks\n' + '\n'.join(f'- {w}' for w in warn) + '\n'
+    kit_path = os.path.join(out, f'{name}_POSTING_KIT.md'); open(kit_path, 'w').write(kit)
+    print('\n'.join([kit_path, srt_path, *files.values(), preview] + ([f'WARN {w}' for w in warn] or ['copy checks ok'])))
+    return kit_path
+
+
 def selftest():
     # split: 3 lines, the middle one with a pause inside; the pause inside is longer than one gap between lines
     runs = [(1, 2), (2.5, 3.2), (3.85, 4.4), (5.5, 7)]
@@ -246,12 +487,16 @@ def selftest():
     p = base(); pl = retime(p, [.8, 2.3, 1]); assert pl[1][0] == 1.95 and pl[1][1] > 1 and 'warp' not in p  # then speed up <=10%
     p = base(); pl = retime(p, [.8, 3.5, 1])                                                          # then insert time
     assert p['warp'] and p['duration'] > 10 and p['scenes'][1]['t'][0] > 5 and pl[2][0] > 6 and p['scenes'][0]['t'][1] > 5  # scene across the insert plays longer
+    assert srt([{'t': [0.05, 1.3], 'text': 'This is [SG Mind Matrix].'}, {'t': [61.5, 62], 'text': 'a\nb'}]) == \
+        '1\n00:00:00,050 --> 00:00:01,300\nThis is SG Mind Matrix.\n\n2\n00:01:01,500 --> 00:01:02,000\na b\n'
     print('selftest ok')
 
 
 if __name__ == '__main__':
     a = sys.argv[1:]
     if a[:1] == ['selftest']: selftest()
+    elif a[:1] == ['qc'] and len(a) >= 2: sys.exit(0 if qc(a[1]) else 1)
+    elif a[:1] == ['package'] and len(a) >= 2: package(a[1], a[a.index('--out') + 1] if '--out' in a else None)
     elif a[:1] == ['build'] and len(a) >= 3:
         opt = lambda k: a[a.index(k) + 1] if k in a else None
         build(a[1], a[2], chain='--no-chain' not in a, audio_only='--audio-only' in a, lines_path=opt('--lines'), name=opt('--name'), out=opt('--out'))
