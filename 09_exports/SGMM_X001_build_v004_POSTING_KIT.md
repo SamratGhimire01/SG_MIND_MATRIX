@@ -20,6 +20,8 @@ Why A: the topic phrase comes first, it ends on the video's open question, and i
 ```
 Every time you don't click a link, someone loses money. AI now answers on top of search, and one study found Google traffic to publishers fell 40.2% in a year. Condé Nast told its teams to plan as if search is zero. When no one clicks, who gets paid?
 
+Sources: one study — Chartbeat via Search Engine Journal (Sep 2026) https://www.searchenginejournal.com/google-search-decline-publishers-chartbeat/590681/ · Condé Nast — Editor & Publisher (Jul 2026) https://www.editorandpublisher.com/stories/approaching-google-zero-as-search-referrals-plunge-news-publishers-must-anticipate-theyll,262684
+
 SG Mind Matrix documents the AI shift — then, now, next — with honest explainers, practical AI tips and real builds made in public.
 
 New episode every Saturday. Subscribe and join the Matrix.
