@@ -1,0 +1,79 @@
+{
+  "episode": "X001",
+  "format": "shift",
+  "version": "v001",
+  "title": "How We Found Answers: Library → Search → Ask",
+  "status": "Waiting for your OK · no MP4 rendered",
+  "fps": 60,
+  "size": [1080, 1920],
+  "duration": 29.86,
+  "score": null,
+  "cues": [],
+  "text": {
+    "question": "How did people find answers before the internet?",
+    "then_label": "THEN",
+    "then_kicker": "THE LIBRARY",
+    "then_word1": "SEARCHED",
+    "then_word2": "WAITED"
+  },
+  "scenes": [
+    {"id": "hook",   "type": "enter_in_dark",   "t": [0, 2.25]},
+    {"id": "map",    "type": "studio_reveal",   "t": [1.95, 4.2]},
+    {"id": "push",   "type": "push_screen",     "t": [4.2, 5.8]},
+    {"id": "library","type": "collage_library", "t": [5.55, 10.9]},
+    {"id": "search", "type": "type_hands",      "t": [10.9, 13.4]},
+    {"id": "ask",    "type": "ots_screen",      "t": [13.1, 18.4]},
+    {"id": "right",  "type": "look_right",      "t": [18.4, 22.4]},
+    {"id": "next",   "type": "field_push",      "t": [22.1, 24.6]},
+    {"id": "logo",   "type": "logo_from_dark",  "t": [24.45, 27.25]},
+    {"id": "tease",  "type": "blackout_tease",  "t": [27.25, 29.86], "text": {"tease": "NEXT SHIFT · TOMORROW MORNING"}}
+  ],
+  "act_tags": [
+    {"t": [4.4, 5.5],   "num": "01", "label": "THEN"},
+    {"t": [10.95, 12.95], "num": "01", "label": "THEN"},
+    {"t": [13.2, 18.2], "num": "02", "label": "NOW"},
+    {"t": [18.6, 24.3], "num": "03", "label": "NEXT"}
+  ],
+  "captions": [
+    {"t": [0.1, 1.8],   "text": "Where do answers come from?", "kind": "line"},
+    {"t": [5.7, 7.6],   "text": "Once, you walked to a library.", "kind": "line"},
+    {"t": [7.9, 10.4],  "text": "You searched the shelves…\nand you waited.", "kind": "line"},
+    {"t": [10.9, 13.0], "text": "Then came the search box.\nTen blue links.", "kind": "fact", "src": "google1998"},
+    {"t": [13.4, 15.6], "text": "Today, you just ask.", "kind": "fact", "src": "chatgpt2022"},
+    {"t": [16.4, 18.3], "text": "And it answers in sentences,\nnot links.", "kind": "line"},
+    {"t": [19.0, 21.0], "text": "Next, AI won’t just answer.", "kind": "forecast"},
+    {"t": [21.3, 24.0], "text": "It will go and [find it for you.]", "kind": "forecast", "src": "deepresearch2025"},
+    {"t": [24.9, 26.9], "text": "This is [SG Mind Matrix].", "kind": "line"}
+  ],
+  "silences": [],
+  "sources": {
+    "google1998": {"title": "Google — Our story (Google founded September 1998)", "url": "https://about.google/our-story/"},
+    "chatgpt2022": {"title": "OpenAI — Introducing ChatGPT (30 Nov 2022): asking a chatbot became a public, everyday tool", "url": "https://openai.com/index/chatgpt/"},
+    "deepresearch2025": {"title": "OpenAI — Introducing deep research (2 Feb 2025): an agent that searches, reads and reports back", "url": "https://openai.com/index/introducing-deep-research/", "note": "first steps exist today; that it becomes the normal way to find answers is our forecast"}
+  },
+  "notes": [
+    "No music bed yet: the Sufi tension score is timed to EP000's 46 s, so new formats need a score made from scene cues (step 4b) before the render. The preview is silent either way.",
+    "Scenes reuse EP000's choreography. The search beat uses the typing-hands shot and the ask beat the over-the-shoulder chat; there is no dedicated search-box scene yet.",
+    "The chat on the top screen shows the plan's question; the answer text is EP000's.",
+    "Voice: 9 lines, about 17 s spoken. Record one take with 2 s pauses."
+  ],
+  "publish": {
+    "day": 2,
+    "titles": ["How We Found Answers: Library, Search, AI", "You Used to Search. Now You Ask. What's Next?", "From Library Shelves to Asking AI in 30 Seconds"],
+    "why": "the topic words come first, it is under 60 characters, and it keeps the promise of the video (three eras of finding answers)",
+    "summary": "How we find answers changed three times. Library shelves, then the search box and ten blue links, now you just ask AI. What comes next is AI that goes and finds it for you.",
+    "hashtags": ["#AI", "#FutureOfAI", "#ArtificialIntelligence", "#Shorts"],
+    "tags": ["history of search", "library vs google vs AI", "how search changed"],
+    "pinned": "Where did you look for answers as a kid: a library, a search engine, or someone you asked? The best answers go into a future episode.",
+    "x_post": "Once, you walked to a library and waited.\nThen came the search box. Ten blue links.\nToday, you just ask.\nNext, AI goes and finds it for you.\n\nThis is SG Mind Matrix. Day 2. #AI",
+    "shorts_frame": "the library collage (~0:08) or the SG mark (~0:25)",
+    "thumbs": {
+      "A": {"small": "SHELVES → SEARCH →", "big": "ASK."},
+      "B": {"t": 8.0, "y": 500, "lines": ["YOU", "[WAITED.]"]},
+      "C": {"t": 23.5, "y": 656, "lines": ["WHAT", "[NEXT?]"]},
+      "vertical": {"lines": ["SHELVES.", "SEARCH.", "ASK."], "big": ["NEXT?"]},
+      "names": {"A": "eras", "B": "library", "C": "whatnext"},
+      "pick": "A"
+    }
+  }
+}

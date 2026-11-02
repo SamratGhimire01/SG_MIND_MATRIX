@@ -115,6 +115,7 @@ sgmm qc EP001 && sgmm package EP001          # 6–7
 3. `sgmm qc` + `sgmm package` (thumbnail + posting kit generation).
    **Done 2 Nov 2026** → `sgmm.py qc` / `sgmm.py package`; EP000 test regenerates the approved thumbnails and posting kit.
 4. Make the **3 X videos** (shift / tip / log) with it as the first real test.
+   **4a done 2 Nov 2026** → `08_templates/formats/` (3 plan templates) + `sgmm.py preview` (storyboard page); sample X001 SHIFT waiting for approval. **4b next:** score from scene cues (no music bed for new lengths yet).
 5. Long-form: segment rendering at 30 fps + assembled master + numbered clips for CapCut.
 6. Add Samrat's 3–4 styles.
 7. Later: plug into the SGMM Studio app (`07_scripts/IDEA_SGMM_Studio_app.md`).

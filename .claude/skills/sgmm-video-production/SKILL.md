@@ -58,7 +58,7 @@ Samrat added 8 explainer looks (Editorial Collage, Constructivist, Manim, Paperc
 - On camera: possibly Samrat in a plain matte mask (no cliché masks), silhouette, rare.
 
 ## Workflow Samrat expects
-1. Storyboard first as an artifact (playable animatic + shot cards with options + timeline lanes), wait for OK.
+1. Storyboard first as an artifact (playable animatic + shot cards with options + timeline lanes), wait for OK. For plans: `python3 08_templates/engine/sgmm.py preview <plan.json>` → publish the HTML as an Artifact; **no MP4 until Samrat approves the storyboard**. Daily X formats: copy a template from `08_templates/formats/`.
 2. Apply notes exactly and only what was asked ("only change these two things" means only those).
 3. Write a `scenes.json` plan from the scene library. With Samrat's voice take: `python3 08_templates/engine/sgmm.py build <plan> <voice>` (split → re-time → score → chain → automix +15 dB → −14 LUFS → final + clean MP4, stems, report). Picture only: `node 08_templates/engine/render.mjs <plan> <out.mp4>`. See `08_templates/engine/README.md`. (EP000's old `edit/animatic/*` scripts are history.)
 4. `python3 08_templates/engine/sgmm.py qc <build prefix>` (frame count, loudness, voice +15 dB per line, caption sync, intended silences, contact sheet) — look at the contact sheet and any ⚠️ before sending. After Samrat's final OK: `sgmm.py package <build prefix>` (SRT, thumbnails, cover, posting kit into `09_exports/`).

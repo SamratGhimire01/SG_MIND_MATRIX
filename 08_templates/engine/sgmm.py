@@ -5,6 +5,7 @@
   python3 08_templates/engine/sgmm.py build <plan.json> <voice> [--no-chain] [--audio-only] [--lines lines.json] [--name NAME] [--out DIR]
   python3 08_templates/engine/sgmm.py qc <build prefix>                 e.g. 04_video_projects/EP000_matrix_online/export/SGMM_EP000_build_v001
   python3 08_templates/engine/sgmm.py package <build prefix> [--out DIR] (default 09_exports)
+  python3 08_templates/engine/sgmm.py preview <plan.json> [--out page.html]  storyboard page (key frames, text, times) for sign-off
   python3 08_templates/engine/sgmm.py selftest
 
 voice split -> re-time to the real voice -> score from the plan (+ its cues, warped with the picture) -> approved crisp+big
@@ -475,6 +476,27 @@ Upload the **same MP4 natively** (do not post a YouTube link in the main post).
     return kit_path
 
 
+# ---------------- step 4a: storyboard preview ----------------
+def preview(plan_path, out=None):
+    """one self-contained page: the scene library + plan inline, key frames drawn live in the browser, script + sources"""
+    plan = json.load(open(plan_path))
+    if not out:
+        d, f = os.path.split(os.path.abspath(plan_path))
+        out = os.path.join(os.path.dirname(d), 'storyboard', re.sub(r'_scenes(_v\d+)?\.json$', r'_storyboard\1.html', f))
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    mark = re.search(r' d="([^"]+)"', open(os.path.join(ROOT, '01_brand/logo/svg/SGMM_mark_green.svg')).read()).group(1)
+    page = open(os.path.join(HERE, 'storyboard_page.html')).read()
+    title = f"{plan.get('episode', '')} {plan.get('format', '').upper()} storyboard".strip()
+    for k, v in (('__TITLE__', title), ('__MARK__', mark), ('__PLAN__', json.dumps(plan, ensure_ascii=False).replace('</', '<\\/')),
+                 ('__ENGINE__', open(os.path.join(HERE, 'sgmm_scenes.js')).read())):
+        page = page.replace(k, v)
+    open(out, 'w').write(page)
+    with tempfile.TemporaryDirectory() as d:   # the same cards as one PNG
+        canvas(page, d); shutil.move(os.path.join(d, 'storyboard.png'), out[:-5] + '.png')
+    print(out, out[:-5] + '.png', sep='\n')
+    return out
+
+
 def selftest():
     # split: 3 lines, the middle one with a pause inside; the pause inside is longer than one gap between lines
     runs = [(1, 2), (2.5, 3.2), (3.85, 4.4), (5.5, 7)]
@@ -496,6 +518,7 @@ if __name__ == '__main__':
     a = sys.argv[1:]
     if a[:1] == ['selftest']: selftest()
     elif a[:1] == ['qc'] and len(a) >= 2: sys.exit(0 if qc(a[1]) else 1)
+    elif a[:1] == ['preview'] and len(a) >= 2: preview(a[1], a[a.index('--out') + 1] if '--out' in a else None)
     elif a[:1] == ['package'] and len(a) >= 2: package(a[1], a[a.index('--out') + 1] if '--out' in a else None)
     elif a[:1] == ['build'] and len(a) >= 3:
         opt = lambda k: a[a.index(k) + 1] if k in a else None

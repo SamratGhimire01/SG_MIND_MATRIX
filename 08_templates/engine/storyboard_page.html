@@ -1,0 +1,131 @@
+<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* SGMM storyboard sheet: one dark brand look (Brand Bible), player on the left, key-frame cards on the right; one column on a phone */
+:root{
+  --void:#050807; --panel:#0A110E; --ink:#F2F5F3; --fog:#7C8A84; --rule:rgba(124,138,132,.24);
+  --green:#00E676; --amber:#FFB547; --forest:#0B3D2E;
+  --title:"Space Grotesk", system-ui, sans-serif; --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme:dark;
+}
+body{background:var(--void);color:var(--ink);font:400 14px/1.5 var(--mono);margin:0}
+.wrap{padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 48px;max-width:1280px;margin:0 auto;display:grid;gap:28px}
+header{display:grid;gap:10px}
+.kick{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--fog);display:flex;flex-wrap:wrap;gap:6px 14px}
+.kick b{font-weight:700}.kick .then{color:var(--amber)}.kick .now{color:var(--ink)}.kick .next{color:var(--green)}
+h1{font:700 clamp(28px,5vw,46px)/1.05 var(--title);margin:0;text-wrap:balance;letter-spacing:-.01em}
+.status{display:inline-flex;align-items:center;gap:8px;font:500 12px/1 var(--mono);color:var(--void);background:var(--amber);padding:7px 10px;border-radius:2px;justify-self:start;letter-spacing:.06em;text-transform:uppercase}
+.facts{display:flex;flex-wrap:wrap;gap:4px 18px;color:var(--fog);font-size:13px;font-variant-numeric:tabular-nums}
+.facts span b{color:var(--ink);font-weight:500}
+.main{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:760px){.main{grid-template-columns:minmax(0,1fr)}}
+.player{position:sticky;top:calc(env(safe-area-inset-top, 0px) + 12px);display:grid;gap:10px;justify-items:center}
+@media (max-width:760px){.player{position:static}}
+#screen{width:100%;max-width:340px;aspect-ratio:9/16;background:#000;display:block;border:1px solid var(--rule)}
+@media (max-width:760px){#screen{max-width:min(300px,100%)}}
+.ctl{display:flex;gap:10px;align-items:center;width:100%;max-width:340px}
+button{font:700 13px/1 var(--mono);color:var(--void);background:var(--ink);border:0;padding:10px 14px;border-radius:2px;cursor:pointer;min-width:74px}
+button:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+input[type=range]{flex:1;min-width:0;accent-color:var(--ink)}
+#clock{font-variant-numeric:tabular-nums;color:var(--fog);font-size:12px;min-width:84px;text-align:right}
+.mute{font-size:12px;color:var(--fog);text-align:center;max-width:340px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px 14px}
+@media (max-width:420px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.card{display:grid;gap:6px;align-content:start;min-width:0}
+.card canvas{width:100%;aspect-ratio:9/16;background:#000;display:block;border:1px solid var(--rule);cursor:pointer}
+.when{display:flex;justify-content:space-between;gap:8px;font:500 12px/1.2 var(--mono);color:var(--fog);font-variant-numeric:tabular-nums}
+.when .act{font-weight:700}
+.scene{font:700 13px/1.2 var(--title);color:var(--ink)}
+.say{font-size:12px;line-height:1.45;color:var(--ink);overflow-wrap:anywhere}
+.say mark{background:none;color:var(--green)}
+.tag{font-size:11px;color:var(--fog)}
+section{display:grid;gap:12px}
+h2{font:700 20px/1.2 var(--title);margin:0}
+.tablebox{overflow-x:auto;border-top:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:560px}
+th,td{text-align:left;padding:9px 10px 9px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:500;color:var(--fog);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--fog);white-space:nowrap}
+.kind{font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.kind.fact{color:var(--ink)}.kind.forecast{color:var(--amber)}.kind.line{color:var(--fog)}
+ol,ul{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
+a{color:var(--ink);text-underline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><path id="markpath" d="__MARK__"/></svg>
+<div class="wrap">
+  <header>
+    <div class="kick" id="kick"></div>
+    <h1 id="h1"></h1>
+    <div class="status" id="status"></div>
+    <div class="facts" id="facts"></div>
+  </header>
+  <div class="main">
+    <div class="player">
+      <canvas id="screen" width="540" height="960" aria-label="Animatic preview"></canvas>
+      <div class="ctl"><button id="play" type="button">Play</button><input id="scrub" type="range" min="0" step="0.01" value="0" aria-label="Time"><span id="clock">0:00.0</span></div>
+      <div class="mute">Silent preview: picture, captions and act tags only. Tap a frame to jump there.</div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+  <section><h2>Script</h2><div class="tablebox"><table><thead><tr><th>#</th><th>Time</th><th>Line (voice = caption)</th><th>Type</th><th>Source</th></tr></thead><tbody id="script"></tbody></table></div></section>
+  <section id="srcsec"><h2>Sources</h2><ol id="sources"></ol></section>
+  <section id="notesec"><h2>Before the render</h2><ul id="notes"></ul></section>
+</div>
+<script>__ENGINE__</script>
+<script>
+const plan=__PLAN__;
+const ep=SGMM.load(plan),D=plan.duration,$=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap=s=>esc(s).replace(/\[([^\]]*)\]/g,'<mark>$1</mark>').replace(/\n/g,' ');
+const fmt=t=>`${Math.floor(t/60)}:${(t%60).toFixed(1).padStart(4,'0')}`;
+const at=(list,t)=>list.find(x=>t>=x.t[0]&&t<x.t[1]);
+const ACT={THEN:'var(--amber)',NOW:'var(--ink)',NEXT:'var(--green)'};
+const caps=plan.captions||[],srcs=plan.sources||{};
+
+/* header */
+$('kick').innerHTML=`<b>${esc(plan.format||'').toUpperCase()}</b><span>${esc(plan.episode||'')}</span><span>storyboard ${esc(plan.version||'v001')}</span><span class="then">THEN</span><span class="now">NOW</span><span class="next">NEXT</span>`;
+$('h1').textContent=plan.title||'Untitled';
+$('status').textContent=plan.status||'Waiting for your OK · no MP4 rendered';
+$('facts').innerHTML=[[D.toFixed(1)+' s','length'],[plan.scenes.length,'scenes'],[caps.length,'voice lines'],[`${plan.size[0]}×${plan.size[1]} · ${plan.fps} fps`,'']].map(([a,b])=>`<span><b>${a}</b> ${b}</span>`).join('');
+
+/* script, sources, notes */
+const ids=Object.keys(srcs);
+$('script').innerHTML=caps.map((c,i)=>`<tr><td class="num">L${String(i+1).padStart(2,'0')}</td><td class="num">${fmt(c.t[0])}–${fmt(c.t[1])}</td><td>${cap(c.text)}</td><td><span class="kind ${esc(c.kind||'line')}">${esc(c.kind||'line')}</span></td><td class="num">${(c.src?[].concat(c.src):[]).map(s=>`[${ids.indexOf(s)+1}]`).join(' ')||'—'}</td></tr>`).join('');
+if(ids.length)$('sources').innerHTML=ids.map(k=>`<li>${srcs[k].url?`<a href="${esc(srcs[k].url)}" target="_blank" rel="noopener">${esc(srcs[k].title)}</a>`:esc(srcs[k].title)}${srcs[k].note?` · <span class="tag">${esc(srcs[k].note)}</span>`:''}</li>`).join('');else $('srcsec').hidden=true;
+if((plan.notes||[]).length)$('notes').innerHTML=plan.notes.map(n=>`<li>${esc(n)}</li>`).join('');else $('notesec').hidden=true;
+
+/* key frames: the middle of every scene and every voice line, merged when closer than 0.6 s */
+let keys=[...plan.scenes.map(s=>(s.t[0]+s.t[1])/2),...caps.map(c=>(c.t[0]+c.t[1])/2)].sort((a,b)=>a-b).filter((t,i,a)=>i===0||t-a[i-1]>=.6);
+const grid=$('grid');
+const cards=keys.map(t=>{const sc=[...plan.scenes].reverse().find(s=>t>=s.t[0]&&t<s.t[1])||{},c=at(caps,t),act=at(plan.act_tags||[],t),el=document.createElement('div');el.className='card';
+  el.innerHTML=`<canvas width="270" height="480" aria-label="Frame at ${fmt(t)}"></canvas><div class="when"><span>${fmt(t)}</span>${act?`<span class="act" style="color:${ACT[act.label]||'var(--ink)'}">${esc(act.num)} ${esc(act.label)}</span>`:''}</div>
+  <div class="scene">${esc(sc.id||'')} <span class="tag">${esc(sc.type||'')}</span></div>${c?`<div class="say">“${cap(c.text)}”</div>`:'<div class="tag">no voice</div>'}`;
+  grid.appendChild(el);el.querySelector('canvas').onclick=()=>{stop();seek(t);$('screen').scrollIntoView({behavior:'smooth',block:'nearest'})};return[el.querySelector('canvas'),t]});
+
+/* player */
+const scr=$('screen'),sx=scr.getContext('2d'),scrub=$('scrub');scrub.max=D;
+let playing=false,t0=0,from=0,raf=0;
+const show=t=>{ep.render(sx,scr.width,scr.height,Math.min(t,D-1e-3),true);scrub.value=t;$('clock').textContent=fmt(t)};
+const seek=t=>{from=t;show(t)};
+const loop=now=>{const t=from+(now-t0)/1000;if(t>=D){from=0;t0=now;show(0)}else show(t);raf=requestAnimationFrame(loop)};
+function stop(){if(!playing)return;playing=false;cancelAnimationFrame(raf);from=+scrub.value;$('play').textContent='Play'}
+$('play').onclick=()=>{if(playing)return stop();playing=true;t0=performance.now();$('play').textContent='Pause';raf=requestAnimationFrame(loop)};
+scrub.oninput=()=>{stop();seek(+scrub.value)};
+
+/* fonts first, then draw the cards one by one so the page stays responsive */
+const F=['500 40px "JetBrains Mono"','700 40px "JetBrains Mono"','700 40px "Space Grotesk"','500 20px "Space Grotesk"','400 120px "Anton"','700 34px "Oswald"','700 34px "Libre Baskerville"','italic 400 20px "Libre Baskerville"','400 11px "Libre Baskerville"'];
+Promise.race([Promise.all(F.map(f=>document.fonts.load(f))),new Promise(r=>setTimeout(r,4000))]).catch(()=>{}).then(async()=>{
+  seek(keys[0]||0);
+  for(const [cv,t] of cards){ep.render(cv.getContext('2d'),cv.width,cv.height,t,true);await new Promise(r=>setTimeout(r,0))}
+  window.__ready=true;
+});
+/* `sgmm preview` also saves the cards as one PNG sheet (headless Chrome calls this) */
+window.outputs=async()=>{const C=5,w=270,h=480,lh=58,p=12,R=Math.ceil(cards.length/C),cv=document.createElement('canvas');cv.width=C*(w+p)+p;cv.height=R*(h+lh+p)+p;const c=cv.getContext('2d');
+  c.fillStyle='#050807';c.fillRect(0,0,cv.width,cv.height);c.textBaseline='top';
+  cards.forEach(([k,t],i)=>{const x=p+(i%C)*(w+p),y=p+Math.floor(i/C)*(h+lh+p),cc=at(caps,t),sc=[...plan.scenes].reverse().find(s=>t>=s.t[0]&&t<s.t[1])||{};c.drawImage(k,x,y,w,h);
+    c.font='500 14px "JetBrains Mono"';c.fillStyle='#7C8A84';c.fillText(`${fmt(t)}  ${sc.id||''}`,x,y+h+8);c.fillStyle='#F2F5F3';c.font='500 13px "JetBrains Mono"';
+    c.fillText((cc?cc.text.replace(/[\[\]]/g,'').replace(/\n/g,' '):'—').slice(0,34),x,y+h+30)});
+  return{storyboard:cv.toDataURL('image/png')}};
+</script>

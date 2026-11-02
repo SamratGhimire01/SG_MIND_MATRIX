@@ -14,6 +14,7 @@
 python3 08_templates/engine/sgmm.py build <plan.json> <voice take> [--lines lines.json] [--no-chain] [--audio-only] [--name N] [--out DIR]
 python3 08_templates/engine/sgmm.py qc <build prefix>
 python3 08_templates/engine/sgmm.py package <build prefix> [--out DIR]     (default 09_exports)
+python3 08_templates/engine/sgmm.py preview <plan.json> [--out page.html]   (storyboard page + PNG for sign-off)
 python3 08_templates/engine/sgmm.py selftest
 node 08_templates/engine/render.mjs <plan.json> <out.mp4> [--workers 4] [--clean] [--from s] [--to s] [--audio mix.wav]
 node 08_templates/engine/render.mjs <plan.json> --score-out <prefix>
@@ -66,6 +67,9 @@ Reads `<prefix>_plan.json`, both MP4s and `_voice.wav`; writes `<prefix>_qc.md` 
 Into `09_exports/` (or `--out`): `<name>_captions_en.srt` (captions = voice timing), `_thumb_A/B/C_<name>_1280x720.png` + `_cover_vertical_1080x1920.png` (the approved template `08_templates/thumbnail/sgmm_thumbnail_template.html`, rendered 3× and downsampled), `_thumbs_phone_preview.png` (168×94, as YouTube shows them), `_POSTING_KIT.md` (sgmm-publishing skill). Words and frames come from the plan's `"publish"` block (Claude writes it with the script): `titles`, `why`, `summary`, `hashtags`, `tags`, `pinned`, `x_post`, `day`, `shorts_frame`, `thumbs` (`A {small, big}`, `B/C {t, y, lines}`, `vertical {lines, big}`, `names`, `pick`; `[word]` = the one green). Copy checks in the kit: titles ≤ 60 chars and no hashtags, 3–5 hashtags with #Shorts, no #viral/#fyp, ≤ 2 hashtags and no YouTube link on X, no hype words, no TODOs left.
 
 EP000 test (2 Nov 2026): thumbnails regenerate the approved set (PSNR 42–50 dB), the kit matches the approved kit plus a thumbnails section and the QC line, the SRT follows the real voice.
+
+## `sgmm preview` (step 4a)
+Writes `../storyboard/<name>_storyboard_v###.html` next to the plan's `edit/` folder (one self-contained page: scene library + plan inline; silent animatic with scrubber, a key frame at the middle of every scene and every voice line, on-screen text, act tags, script table with fact/forecast + sources, open items from `notes`) and the same cards as `…_storyboard_v###.png`. Publish the HTML as an Artifact so Samrat can approve it on the phone. Template: `storyboard_page.html`. Daily format templates: `08_templates/formats/`.
 
 ## Not yet
 - No generative music bed for new lengths: a new plan uses a named score (EP000's, warped) and/or its own cues. Add a bed when the SHIFT/TIP/LOG templates are built (step 4).

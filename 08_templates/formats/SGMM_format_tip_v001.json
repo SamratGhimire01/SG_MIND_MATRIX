@@ -1,0 +1,195 @@
+{
+ "episode": "X###",
+ "format": "tip",
+ "version": "v001",
+ "title": "‹TIP: one practical AI tip›",
+ "status": "Waiting for your OK · no MP4 rendered",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "score": null,
+ "cues": [],
+ "silences": [],
+ "sources": {},
+ "notes": [
+  "No music bed yet: new formats need a score from scene cues (step 4b) before the render.",
+  "Scenes reuse EP000's choreography; keep each scene near its EP000 length (README table) or check the cut in the storyboard.",
+  "One caption = one voice line. Every fact line gets \"kind\": \"fact\" and a \"src\"; a forecast is marked \"forecast\".",
+  "Cadence style is Papercraft or Claymation; neither is built yet, so this uses the studio + build-log cards (relabelled STEP 1/2/3).",
+  "Card pictograms are the SHIFT/TOOL/BUILD drawings until step cards get their own."
+ ],
+ "duration": 22.76,
+ "text": {
+  "question": "‹the exact prompt to type›",
+  "log_kicker": "SGMM / TIP",
+  "log_title": "‹TIP · SHORT NAME›",
+  "log_sub": "TRY IT TODAY",
+  "log_cards": [
+   "STEP 1",
+   "STEP 2",
+   "STEP 3"
+  ],
+  "log_tagline": "→ SAVE THIS",
+  "log_rec": "TIP",
+  "log_day": "‹DAY ###›"
+ },
+ "scenes": [
+  {
+   "id": "hook",
+   "type": "enter_in_dark",
+   "t": [
+    0,
+    2.25
+   ]
+  },
+  {
+   "id": "type",
+   "type": "type_hands",
+   "t": [
+    2.0,
+    4.7
+   ]
+  },
+  {
+   "id": "prompt",
+   "type": "ots_screen",
+   "t": [
+    4.4,
+    10.4
+   ]
+  },
+  {
+   "id": "steps",
+   "type": "build_log",
+   "t": [
+    10.1,
+    17.5
+   ]
+  },
+  {
+   "id": "logo",
+   "type": "logo_from_dark",
+   "t": [
+    17.35,
+    20.15
+   ]
+  },
+  {
+   "id": "tease",
+   "type": "blackout_tease",
+   "t": [
+    20.15,
+    22.76
+   ],
+   "text": {
+    "tease": "NEXT TIP · TOMORROW AFTERNOON"
+   }
+  }
+ ],
+ "act_tags": [
+  {
+   "t": [
+    4.6,
+    10.2
+   ],
+   "num": "02",
+   "label": "NOW"
+  }
+ ],
+ "captions": [
+  {
+   "t": [
+    0.1,
+    1.9
+   ],
+   "text": "‹L1 hook: the problem, ≤ 6 words›",
+   "kind": "line"
+  },
+  {
+   "t": [
+    2.2,
+    4.4
+   ],
+   "text": "‹L2 the tip in one sentence›",
+   "kind": "line"
+  },
+  {
+   "t": [
+    4.8,
+    7.2
+   ],
+   "text": "‹L3 what to type (matches the screen)›",
+   "kind": "line"
+  },
+  {
+   "t": [
+    7.6,
+    10.0
+   ],
+   "text": "‹L4 what you get back›",
+   "kind": "line"
+  },
+  {
+   "t": [
+    13.9,
+    14.8
+   ],
+   "text": "‹L5 step 1›",
+   "kind": "line"
+  },
+  {
+   "t": [
+    14.85,
+    16.1
+   ],
+   "text": "‹L6 step 2›",
+   "kind": "line"
+  },
+  {
+   "t": [
+    16.15,
+    17.3
+   ],
+   "text": "‹L7 step 3 — the [result]›",
+   "kind": "line"
+  },
+  {
+   "t": [
+    17.8,
+    19.8
+   ],
+   "text": "This is [SG Mind Matrix].",
+   "kind": "line"
+  }
+ ],
+ "publish": {
+  "day": 0,
+  "titles": [],
+  "why": "",
+  "summary": "",
+  "hashtags": [
+   "#AI",
+   "#FutureOfAI",
+   "#ArtificialIntelligence",
+   "#Shorts"
+  ],
+  "tags": [
+   "AI tips",
+   "how to use AI",
+   "AI tutorial"
+  ],
+  "pinned": "",
+  "x_post": "",
+  "shorts_frame": "",
+  "thumbs": {
+   "names": {
+    "A": "type",
+    "B": "frame1",
+    "C": "frame2"
+   },
+   "pick": "A"
+  }
+ }
+}
