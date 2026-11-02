@@ -24,5 +24,5 @@ Naming: `SGMM_EP###_{asset}_v###.ext`.
 Follow `.claude/skills/sgmm-video-production/SKILL.md` for every SGMM video and `.claude/skills/sgmm-publishing/SKILL.md` when posting: Samrat's approved look, hands/keyboard, screens mapping, the Sufi tension score and the render pipeline. Record new preferences there.
 
 ## Parked ideas
-- **Video pipeline** (Shorts + long-form, scene-plan JSON + reusable engine): design in `07_scripts/PIPELINE_SGMM_video_v001.md`.
+- **Video pipeline** (Shorts + long-form, scene-plan JSON + reusable engine): design in `07_scripts/PIPELINE_SGMM_video_v001.md`; problems, fixes, approval gates, iPhone/Mac setup in `07_scripts/PIPELINE_SGMM_video_v002_analysis.md`.
 - **SGMM Studio app** (research + analytics + scheduling + comments + Video Lab pipeline): full spec, research and build order in `07_scripts/IDEA_SGMM_Studio_app.md`. Read it first when Samrat says "let's build the Studio/app/pipeline".
