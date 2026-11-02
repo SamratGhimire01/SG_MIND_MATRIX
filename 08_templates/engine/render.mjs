@@ -19,7 +19,7 @@ const ROOT = path.resolve(HERE, '../..');
 const CHROME = process.env.SGMM_CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const FONTS = 'https://fonts.googleapis.com/css2?family=Anton&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap';
 const FONT_SPECS = ['500 40px "JetBrains Mono"', '700 40px "JetBrains Mono"', '700 40px "Space Grotesk"', '500 20px "Space Grotesk"', '400 120px "Anton"', '700 34px "Oswald"', '700 34px "Libre Baskerville"', 'italic 400 20px "Libre Baskerville"', '400 11px "Libre Baskerville"', '400 52px "STIX Two Text"', 'italic 400 52px "STIX Two Text"'];
-export const STYLE_FILES = ['08_templates/styles/manim/sgmm_manim.js']; // style modules that add scene types (loaded before the library)
+export const STYLE_FILES = ['08_templates/styles/manim/sgmm_manim.js', '08_templates/styles/music/sgmm_music.js']; // style modules that add scene types (loaded before the library)
 
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i < 0 ? d : (args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : true); };

@@ -342,7 +342,7 @@ def build(plan_path, voice_path, chain=True, audio_only=False, lines_path=None, 
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 SILENT = -40.0               # dBFS: an intended silence (plan "silences") must stay under this
 CAP_SYNC = .10               # a caption must start within this of its voice line
-STYLE_FILES = ['08_templates/styles/manim/sgmm_manim.js']   # same list as render.mjs STYLE_FILES
+STYLE_FILES = ['08_templates/styles/manim/sgmm_manim.js', '08_templates/styles/music/sgmm_music.js']   # same list as render.mjs STYLE_FILES
 
 
 def probe(mp4):

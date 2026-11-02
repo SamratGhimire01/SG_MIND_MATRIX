@@ -617,12 +617,20 @@ const SCENE_SOUND={
 /* a kit that only plays what starts inside [a, b) (cuts always pass) */
 const inWindow=(k,a,b)=>{const ok=t=>t>=a-.05&&t<b;return{...k,play:(n,t,o)=>{if(ok(t))k.play(n,t,o)},tone:(t,p)=>{if(ok(t))k.tone(t,p)},noise:(t,p)=>{if(ok(t))k.noise(t,p)},
   daf:(t,...r)=>{if(ok(t))k.daf(t,...r)},ney:(ph,o)=>{if(ph.length&&ok(ph[0][0]))k.ney(ph,o)},choir:(t0,...r)=>{if(ok(t0))k.choir(t0,...r)},drone:(t0,...r)=>{if(ok(t0))k.drone(t0,...r)}}};
-function sufiTension(k,plan,scenes){
-  const D=plan.duration,find=ty=>scenes.find(s=>s.type===ty),clock=s=>x=>{if(!s.map)return x-s.off;const {P,S,K}=s.map;let i=S.length-1;while(i>0&&x<S[i])i--;return P[i]+(x-S[i])/K[i]};   // scene time -> plan time (inverse of the stretch)
+/* the scene sounds (every scene type's own effects, on its own clock) + the plan's anchors; shared by every plan-based score */
+function sceneSounds(k,plan,scenes){
+  const D=plan.duration,find=ty=>scenes.find(s=>s.type===ty),clock=s=>x=>{if(!s.map)return x-s.off;const {P,S,K}=s.map;let i=S.length-1;while(i>0&&x<S[i])i--;return P[i]+(x-S[i])/K[i]};
   const hook=find('enter_in_dark'),field=find('field_push'),logo=find('logo_from_dark'),tease=find('blackout_tease');
   const press=hook?clock(hook)(PRESS):0,hit=field?clock(field)(28.0):null;
   const A={press,hit,cut:hit!=null?hit-.52:null,logoHit:logo?clock(logo)(41.0):null,blackout:tease?tease.a:logo?clock(logo)(BLACKOUT):D};
   for(const s of scenes){const f=SCENE_SOUND[s.type]||(TYPES[s.type]||{}).sound;if(!f)continue;const kk=inWindow(k,s.a,s.b);f(kk,(n,t,o)=>kk.play(n,t,o),clock(s),s.b,s.a,A)}
+  return A;
+}
+function sufiTension(k,plan,scenes){
+  const D=plan.duration,find=ty=>scenes.find(s=>s.type===ty),clock=s=>x=>{if(!s.map)return x-s.off;const {P,S,K}=s.map;let i=S.length-1;while(i>0&&x<S[i])i--;return P[i]+(x-S[i])/K[i]};   // scene time -> plan time (inverse of the stretch)
+  const hook=find('enter_in_dark'),field=find('field_push'),logo=find('logo_from_dark'),tease=find('blackout_tease');
+  const press=hook?clock(hook)(PRESS):0,hit=field?clock(field)(28.0):null;
+  const A=sceneSounds(k,plan,scenes);
   /* beds: drone from the Enter press to the dead stop (or the mark), a brighter drone from the hit to the blackout */
   /* "bed": "light" (talking formats: the voice runs most of the video): two steady pure drone notes (no detuned saws = no wobble), daf without the deep dum */
   const light=plan.bed==='light';
@@ -721,7 +729,7 @@ function load(plan){
     audio:async(mute)=>{const sc=plan.score==null?()=>{}:SCORES[plan.score];if(!sc)throw new Error(`unknown score "${plan.score}"`);const sr=48000,off=new OfflineAudioContext(2,sr*DUR,sr);
     /* warp: [[t, +seconds],...] from sgmm build when the real voice needed more time; the cue sheet's times move with the picture */
     const WP=plan.warp||[],warp=t=>{let d=0;for(const [p,dt] of WP)if(t>=p)d+=dt;return t+d};
-    const kk=makeKit(off,0,mute,WP.length?warp:null);if(sc===sufiTension)kk.setWarp(false);sc(kk,plan,scenes);kk.setWarp(true);
+    const kk=makeKit(off,0,mute,WP.length?warp:null);if(sc===sufiTension||sc.planBased)kk.setWarp(false);sc(kk,plan,scenes,{sceneSounds,HZ});kk.setWarp(true);
     /* cues from the plan: {"t":28,"cue":"impact","g":1.2} (one-shots: key tick click thud impact whoosh riser paper slide put tear stroke ding) | {"cue":"daf","kind":"dum"} | {"cue":"cut","reopen":28} */
     for(const {t,cue,...o} of plan.cues||[]){if(cue==='daf')kk.daf(t,o.kind||'dum',o.g??1,o.pan||0);else if(cue==='cut')kk.cut(t,o.reopen);else kk.play(cue,t,o)}const buf=await off.startRendering();
     const L=buf.getChannelData(0),R=buf.getChannelData(1),N=L.length;let pk=0;for(let i=0;i<N;i++)pk=Math.max(pk,Math.abs(L[i]),Math.abs(R[i]));const g=mute?1:(pk>0?.891/pk:1);
@@ -731,6 +739,7 @@ function load(plan){
     const u=new Uint8Array(ab);let bin='';for(let i=0;i<u.length;i+=32768)bin+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return{b64:btoa(bin),peak:pk}}};
 }
 /* named scores (hand-written cue sheets); a plan adds its own `cues` on top, or uses "score": null for cues only */
-const SCORES={sufi_tension_ep000:score,sufi_tension:sufiTension};
+/* plug-in scores from style modules: window.SGMM_SCORES = {name: fn(k, plan, scenes, {sceneSounds, HZ})} with fn.planBased = true */
+const SCORES=Object.assign({sufi_tension_ep000:score,sufi_tension:sufiTension},window.SGMM_SCORES||{});
 return{load,types:Object.keys(TYPES)};
 })();
