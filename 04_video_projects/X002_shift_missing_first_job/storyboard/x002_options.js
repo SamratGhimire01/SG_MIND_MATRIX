@@ -43,6 +43,7 @@ window.X002_OPT = (() => {
   function thenA(c, t) { // DAY 1 stamp; COFFEE / SPREADSHEETS / FIRST DRAFTS pop in on the words; LEARNED highlighted, one green ring
     K.paperBg(c); tag(c, t, '01', 'THEN', C.amber);
     const st = seg(0.1, 0.25, q12(t)); if (st > 0) { c.save(); c.translate(300, 520); c.rotate(-0.12); const k = 1.4 - 0.4 * st; c.scale(k, k); c.globalAlpha = 0.9 * st; c.strokeStyle = C.forest; c.lineWidth = 9; c.strokeRect(-150, -70, 300, 140); c.font = `400 110px ${ANTON}`; c.fillStyle = C.forest; c.textAlign = 'center'; c.fillText('DAY 1', 0, 40); c.restore(); }
+    const td = K.drop(t, 0.9); if (td) { K.strip(c, 640, 560 + td.y, 0.06, 'TO DO', 76, C.ink, C.card, 15); } const ck = K.drop(t, 1.6); if (ck) { K.strip(c, 640, 650 + ck.y, -0.04, '9:00 AM', 60, C.paper, C.forest, 16); K.tape(c, 700, 620 + ck.y, 90, 26, 0.2); }
     TASKS.forEach((w, i) => { const d = K.drop(t, 2.4 + i * 0.55); if (!d) return; const x = [250, 560, 850][i], y = [800, 760, 820][i];
       K.piece(c, x, y + d.y, [-0.06, 0.04, -0.03][i], 270, 300, C.card, 40 + i, (cc) => { cc.save(); cc.translate(0, -20); taskArt(cc, i); cc.restore(); cc.font = `400 38px ${ANTON}`; cc.fillStyle = C.ink; cc.textAlign = 'center'; cc.fillText(w, 0, 120); });
       K.tape(c, x, y - 150 + d.y, 110, 30, [0.1, -0.08, 0.12][i]); });
@@ -91,7 +92,8 @@ window.X002_OPT = (() => {
       drawTex(c, layout(c, [T(l1, {f: 'mono'})], 24, 120, y + 8), {alpha: al * b1, col: C.fog}); drawTex(c, layout(c, [T(l2, {f: 'mono'})], 24, 120, y + 68), {alpha: al * b1, col: C.fog});
       strokePts(c, [[360, y], [360 + W, y]], C.white, 22, 0, b1, al * 0.85); strokePts(c, [[360, y + 60], [360 + W * k1, y + 60]], C.white, 22, 0, b2, al * 0.85); };
     bars(1060, 5.4, 0.81, 'peers', 'young, AI-exposed', 1 - up);
-    if (t > 7.6) { bars(860, 7.7, 1.0, 'peers', 'experienced, AI-exposed', 1); const ng = layout(c, [T('No gap', {f: 'sg'})], 64, 540, 1080, 'center'); drawTex(c, ng, {p: seg(8.6, 9.2, t)}); }
+    const gm = sm(6.3, 6.6, t) * (1 - up); if (gm > 0) { c.save(); c.setLineDash([10, 9]); strokePts(c, rectPts(360 + 560 * 0.81 + 6, 1108, 920, 1132), C.amber, 3, 0, gm); c.restore(); drawTex(c, layout(c, [T('\u221219%', {f: 'mono'})], 26, 935, 1128), {p: seg(6.9, 7.2, t), alpha: 1 - up, col: C.amber}); }
+    if (t > 7.6) { const pz = 1 + 0.06 * tab(9.0, 9.4, t); c.save(); c.translate(640, 900); c.scale(pz, pz); c.translate(-640, -900); bars(860, 7.7, 1.0, 'peers', 'experienced, AI-exposed', 1); c.restore(); const ng = layout(c, [T('No gap', {f: 'sg'})], 64, 540, 1080, 'center'); drawTex(c, ng, {p: seg(8.6, 9.2, t)}); strokePts(c, [[430, 1100], [650, 1100]], C.white, 4, 0, sm(9.5, 9.9, t)); }
     cap(c, t, 'now');
   }
   function nowB(c, t) { // the gap's two real data points: 15% (Jul 2025) -> 19% (Jun 2026); experienced workers stay at 0
@@ -124,9 +126,9 @@ window.X002_OPT = (() => {
   function ladderVox(missing) { const L = []; for (let z = 0; z < 16; z++) { L.push({x: 0, y: 0, z, c: '#B9C2BE'}); L.push({x: 5, y: 0, z, c: '#B9C2BE'}); if (z % 2 === 1 && !missing.includes(z)) for (let x = 1; x < 5; x++) L.push({x, y: 0, z, c: z === 15 ? C.green : '#E6EAE7', e: z === 15}); } return L; }
   function nextA(c, t) { // a voxel ladder builds; its bottom rungs fall out; the top rung is the one green; slow orbit
     K.voxGround(c); tag(c, t, '03', 'NEXT', C.green);
-    const pr = K.proj(540, 1280, 40, K.YAW + 0.08 * t), full = ladderVox([]);
+    const pr = K.proj(540, 1280, 40, K.YAW + 0.16 * t), full = ladderVox([]);
     let list = K.fallIn(full, t, (v) => 0.05 + v.z * 0.06);
-    list = list.flatMap((v) => { if (v.x > 0 && v.x < 5 && v.z < 6) { const out = sm(1.2 + v.z * 0.15, 1.6 + v.z * 0.15, t); if (out >= 1) return []; return [{...v, z: v.z - out * 6, fall: out > 0}]; } return [v]; });
+    list = list.flatMap((v) => { if (v.x > 0 && v.x < 5 && v.z < 10) { const at = v.z < 6 ? 1.2 + v.z * 0.15 : v.z === 7 ? 3.4 : 4.2, out = sm(at, at + 0.4, t); if (out >= 1) return []; return [{...v, z: v.z - out * 8, fall: out > 0}]; } return [v]; });
     for (let x = -6; x < 12; x++) for (let y = -6; y < 6; y++) list.push({x, y, z: -1, c: (x + y) % 2 ? '#0B3D2E' : '#0E4636'});
     K.voxels(c, list, pr); cap(c, t, 'next');
   }
@@ -147,11 +149,12 @@ window.X002_OPT = (() => {
   const SND = {
     hook: (k, P, c) => { P('tick', c(0.1), {f: 2200, g: 0.3}); P('put', c(0.55), {g: 1.0}); P('thud', c(0.56), {f: 120, g: 0.3}); P('slide', c(1.6), {dur: 0.55, g: 0.8}); P('whoosh', c(2.15), {dur: 0.5, top: 1600, g: 0.35}); },
     then: (k, P, c) => { P('put', c(0.1), {g: 1.0}); P('thud', c(0.11), {f: 100, g: 0.3}); [2.4, 2.95, 3.5].forEach((x, i) => { P('put', c(x), {g: 0.9, pan: -0.4 + 0.4 * i}); P('paper', c(x + 0.02), {dur: 0.2, g: 0.5}); P('tear', c(x + 0.15), {g: 0.35}); });
+      P('put', c(0.9), {g: 0.8}); P('put', c(1.6), {g: 0.8}); P('tear', c(1.65), {g: 0.4});
       P('put', c(4.2), {g: 0.9}); P('stroke', c(4.6), {material: 'marker', dur: 0.4, g: 0.8}); P('stroke', c(4.9), {material: 'marker', dur: 0.5, g: 0.9}); },
     now: (k, P, c) => { P('tick', c(0.1), {f: 2000, g: 0.35}); P('stroke', c(0.3), {material: 'pen', dur: 0.5, g: 0.35}); [0.9, 1.15, 1.4].forEach((x) => P('whoosh', c(x), {dur: 0.4, top: 1500, g: 0.3}));
       P('slide', c(2.1), {dur: 0.7, g: 0.6}); for (let i = 0; i < 14; i++) P('tick', c(3.8 + i * 0.057), {f: 2200 + i * 50, g: 0.3}); k.ney([[c(4.6), 587.33, 0.9, 1]], {gain: 0.06}); k.daf(c(4.8), 'tek', 0.6);
-      P('slide', c(5.4), {dur: 0.4, g: 0.6}); P('slide', c(5.8), {dur: 0.5, g: 0.6}); P('whoosh', c(7.4), {dur: 0.4, top: 1100, g: 0.35}); P('slide', c(7.7), {dur: 0.4, g: 0.6}); P('slide', c(8.1), {dur: 0.5, g: 0.6}); P('ding', c(8.6), {f: 1318.5, g: 0.2}); },
-    next: (k, P, c) => { for (let i = 0; i < 16; i++) P('key', c(0.05 + i * 0.06), {g: 0.3}); for (let i = 0; i < 6; i++) P('click', c(1.2 + i * 0.15), {f: 2600 - i * 120, g: 0.45}); P('ding', c(2.6), {f: 1975, g: 0.2}); P('whoosh', c(3.0), {dur: 1.2, top: 1400, g: 0.2}); },
+      P('slide', c(5.4), {dur: 0.4, g: 0.6}); P('slide', c(5.8), {dur: 0.5, g: 0.6}); P('whoosh', c(7.4), {dur: 0.4, top: 1100, g: 0.35}); P('slide', c(7.7), {dur: 0.4, g: 0.6}); P('slide', c(8.1), {dur: 0.5, g: 0.6}); P('ding', c(8.6), {f: 1318.5, g: 0.2}); P('tick', c(6.3), {f: 2600, g: 0.4}); P('click', c(6.9), {f: 2200, g: 0.5}); k.daf(c(9.0), 'tek', 0.5); P('stroke', c(9.5), {material: 'pen', dur: 0.4, g: 0.4}); },
+    next: (k, P, c) => { for (let i = 0; i < 16; i++) P('key', c(0.05 + i * 0.06), {g: 0.3}); for (let i = 0; i < 6; i++) P('click', c(1.2 + i * 0.15), {f: 2600 - i * 120, g: 0.45}); P('ding', c(2.6), {f: 1975, g: 0.2}); P('whoosh', c(3.0), {dur: 1.2, top: 1400, g: 0.2}); P('click', c(3.4), {f: 2300, g: 0.6}); P('click', c(4.2), {f: 2000, g: 0.6}); P('put', c(3.85), {g: 0.4}); P('put', c(4.65), {g: 0.4}); },
   };
   const engineScene = (fn, sound) => ({at: 0, sound, draw: (ctx, t) => { CH = false; try { fn(ctx, t); } finally { CH = true; } }});
   window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x002_hook_badge: engineScene(hookA, SND.hook), x002_then_day1: engineScene(thenA, SND.then), x002_now_gap: engineScene(nowA, SND.now), x002_next_ladder: engineScene(nextA, SND.next)});

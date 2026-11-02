@@ -1,0 +1,35 @@
+1
+00:00:00,000 --> 00:00:03,893
+Every answer AI gives you runs on electricity.
+
+2
+00:00:03,943 --> 00:00:06,386
+Data centres used to just store things.
+
+3
+00:00:06,436 --> 00:00:08,866
+Photos. Videos. Web pages.
+
+4
+00:00:08,916 --> 00:00:12,441
+But now they think — and thinking takes power.
+
+5
+00:00:12,491 --> 00:00:16,334
+Last year, data centres used 485 terawatt-hours.
+
+6
+00:00:16,384 --> 00:00:21,572
+By 2030: almost double — about 3% of the world’s electricity.
+
+7
+00:00:21,622 --> 00:00:23,328
+And the AI part triples.
+
+8
+00:00:23,378 --> 00:00:27,593
+So the next limit on AI may not be chips… but power.
+
+9
+00:00:27,643 --> 00:00:30,493
+Who gets the power — and who pays the bill?

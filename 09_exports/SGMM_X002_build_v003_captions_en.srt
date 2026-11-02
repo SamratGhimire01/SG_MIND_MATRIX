@@ -1,0 +1,35 @@
+1
+00:00:00,000 --> 00:00:04,602
+AI isn’t taking the last job. It’s taking the first one.
+
+2
+00:00:04,652 --> 00:00:07,031
+Your first job used to be the boring part.
+
+3
+00:00:07,081 --> 00:00:10,742
+Coffee. Spreadsheets. First drafts. That’s how you learned.
+
+4
+00:00:10,792 --> 00:00:13,226
+But now AI does the boring part.
+
+5
+00:00:13,276 --> 00:00:16,564
+So companies hire fewer beginners.
+
+6
+00:00:16,614 --> 00:00:22,848
+One study: young workers in AI-exposed jobs are 19% behind their peers.
+
+7
+00:00:22,898 --> 00:00:25,513
+Experienced workers? No gap.
+
+8
+00:00:25,563 --> 00:00:28,003
+So if nobody starts at the bottom…
+
+9
+00:00:28,163 --> 00:00:29,403
+who becomes the expert?

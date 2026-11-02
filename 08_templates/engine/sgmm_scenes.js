@@ -618,7 +618,7 @@ const SCENE_SOUND={
 const inWindow=(k,a,b)=>{const ok=t=>t>=a-.05&&t<b;return{...k,play:(n,t,o)=>{if(ok(t))k.play(n,t,o)},tone:(t,p)=>{if(ok(t))k.tone(t,p)},noise:(t,p)=>{if(ok(t))k.noise(t,p)},
   daf:(t,...r)=>{if(ok(t))k.daf(t,...r)},ney:(ph,o)=>{if(ph.length&&ok(ph[0][0]))k.ney(ph,o)},choir:(t0,...r)=>{if(ok(t0))k.choir(t0,...r)},drone:(t0,...r)=>{if(ok(t0))k.drone(t0,...r)}}};
 function sufiTension(k,plan,scenes){
-  const D=plan.duration,find=ty=>scenes.find(s=>s.type===ty),clock=s=>x=>{let p=x-s.off;for(const [T,dt] of s.hold||[])if(p>=T)p+=dt;return p};
+  const D=plan.duration,find=ty=>scenes.find(s=>s.type===ty),clock=s=>x=>{if(!s.map)return x-s.off;const {P,S,K}=s.map;let i=S.length-1;while(i>0&&x<S[i])i--;return P[i]+(x-S[i])/K[i]};   // scene time -> plan time (inverse of the stretch)
   const hook=find('enter_in_dark'),field=find('field_push'),logo=find('logo_from_dark'),tease=find('blackout_tease');
   const press=hook?clock(hook)(PRESS):0,hit=field?clock(field)(28.0):null;
   const A={press,hit,cut:hit!=null?hit-.52:null,logoHit:logo?clock(logo)(41.0):null,blackout:tease?tease.a:logo?clock(logo)(BLACKOUT):D};
@@ -698,11 +698,13 @@ function load(plan){
   const TAGS=(plan.act_tags||[]).map(g=>[g.t[0],g.t[1],g.num,g.label,ACTCOL[g.label]||C.white]);
   const TRAIL=scenes.flatMap(s=>s.trail),DUR=plan.duration;
   const trailK=t=>{for(const [a,b,k] of TRAIL){if(t>=a&&t<b)return k*Math.min(seg(t,a,a+.15),1-seg(t,b-.15,b))}return 0};
-  /* hold: [[T, dt]] from sgmm build — the scene freezes at plan time T for dt seconds (time inserted for a long voice line) */
-  const local=(s,t)=>{for(let i=s.hold.length-1;i>=0;i--){const [T,dt]=s.hold[i];if(t>=T+dt)t-=dt;else if(t>=T)t=T}return t+s.off};
+  /* hold: [[T, dt]] from sgmm build (time inserted for a long voice line). The scene never freezes: from T to the next hold (or its end)
+     its own animation runs slower so it fills the extra dt — every move, and its sound, stays on the picture (Samrat: no dead stretches) */
+  scenes.forEach(s=>{const H=[...s.hold].sort((x,y)=>x[0]-y[0]),P=[s.a],S=[s.a+s.off],K=[1];
+    H.forEach(([T,dt],i)=>{P.push(T);S.push(S[S.length-1]+(T-P[P.length-2])*K[K.length-1]);const nx=i+1<H.length?H[i+1][0]:s.b,Lp=nx-T,Ls=Math.max(.1,Lp-dt);K.push(Ls/Lp)});s.map={P,S,K}});
+  const local=(s,t)=>{const {P,S,K}=s.map;let i=P.length-1;while(i>0&&t<P[i])i--;return S[i]+(t-P[i])*K[i]};
   /* a held picture never freezes: a slow push-in while the hold runs, kept afterwards (no jump) */
-  const pushIn=(s,t)=>{let h=0;for(const [T,dt] of s.hold)if(t>T)h+=Math.min(dt,t-T);return 1+Math.min(.06,.03*h)};
-  const draw=(c,s,t)=>{TX=s.tx;c.save();const z=s.hold.length?pushIn(s,t):1;if(z!==1){c.translate(540,960);c.scale(z,z);c.translate(-540,-960)}s.fn(c,local(s,t));c.restore()};
+  const draw=(c,s,t)=>{TX=s.tx;c.save();s.fn(c,local(s,t));c.restore()};
   function render(ctx,W,H,t,caps=true){const S=W/1080;ctx.setTransform(S,0,0,H/1920,0,0);ctx.globalAlpha=1;ctx.filter='none';ctx.globalCompositeOperation='source-over';ctx.fillStyle=C.void;ctx.fillRect(0,0,1080,1920);
     const act=scenes.filter(s=>t>=s.a&&t<s.b);
     act.forEach((s,i)=>{if(i===0){draw(ctx,s,t);return}const al=ss(seg(t,s.a,act[i-1].b));const oc2=offFor(W,H),o=oc2.getContext('2d');o.setTransform(S,0,0,H/1920,0,0);o.globalAlpha=1;o.filter='none';o.fillStyle=C.void;o.fillRect(0,0,1080,1920);draw(o,s,t);

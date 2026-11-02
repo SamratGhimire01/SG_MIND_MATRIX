@@ -74,10 +74,14 @@ window.X003_OPT = (() => {
     if (t > 2.5) { const W = 300, b1 = sm(2.6, 3.2, t), b2 = sm(5.0, 5.8, t);
       drawTex(c, layout(c, [T('485 TWh', {f: 'stix'}), T('  2025', {f: 'mono', sz: 0.4})], 100, 150, 640), {p: seg(2.5, 3.1, t)});
       strokePts(c, [[150, 720], [150 + W, 720]], C.white, 26, 0, b1);
+      strokePts(c, rectPts(500, 600, 640, 660), C.fog, 3, 0, sm(3.4, 3.8, t)); const fl = seg(4.1, 4.6, t); if (fl > 0 && fl < 1) P.flash(c, [[150, 720], [150 + W, 720]], SM(fl), C.amber, 26, 0.35);
+      const fl2 = seg(7.9, 8.4, t); if (fl2 > 0 && fl2 < 1) P.flash(c, [[150 + W, 720], [150 + 2 * W, 720]], SM(fl2), C.amber, 26, 0.35);
+      drawTex(c, layout(c, [T('\u00d72', {f: 'stix'})], 80, 790, 700), {p: seg(6.0, 6.3, t), col: C.amber});
       if (b2 > 0) { c.save(); c.setLineDash([16, 12]); strokePts(c, [[150 + W, 720], [150 + 2 * W, 720]], C.white, 26, 0, b2, 0.8); c.restore(); drawTex(c, layout(c, [T('~950 TWh', {f: 'stix'}), T('  2030 · projection', {f: 'mono', sz: 0.4})], 70, 150, 820), {p: seg(5.4, 6.0, t)}); }
       const wd = sm(6.2, 7.0, t); if (wd > 0) { const cx = 540, cy = 1130, R = 150; strokePts(c, Array.from({length: 61}, (_, i) => [cx + Math.cos(i / 60 * TAU) * R, cy + Math.sin(i / 60 * TAU) * R]), C.fog, 4, 0, 1, wd);
-        c.save(); c.globalAlpha = wd; c.fillStyle = C.green; c.beginPath(); c.moveTo(cx, cy); c.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + TAU * 0.03 * wd); c.closePath(); c.fill(); c.restore();
-        drawTex(c, layout(c, [T('≈3%', {f: 'stix'}), T(' of world electricity, 2030', {f: 'mono', sz: 0.35})], 80, 720, 1150), {p: seg(6.6, 7.2, t), col: C.green}); }
+        const pz = 1 + 0.25 * tab(7.4, 7.8, t); c.save(); c.globalAlpha = wd; c.fillStyle = C.green; c.beginPath(); c.moveTo(cx, cy); c.arc(cx, cy, R * pz, -Math.PI / 2, -Math.PI / 2 + TAU * 0.03 * wd); c.closePath(); c.fill(); c.restore();
+        drawTex(c, layout(c, [T('≈3%', {f: 'stix'}), T(' of world electricity, 2030', {f: 'mono', sz: 0.35})], 80, 720, 1150), {p: seg(6.6, 7.2, t), col: C.white});   // the wedge is the one green
+        strokePts(c, rectPts(700, 1075, 1000, 1180), C.white, 4, 0, sm(7.0, 7.5, t)); arrow(c, 600, 1030, lerp(600, 700, sm(7.6, 8.0, t)), lerp(1030, 1100, sm(7.6, 8.0, t)), C.white, 4, sm(7.6, 8.0, t), 20); }
       const ai = [sm(8.3, 8.5, t), sm(8.8, 9.0, t), sm(9.3, 9.5, t)]; if (ai[0] > 0) { drawTex(c, layout(c, [T('AI part', {f: 'mono'})], 26, 150, 920), {col: C.fog}); ai.forEach((p, i) => strokePts(c, [[300 + i * 90, 912], [380 + i * 90, 912]], C.amber, 22, 0, p)); drawTex(c, layout(c, [T('×3', {f: 'stix'})], 60, 590, 932), {p: seg(9.4, 9.8, t), col: C.amber}); }
       src(c, t, 3.2, 1360); }
     cap(c, t, 'now');
@@ -114,9 +118,9 @@ window.X003_OPT = (() => {
     for (let k = 0; k < 6; k++) { const on = lit > k / 6; L.push({x: -6 + k, y: 3, z: 1 + ((k * 3) % 3), c: on ? C.amber : '#3B4743', e: on}); } return L; }
   function nextA(c, t) { // a voxel city; power runs block by block into one data-centre block (the green light on top); a voxel bill prints out
     K.voxGround(c); tag(c, t, '03', 'NEXT', C.green);
-    const pr = K.proj(540, 1220, 34, K.YAW + 0.07 * t), list = K.fallIn(cityVox(t, seg(0.8, 2.4, t)), t, (v) => 0.05 + (v.x + 6) * 0.03 + v.z * 0.05);
+    const pr = K.proj(540, 1220, 34, K.YAW + 0.16 * t), list = K.fallIn(cityVox(t, seg(0.8, 2.4, t)), t, (v) => 0.05 + (v.x + 6) * 0.03 + v.z * 0.05);
     const bill = seg(2.9, 4.4, t); for (let z = 0; z < Math.floor(9 * bill); z++) for (let x = 0; x < 4; x++) list.push({x: 2 + x, y: 2, z: 7 + z, c: z % 2 && x > 0 && x < 3 ? '#2C5E4E' : '#EDEFEA'});
-    K.voxels(c, list, pr); cap(c, t, 'next');
+    K.voxels(c, list, pr); const fx = Math.max(tab(1.6, 1.9, t), tab(2.4, 2.7, t)); if (fx > 0) { c.save(); c.globalAlpha = 0.18 * fx; c.fillStyle = C.white; c.fillRect(0, 0, 1080, 1920); c.restore(); } cap(c, t, 'next');
   }
   function nextB(c, t) { // the engine flow field with a Manim bill drawing on
     if (!nextB.ep) nextB.ep = SGMM.load({fps: 60, size: [1080, 1920], duration: 5.4, score: null, scenes: [{type: 'field_push', t: [0, 5.4]}], act_tags: [{t: [0, 5.4], num: '03', label: 'NEXT'}], captions: CAPS.next.map(([a, b, x]) => ({t: [a, b], text: x}))});
@@ -138,8 +142,8 @@ window.X003_OPT = (() => {
     hook: (k, P, c) => { for (let i = 0; i < 8; i++) P('key', c(0.25 + i * 0.08), {g: 0.4}); for (let i = 0; i < 8; i++) P('tick', c(0.95 + i * 0.16), {f: 1800 + i * 120, g: 0.3}); P('ding', c(2.2), {f: 1975, g: 0.22}); },
     then: (k, P, c) => { P('put', c(0.1), {g: 1.0}); P('thud', c(0.11), {f: 90, g: 0.3}); P('put', c(0.6), {g: 0.8}); [2.4, 3.0, 3.6].forEach((x, i) => { P('slide', c(x - 0.1), {dur: 0.2, g: 0.6}); P('put', c(x), {g: 0.9, pan: 0.4}); P('tear', c(x + 0.12), {g: 0.3}); }); P('stroke', c(4.4), {material: 'marker', dur: 0.5, g: 0.9}); },
     now: (k, P, c) => { P('whoosh', c(0.8), {dur: 0.9, top: 1300, g: 0.35}); P('tick', c(1.8), {f: 2600, g: 0.4}); P('stroke', c(2.5), {material: 'pen', dur: 0.6, g: 0.4}); P('slide', c(2.6), {dur: 0.6, g: 0.6});
-      P('slide', c(5.0), {dur: 0.8, g: 0.6}); P('ding', c(5.8), {f: 1318.5, g: 0.18}); P('tick', c(6.2), {f: 2400, g: 0.35}); k.ney([[c(6.6), 587.33, 0.9, 1]], {gain: 0.06}); [8.3, 8.8, 9.3].forEach((x) => P('click', c(x), {f: 2400, g: 0.6})); k.daf(c(9.4), 'tek', 0.6); },
-    next: (k, P, c) => { for (let i = 0; i < 14; i++) P('key', c(0.05 + i * 0.1), {g: 0.28}); for (let i = 0; i < 6; i++) P('tick', c(0.8 + i * 0.27), {f: 2000 + i * 150, g: 0.4}); for (let i = 0; i < 9; i++) P('key', c(2.9 + i * 0.17), {g: 0.4, pan: 0.2}); P('ding', c(4.5), {f: 1975, g: 0.2}); },
+      P('slide', c(5.0), {dur: 0.8, g: 0.6}); P('ding', c(5.8), {f: 1318.5, g: 0.18}); P('tick', c(6.2), {f: 2400, g: 0.35}); k.ney([[c(6.6), 587.33, 0.9, 1]], {gain: 0.06}); [8.3, 8.8, 9.3].forEach((x) => P('click', c(x), {f: 2400, g: 0.6})); k.daf(c(9.4), 'tek', 0.6); P('tick', c(3.4), {f: 2400, g: 0.4}); P('whoosh', c(4.1), {dur: 0.5, top: 1500, g: 0.35}); P('click', c(6.0), {f: 2400, g: 0.9}); P('tick', c(6.6), {f: 2800, g: 0.7}); P('click', c(7.0), {f: 2200, g: 0.9}); k.daf(c(7.4), 'tek', 0.5); P('click', c(7.6), {f: 2000, g: 0.9}); P('tick', c(7.9), {f: 2600, g: 0.7}); },
+    next: (k, P, c) => { for (let i = 0; i < 14; i++) P('key', c(0.05 + i * 0.1), {g: 0.28}); for (let i = 0; i < 6; i++) P('tick', c(0.8 + i * 0.27), {f: 2000 + i * 150, g: 0.4}); for (let i = 0; i < 9; i++) P('key', c(2.9 + i * 0.17), {g: 0.4, pan: 0.2}); P('ding', c(4.5), {f: 1975, g: 0.2}); P('thud', c(1.6), {f: 90, g: 0.4}); P('thud', c(2.4), {f: 80, g: 0.45}); },
   };
   const engineScene = (fn, sound) => ({at: 0, sound, draw: (ctx, t) => { CH = false; try { fn(ctx, t); } finally { CH = true; } }});
   window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x003_hook_line: engineScene(hookA, SND.hook), x003_then_rack: engineScene(thenA, SND.then), x003_now_power: engineScene(nowA, SND.now), x003_next_city: engineScene(nextA, SND.next)});
