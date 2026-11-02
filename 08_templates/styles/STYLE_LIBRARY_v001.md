@@ -28,5 +28,6 @@ Samrat brought 8 "explainer look" reference styles. They become **SGMM styles**:
 | **Y2K Liquid Chrome** | NEXT alternative (highest brand risk) | env map → Void / Signal White / Deep Forest only; **no lilac/pink iridescence**, no glints that read as tech-glow; mercury blob = the model; one Green highlight |
 
 ## Status
-- Nothing built yet in these styles. First build waits for Samrat's content (topic or script) and which style to start with.
+- **Manim (NOW):** reference saved in `_reference/`; 3 recoloured options drawn in `manim/` (`sgmm_manim.js`, options page + PNG, https://claude.ai/artifact/B8X82h3p4gno2xp3mmgXAc ) — waiting for Samrat's pick, not in the engine yet.
+- The other 7 styles: nothing built yet. First build waits for Samrat's content (topic or script) and which style to start with.
 - When a style is built, put it in `08_templates/styles/<style-id>/` (renderer + `style.json` + preview still) so `scenes.json` can name it.

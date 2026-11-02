@@ -1,0 +1,344 @@
+/* SGMM Manim style v001 (draft for the options storyboard) — Manim's vocabulary, studied from
+   08_templates/styles/_reference/styles/math-anim.js: the sigmoid `smooth` rate function, Write (glyph outlines trace on, then fill),
+   Create, Transform / TransformMatchingTex, Indicate, ShowPassingFlash, SurroundingRectangle, GrowArrow, axes with ticks,
+   gradient-descent hops with ghost dots.
+   Recoloured to SGMM (STYLE_LIBRARY_v001): black -> Void, Manim blue -> Signal White, teal -> Fog, yellow / gold / red -> Archive Amber,
+   ONE Matrix Green element per frame (the answer). Math in STIX (the medium), words in Space Grotesk, labels in JetBrains Mono.
+   Vertical 1080x1920; every frame is a pure function of t; randomness is seeded.
+   Usage: SGMM_MANIM.options.A.draw(ctx, t) with ctx scaled to 1080x1920 logical pixels. */
+window.SGMM_MANIM = (() => {
+  const C = {bg: '#050807', white: '#F2F5F3', fog: '#7C8A84', fogD: '#33403A', amber: '#FFB547', green: '#00E676'};
+  const cl = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), lerp = (a, b, t) => a + (b - a) * t, TAU = Math.PI * 2;
+  // Manim's `smooth` (inflection 10), there_and_back
+  const sig = (x) => 1 / (1 + Math.exp(-x)), SE = sig(-5);
+  const SM = (x) => { x = cl(x); return cl((sig(10 * (x - 0.5)) - SE) / (1 - 2 * SE)); };
+  const seg = (a, b, t) => cl((t - a) / (b - a)), sm = (a, b, t) => SM(seg(a, b, t));
+  const tab = (a, b, t) => { const x = seg(a, b, t); return x <= 0 || x >= 1 ? 0 : SM(x < 0.5 ? 2 * x : 2 - 2 * x); };
+  const hex = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+  const mixc = (a, b, t) => { const A = hex(a), B = hex(b); t = cl(t); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); };
+  function rng(seed) { let a = seed >>> 0 || 1; return () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  const FAM = {stix: '"STIX Two Text", STIXGeneral, "Times New Roman", serif', sg: '"Space Grotesk", system-ui, sans-serif', mono: '"JetBrains Mono", ui-monospace, monospace'};
+  const fnt = (sz, it, w, f) => `${it ? 'italic ' : ''}${w || (f === 'sg' ? 500 : 400)} ${sz}px ${FAM[f || 'stix']}`;
+  const FONTS = ['400 52px "STIX Two Text"', 'italic 400 52px "STIX Two Text"', '500 52px "Space Grotesk"', '700 52px "Space Grotesk"', '500 40px "JetBrains Mono"', '700 40px "JetBrains Mono"'];
+
+  // ---------------- typesetting (the reference's tiny MathTex, with a font family per token)
+  const T = (s, o) => Object.assign({s}, o || {});
+  function layout(ctx, toks, size, x, y, align) {
+    const gl = []; let cx = 0;
+    for (const tk of toks) {
+      if (tk.gap) { cx += tk.gap * size; continue; }
+      const sz = size * (tk.sz || 1), font = fnt(sz, tk.it, tk.w, tk.f);
+      ctx.font = font;
+      for (let i = 0; i < tk.s.length; i++) {
+        if (tk.s[i] === ' ') continue;
+        const off = i ? ctx.measureText(tk.s.slice(0, i)).width : 0;
+        gl.push({ch: tk.s[i], x: cx + off, y: (tk.dy || 0) * size, font, sz, c: tk.c || C.white, k: tk.k || tk.s, ki: i});
+      }
+      cx += ctx.measureText(tk.s).width + (tk.kern || 0) * size;
+    }
+    const w = cx, x0 = align === 'center' ? x - w / 2 : align === 'right' ? x - w : x;
+    for (const g of gl) { g.x += x0; g.y += y; }
+    return {gl, w, x0, x1: x0 + w, y, size, cx: x0 + w / 2};
+  }
+  // Write: outline traces on (dash), then the fill comes up as the outline fades
+  function glyph(ctx, g, a, alpha, col, x, y, s) {
+    if (a <= 0 || alpha <= 0.003) return;
+    x = x == null ? g.x : x; y = y == null ? g.y : y; s = s || 1;
+    ctx.save(); ctx.translate(x, y); if (s !== 1) ctx.scale(s, s); ctx.font = g.font;
+    if (a >= 1) { ctx.globalAlpha = alpha; ctx.fillStyle = col; ctx.fillText(g.ch, 0, 0); ctx.restore(); return; }
+    const d = SM(a * 2), f = SM(a * 2 - 1), Lm = g.sz * 4;
+    if (f < 1) { ctx.globalAlpha = alpha * (1 - f); ctx.strokeStyle = col; ctx.lineWidth = Math.max(1, g.sz * 0.028); ctx.setLineDash([d * Lm + 0.01, Lm * 30]); ctx.strokeText(g.ch, 0, 0); }
+    if (f > 0) { ctx.setLineDash([]); ctx.globalAlpha = alpha * f; ctx.fillStyle = col; ctx.fillText(g.ch, 0, 0); }
+    ctx.restore();
+  }
+  function writeA(n, p, i) { if (p >= 1) return 1; const r = Math.min(4 / Math.max(1, n), 0.2), Ld = 1 / (1 + (n - 1) * r); return cl((p - i * r * Ld) / Ld); }
+  function drawTex(ctx, L, o) {
+    o = o || {};
+    const p = o.p == null ? 1 : o.p, alpha = o.alpha == null ? 1 : o.alpha, n = L.gl.length, dx = o.dx || 0, dy = o.dy || 0;
+    L.gl.forEach((g, i) => {
+      const col = o.col ? (typeof o.col === 'function' ? o.col(g, i) : o.col) : g.c;
+      let s = 1, x = g.x + dx, y = g.y + dy;
+      if (o.scale && o.scale !== 1) { const ox = (o.ox == null ? L.cx : o.ox) + dx, oy = (o.oy == null ? L.y - L.size * 0.33 : o.oy) + dy; x = ox + (x - ox) * o.scale; y = oy + (y - oy) * o.scale; s = o.scale; }
+      glyph(ctx, g, writeA(n, p, i), alpha, col, x, y, s);
+    });
+  }
+  // TransformMatchingTex: same glyphs fly to their new places, the rest fade while shifting with the group
+  function morphTex(ctx, A, B, q, o) {
+    o = o || {};
+    const alpha = o.alpha == null ? 1 : o.alpha, used = new Set(), dx = B.cx - A.cx, dy = B.y - A.y, sc = B.size / A.size;
+    const colA = (g) => (o.colA ? o.colA(g) : g.c), colB = (g) => (o.colB ? o.colB(g) : g.c);
+    for (const g of A.gl) {
+      const j = B.gl.findIndex((h, jj) => !used.has(jj) && h.ch === g.ch);
+      if (j >= 0) { used.add(j); const h = B.gl[j]; glyph(ctx, g, 1, alpha, mixc(colA(g), colB(h), q), lerp(g.x, h.x, q), lerp(g.y, h.y, q), lerp(1, h.sz / g.sz, q)); }
+      else glyph(ctx, g, 1, alpha * (1 - q), colA(g), A.cx + (g.x - A.cx) * lerp(1, sc, q) + dx * q, A.y + (g.y - A.y) * lerp(1, sc, q) + dy * q, lerp(1, sc, q));
+    }
+    B.gl.forEach((h, j) => { if (!used.has(j)) glyph(ctx, h, 1, alpha * q, colB(h), B.cx + (h.x - B.cx) * lerp(1 / sc, 1, q) - dx * (1 - q), B.y + (h.y - B.y) * lerp(1 / sc, 1, q) - dy * (1 - q), lerp(1 / sc, 1, q)); });
+  }
+
+  // ---------------- vector primitives (Create = stroke drawn along its length)
+  function cumLen(pts) { const c = [0]; for (let i = 1; i < pts.length; i++) c.push(c[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])); return c; }
+  function pathPart(ctx, pts, a, b, cum) {
+    cum = cum || cumLen(pts);
+    const L = cum[cum.length - 1], A = a * L, B = b * L; if (B <= A) return false;
+    const at = (d) => { let i = 1; while (i < cum.length - 1 && cum[i] < d) i++; const u = (d - cum[i - 1]) / Math.max(1e-6, cum[i] - cum[i - 1]); return [lerp(pts[i - 1][0], pts[i][0], u), lerp(pts[i - 1][1], pts[i][1], u), i]; };
+    const s = at(A), e = at(B);
+    ctx.beginPath(); ctx.moveTo(s[0], s[1]); for (let i = s[2]; i < e[2]; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.lineTo(e[0], e[1]);
+    return true;
+  }
+  function strokePts(ctx, pts, col, lw, a, b, alpha, cum) {
+    if (alpha != null && alpha <= 0.003) return;
+    ctx.save(); ctx.globalAlpha = alpha == null ? 1 : alpha;
+    if (pathPart(ctx, pts, a == null ? 0 : a, b == null ? 1 : b, cum)) { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(); }
+    ctx.restore();
+  }
+  function flash(ctx, pts, u, col, lw, w, alpha, cum) { w = w || 0.3; const b = lerp(0, 1 + w, u), a = b - w; strokePts(ctx, pts, col, lw, Math.max(0, a), Math.min(1, b), alpha, cum); }
+  function tip(ctx, x, y, ang, len, col, alpha) { ctx.save(); ctx.globalAlpha = alpha == null ? 1 : alpha; ctx.fillStyle = col; ctx.translate(x, y); ctx.rotate(ang); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-len, -len * 0.5); ctx.lineTo(-len, len * 0.5); ctx.closePath(); ctx.fill(); ctx.restore(); }
+  function arrow(ctx, x1, y1, x2, y2, col, lw, p, tl, alpha) {
+    p = p == null ? 1 : p; if (p <= 0) return;
+    tl = (tl || 18) * Math.min(1, p * 1.5);
+    const ex = lerp(x1, x2, p), ey = lerp(y1, y2, p), ang = Math.atan2(y2 - y1, x2 - x1);
+    strokePts(ctx, [[x1, y1], [ex - Math.cos(ang) * tl * 0.9, ey - Math.sin(ang) * tl * 0.9]], col, lw, 0, 1, alpha); tip(ctx, ex, ey, ang, tl, col, alpha);
+  }
+  function arcPts(x1, y1, x2, y2, bend, n) {
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), cx = mx - dy / L * bend * L, cy = my + dx / L * bend * L, pts = [];
+    for (let i = 0; i <= (n || 24); i++) { const u = i / (n || 24); pts.push([(1 - u) * (1 - u) * x1 + 2 * u * (1 - u) * cx + u * u * x2, (1 - u) * (1 - u) * y1 + 2 * u * (1 - u) * cy + u * u * y2]); }
+    return pts;
+  }
+  function curvedArrow(ctx, pts, col, lw, p, tl, alpha) {
+    if (p <= 0) return;
+    const cum = cumLen(pts), L = cum[cum.length - 1]; tl = tl || 16;
+    const end = p * L, k = cum.findIndex((c) => c >= end - tl * 0.85);
+    strokePts(ctx, pts, col, lw, 0, Math.max(0, (end - tl * 0.85) / L), alpha, cum);
+    let i = 1; while (i < cum.length - 1 && cum[i] < end) i++;
+    const u = (end - cum[i - 1]) / Math.max(1e-6, cum[i] - cum[i - 1]), ex = lerp(pts[i - 1][0], pts[i][0], u), ey = lerp(pts[i - 1][1], pts[i][1], u), j = Math.max(0, k);
+    tip(ctx, ex, ey, Math.atan2(ey - pts[j][1], ex - pts[j][0]), tl * Math.min(1, p * 2), col, alpha);
+  }
+  const rectPts = (x0, y0, x1, y1) => [[x1, y0], [x0, y0], [x0, y1], [x1, y1], [x1, y0]]; // Manim polygon order
+  function ghost(ctx, x, y, r, col, alpha) { if (alpha <= 0.003) return; ctx.save(); ctx.globalAlpha = alpha * 0.22; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); ctx.globalAlpha = alpha; ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore(); }
+  function dot(ctx, x, y, r, col, alpha) { if (r <= 0) return; ctx.save(); ctx.globalAlpha = alpha == null ? 1 : alpha; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); ctx.restore(); }
+  function circle(ctx, x, y, r, p, stroke, lw, fillCol, fill, alpha) {
+    alpha = alpha == null ? 1 : alpha; if (p <= 0 || alpha <= 0.003) return;
+    ctx.save();
+    if (fill > 0.002) { ctx.globalAlpha = alpha * fill * Math.min(1, p * 1.2); ctx.fillStyle = fillCol; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); }
+    ctx.globalAlpha = alpha; ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.beginPath(); ctx.arc(x, y, r, 0, -TAU * Math.min(1, p), true); ctx.stroke();
+    ctx.restore();
+  }
+  const checkPts = (x, y, s) => [[x - 0.5 * s, y], [x - 0.15 * s, y + 0.38 * s], [x + 0.55 * s, y - 0.45 * s]];
+  function axes(ctx, A, p, o) {
+    o = o || {}; const alpha = o.alpha == null ? 1 : o.alpha, col = o.col || C.white, lw = o.lw || 3;
+    if (p <= 0 || alpha <= 0.003) return;
+    arrow(ctx, A.ox, A.oy, A.ox + (A.xn + 0.35) * A.ux, A.oy, col, lw, SM(p), 16, alpha);
+    arrow(ctx, A.ox, A.oy, A.ox, A.oy - (A.yn + 0.35) * A.uy, col, lw, SM(p), 16, alpha);
+    ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = col; ctx.lineWidth = 2.5;
+    for (let i = 1; i <= A.xn; i++) { const s = SM(seg(i / (A.xn + 1) * 0.8, i / (A.xn + 1) * 0.8 + 0.25, p)); if (s > 0) { const x = A.ox + i * A.ux; ctx.beginPath(); ctx.moveTo(x, A.oy - 9 * s); ctx.lineTo(x, A.oy + 9 * s); ctx.stroke(); } }
+    for (let i = 1; i <= A.yn; i++) { const s = SM(seg(i / (A.yn + 1) * 0.8, i / (A.yn + 1) * 0.8 + 0.25, p)); if (s > 0) { const y = A.oy - i * A.uy; ctx.beginPath(); ctx.moveTo(A.ox - 9 * s, y); ctx.lineTo(A.ox + 9 * s, y); ctx.stroke(); } }
+    ctx.restore();
+  }
+  const ax2s = (A, x, y) => [A.ox + x * A.ux, A.oy - y * A.uy];
+  const graphPts = (A, f, x0, x1, n) => Array.from({length: n + 1}, (_, i) => { const x = lerp(x0, x1, i / n); return ax2s(A, x, f(x)); });
+
+  // ---------------- what the engine adds on top in a real plan (shown here for context): act tag + caption
+  function actTag(ctx, t) {
+    const inn = sm(0, 0.45, t), x = 72, y = 330; if (inn <= 0) return;
+    ctx.save(); ctx.fillStyle = C.white; ctx.beginPath(); ctx.arc(x + 18, y, 18 * inn, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.rect(x + 48, y - 34, 360 * inn, 68); ctx.clip(); ctx.fillStyle = 'rgba(5,8,7,.55)'; ctx.fillRect(x + 48, y - 30, 360, 60);
+    ctx.font = `500 26px ${FAM.mono}`; ctx.fillStyle = C.fog; ctx.textBaseline = 'middle'; ctx.fillText('02', x + 62, y + 1);
+    ctx.font = `700 38px ${FAM.mono}`; ctx.fillStyle = C.white; ctx.fillText('NOW', x + 112, y + 2); ctx.restore();
+  }
+  const CAPS = [[0.15, 2.2, 'Today, you just ask.'], [2.5, 99, 'And it answers in sentences,\nnot links.']];
+  function caption(ctx, t, D) {
+    for (const [a, b0, txt] of CAPS) {
+      const b = Math.min(b0, D - 0.05); if (t < a || t > b) continue;
+      const al = Math.min(sm(a, a + 0.2, t), 1 - sm(b - 0.2, b, t));
+      ctx.save(); ctx.globalAlpha = al; ctx.font = `500 44px ${FAM.mono}`; ctx.textBaseline = 'middle';
+      txt.split('\n').forEach((ln, i) => { const w = ctx.measureText(ln).width, y = 1440 + i * 60; ctx.fillStyle = 'rgba(5,8,7,.62)'; ctx.fillRect(540 - w / 2 - 16, y - 30, w + 32, 60); ctx.fillStyle = C.white; ctx.fillText(ln, 540 - w / 2, y); });
+      ctx.restore();
+    }
+  }
+  const ground = (ctx) => { ctx.fillStyle = C.bg; ctx.fillRect(0, 0, 1080, 1920); };
+  const question = (ctx, t, a, b, y) => { const L = layout(ctx, [T('How did people find answers?', {f: 'sg'})], 56, 540, y, 'center'); drawTex(ctx, L, {p: seg(a, b, t)}); return L; };
+
+  // =====================================================================================================
+  // A · TEN LINKS -> ONE ANSWER: a search page of ten result rows is Created, boxed in Amber, then the rows collapse
+  //     (Transform) into one written sentence; a green SurroundingRectangle lands on the answer.
+  // =====================================================================================================
+  const ROWS = (() => { const r = rng(11); return Array.from({length: 10}, (_, i) => ({y: 640 + i * 62, w1: 320 + r() * 380, w2: 160 + r() * 240})); })();
+  function drawA(ctx, t) {
+    const D = OPT.A.dur; ground(ctx); actTag(ctx, t);
+    question(ctx, t, 0.05, 0.9, 500);
+    const coll = sm(2.9, 3.55, t), gone = sm(3.2, 3.6, t);
+    // ten results: bullet, title line (white), url line (fog); Create with lag
+    ROWS.forEach((R, i) => {
+      const p = sm(0.6 + i * 0.09, 1.1 + i * 0.09, t); if (p <= 0) return;
+      const x0 = 170, y = lerp(R.y, 880, coll), k = 1 - coll, a = 1 - gone;
+      dot(ctx, x0, y - 4, 7 * p, C.fog, a);
+      strokePts(ctx, [[x0 + 34, y - 12], [x0 + 34 + R.w1 * k + 1, y - 12]], C.white, 7, 0, p, a * 0.92);
+      strokePts(ctx, [[x0 + 34, y + 12], [x0 + 34 + R.w2 * k + 1, y + 12]], C.fog, 4, 0, p, a * 0.85);
+    });
+    // "10 links" under the list, later Transforms into "1 answer"
+    const L10 = layout(ctx, [T('10', {f: 'stix'}), T(' links', {f: 'mono', sz: 0.78})], 50, 540, 1330, 'center');
+    const L1 = layout(ctx, [T('1', {f: 'stix'}), T(' answer', {f: 'mono', sz: 0.78})], 50, 540, 1080, 'center');
+    const mq = sm(4.75, 5.3, t);
+    if (mq <= 0) drawTex(ctx, L10, {p: seg(1.5, 2.0, t), col: (g) => (g.ch.match(/\d/) ? C.white : C.fog)});
+    else morphTex(ctx, L10, L1, mq, {colA: (g) => (g.ch.match(/\d/) ? C.white : C.fog), colB: (g) => (g.ch.match(/\d/) ? C.white : C.fog)});
+    // SurroundingRectangle (Amber): the old effort
+    const rp = sm(2.15, 2.65, t), ra = 1 - sm(2.95, 3.3, t);
+    if (rp > 0) strokePts(ctx, rectPts(140, 600, 940, 1250), C.amber, 4, 0, rp, ra);
+    // GrowArrow from the question down to the answer, ShowPassingFlash along it
+    const ar = sm(3.3, 3.75, t); arrow(ctx, 540, 545, 540, 745, C.white, 3.5, ar, 22);
+    const fl = seg(3.75, 4.3, t); if (fl > 0 && fl < 1) flash(ctx, [[540, 545], [540, 720]], SM(fl), C.amber, 6, 0.4);
+    // the answer, written
+    const A1 = layout(ctx, [T('Card catalogs, librarians', {f: 'sg'})], 56, 540, 850, 'center'), A2 = layout(ctx, [T('and a lot of patience.', {f: 'sg'})], 56, 540, 925, 'center');
+    drawTex(ctx, A1, {p: seg(3.5, 4.4, t)}); drawTex(ctx, A2, {p: seg(3.85, 4.75, t)});
+    // the one green element: SurroundingRectangle round the answer
+    const g = sm(4.75, 5.2, t);
+    if (g > 0) strokePts(ctx, rectPts(Math.min(A1.x0, A2.x0) - 34, 850 - 66, Math.max(A1.x1, A2.x1) + 34, 925 + 32), C.green, 4.5, 0, g);
+    caption(ctx, t, D);
+  }
+
+  // =====================================================================================================
+  // B · ONE WORD AT A TIME: a bar chart of next-word candidates (illustrative), the top bar Indicates in Amber
+  //     and its word flies into the growing sentence; the finished answer gets the green rectangle.
+  // =====================================================================================================
+  const CAND = [[['Card', 0.46], ['Books', 0.22], ['Ask', 0.18], ['The', 0.14]], [['catalogs', 0.71], ['games', 0.12], ['index', 0.09], ['tricks', 0.08]], [['and', 0.52], ['or', 0.2], ['plus', 0.18], ['then', 0.1]]];
+  const WORDS = ['Card', 'catalogs', 'and', 'librarians.'], ST = [0.9, 2.3, 3.7], STEP = 1.4, AB = {ox: 170, oy: 1250, ux: 190, uy: 110, xn: 4, yn: 4};
+  function drawB(ctx, t) {
+    const D = OPT.B.dur; ground(ctx); actTag(ctx, t);
+    question(ctx, t, 0.05, 0.9, 470);
+    // the sentence slots
+    ctx.font = fnt(56, false, 500, 'sg');
+    const sp = ctx.measureText(' ').width, ws = WORDS.map((w) => ctx.measureText(w).width), total = ws.reduce((a, b) => a + b, 0) + sp * (WORDS.length - 1);
+    let sx = 540 - total / 2; const slot = WORDS.map((w, i) => { const x = sx; sx += ws[i] + sp; return x; }), SY = 620;
+    // chart
+    const chartA = 1 - sm(4.95, 5.35, t), ca = sm(0.55, 1.1, t);
+    axes(ctx, AB, ca, {alpha: chartA});
+    const head = layout(ctx, [T('P', {it: true}), T('('), T('next word', {f: 'sg', sz: 0.86}), T(')')], 46, AB.ox, 760);
+    drawTex(ctx, head, {p: seg(0.6, 1.2, t), alpha: chartA});
+    ctx.save(); ctx.font = fnt(30); ctx.fillStyle = C.fog; ctx.textAlign = 'right';
+    for (const [v, i] of [['0.5', 2], ['1', 4]]) { ctx.globalAlpha = sm(1.0, 1.4, t) * chartA; ctx.fillText(v, AB.ox - 20, AB.oy - i * AB.uy + 10); }
+    ctx.restore();
+    const note = layout(ctx, [T('illustrative probabilities', {f: 'mono', sz: 1})], 24, AB.ox, AB.oy + 120);
+    drawTex(ctx, note, {alpha: sm(1.2, 1.6, t) * chartA, col: C.fog});
+    let k = ST.findIndex((s, i) => t >= s && (i === ST.length - 1 || t < ST[i + 1])); if (k < 0) k = 0;
+    const s0 = ST[k], grow = sm(s0, s0 + 0.45, t), prev = k ? CAND[k - 1] : null;
+    CAND[k].forEach(([word, pr], j) => {
+      const x = AB.ox + (j + 0.5) * AB.ux, h = lerp(prev ? prev[j][1] : 0, pr, grow) * 4 * AB.uy, bw = 116;
+      const ind = j === 0 ? tab(s0 + 0.55, s0 + 1.0, t) : 0, picked = j === 0 ? sm(s0 + 0.5, s0 + 0.7, t) * (1 - sm(s0 + 1.25, s0 + 1.4, t)) : 0;
+      ctx.save(); ctx.globalAlpha = chartA;
+      ctx.fillStyle = mixc(C.white, C.amber, Math.max(ind, picked)); ctx.globalAlpha = chartA * (0.16 + 0.34 * Math.max(ind, picked));
+      ctx.fillRect(x - bw / 2, AB.oy - h, bw, h); ctx.globalAlpha = chartA;
+      ctx.strokeStyle = mixc(C.white, C.amber, Math.max(ind, picked)); ctx.lineWidth = 3; ctx.strokeRect(x - bw / 2, AB.oy - h, bw, h); ctx.restore();
+      // probability (DecimalNumber) above, the word below
+      ctx.save(); ctx.font = fnt(32); ctx.textAlign = 'center'; ctx.fillStyle = C.white; ctx.globalAlpha = chartA * sm(s0 + 0.2, s0 + 0.5, t);
+      ctx.fillText((lerp(prev ? prev[j][1] : 0, pr, grow)).toFixed(2), x, AB.oy - h - 16); ctx.restore();
+      const lab = layout(ctx, [T(word, {f: 'sg'})], 36, x, AB.oy + 58, 'center');
+      // the picked word flies up into its slot (Transform), the others just Write on
+      if (j === 0) {
+        const fly = sm(s0 + 0.85, s0 + 1.3, t), fin = layout(ctx, [T(word, {f: 'sg'})], 56, slot[k], SY);
+        if (fly <= 0) drawTex(ctx, lab, {p: seg(s0 + 0.1, s0 + 0.5, t), alpha: chartA, col: mixc(C.white, C.amber, Math.max(ind, picked)), scale: 1 + 0.2 * ind});
+        else if (fly < 1) morphTex(ctx, lab, fin, fly, {colA: () => C.amber, colB: () => mixc(C.amber, C.white, fly)});
+      } else drawTex(ctx, lab, {p: seg(s0 + 0.1, s0 + 0.5, t), alpha: chartA});
+    });
+    // words already in the sentence
+    WORDS.forEach((w, i) => {
+      const arrived = i < 3 ? ST[i] + 1.3 : 4.95; if (t < arrived) return;
+      const L = layout(ctx, [T(w, {f: 'sg'})], 56, slot[i], SY);
+      drawTex(ctx, L, {p: i < 3 ? 1 : seg(4.95, 5.5, t)});
+    });
+    // the one green element: SurroundingRectangle round the finished answer
+    const g = sm(5.5, 5.95, t);
+    if (g > 0) strokePts(ctx, rectPts(slot[0] - 30, SY - 66, slot[3] + ws[3] + 30, SY + 32), C.green, 4.5, 0, g);
+    caption(ctx, t, D);
+  }
+
+  // =====================================================================================================
+  // C · HOW IT LEARNED: the reference's "How does AI learn?" recomposed for 9:16 — a small net Creates, examples fly in,
+  //     a forward pass guesses "links?" (Amber cross), the error flows back, a loss dot descends, the second pass gets
+  //     "answer" right; takeaway with the one green phrase.
+  // =====================================================================================================
+  const LX = [210, 400, 590, 780], LAY = [[0, 1, 2, 3, 4].map((i) => 590 + i * 70), [0, 1, 2, 3].map((i) => 625 + i * 70), [0, 1, 2, 3].map((i) => 625 + i * 70), [690, 800]];
+  const NR = [17, 18, 18, 22], NEUR = LAY.map((ys, l) => ys.map((y) => [LX[l], y]));
+  const EDGES = (() => {
+    const r = rng(808), E = [];
+    for (let l = 0; l < 3; l++) for (let i = 0; i < NEUR[l].length; i++) for (let j = 0; j < NEUR[l + 1].length; j++) {
+      const [x1, y1] = NEUR[l][i], [x2, y2] = NEUR[l + 1][j], ang = Math.atan2(y2 - y1, x2 - x1);
+      const w0 = (r() * 2 - 1) * (0.35 + 0.65 * r()), w1 = r() < 0.45 ? -w0 * (0.6 + 0.6 * r()) : w0 + (r() - 0.5) * 0.5;
+      E.push({l, pts: [[x1 + Math.cos(ang) * NR[l], y1 + Math.sin(ang) * NR[l]], [x2 - Math.cos(ang) * NR[l + 1], y2 - Math.sin(ang) * NR[l + 1]]], w0, w1: cl(w1, -1, 1), d: r()});
+    }
+    return E;
+  })();
+  const ACTS = (() => { const r = rng(41), A1 = [], A2 = []; for (const l of [0, 1, 2]) { A1[l] = NEUR[l].map(() => 0.1 + r() * 0.85); A2[l] = NEUR[l].map(() => 0.1 + r() * 0.85); } A1[3] = [0.9, 0.15]; A2[3] = [0.1, 0.95]; return {A1, A2}; })();
+  const X = {net: [0.35, 1.2], edges: [0.55, 1.4], out: [1.1, 1.5], cards: [1.0, 1.4], fly: [1.6, 1.9, 2.2], pass1: 2.55, lay: 0.22, guess: [3.15, 3.4], cross: [3.35, 3.6],
+    back: 3.65, rew: [3.7, 4.5], loss: [3.6, 4.1], curve: [3.8, 4.3], hops: [[4.35, 4.75], [4.8, 5.2]], pass2: 5.15, lay2: 0.12, fix: [5.45, 5.75], tick: [5.6, 5.85],
+    clear: [5.95, 6.3], take: [6.3, 7.0], D: 7.4};
+  const AC = {ox: 200, oy: 1300, ux: 125, uy: 62, xn: 5, yn: 3}, fL = (w) => 0.22 * (w - 3.7) * (w - 3.7) + 0.35 + 0.1 * Math.sin(3 * w), dfL = (w) => (fL(w + 1e-3) - fL(w - 1e-3)) / 2e-3, LSTEP = [0.7, 2.1, 3.45];
+  function drawC(ctx, t) {
+    const D = OPT.C.dur; ground(ctx); actTag(ctx, t);
+    const head = layout(ctx, [T('How did it learn to ', {f: 'sg'}), T('answer', {f: 'sg'}), T('?', {f: 'sg'})], 54, 540, 470, 'center');
+    drawTex(ctx, head, {p: seg(0.05, 0.9, t)});
+    const clr = sm(X.clear[0], X.clear[1], t), netA = 1 - clr * 0.85;
+    // edges: Signal White for positive weights, Amber for negative; width by magnitude
+    const rw = sm(X.rew[0], X.rew[1], t);
+    for (const e of EDGES) {
+      const cp = sm(X.edges[0] + e.l * 0.2 + e.d * 0.25, X.edges[0] + e.l * 0.2 + e.d * 0.25 + 0.4, t); if (cp <= 0) continue;
+      const w = lerp(e.w0, e.w1, rw), m = Math.abs(w);
+      strokePts(ctx, e.pts, w >= 0 ? C.white : C.amber, 0.6 + 3.2 * m, 0, cp, netA * (0.2 + 0.6 * m));
+    }
+    const pass = (P, dur, col, rev, alpha) => { for (const e of EDGES) { const st = rev ? P + (2 - e.l) * dur * 0.85 : P + e.l * dur * 0.85, u = seg(st, st + dur, t); if (u > 0 && u < 1) flash(ctx, rev ? [e.pts[1], e.pts[0]] : e.pts, SM(u), col, 3, 0.4, alpha * netA); } };
+    pass(X.pass1, X.lay, C.amber, false, 0.95); pass(X.back, 0.25, C.amber, true, 0.8); pass(X.pass2, X.lay2, C.white, false, 0.95);
+    const act = (l, i) => { const a1 = sm(X.pass1 + l * X.lay * 0.85 + X.lay * 0.5, X.pass1 + l * X.lay * 0.85 + X.lay, t), a2 = sm(X.pass2 + l * X.lay2 * 0.85 + X.lay2 * 0.5, X.pass2 + l * X.lay2 * 0.85 + X.lay2 * 1.4, t); let v = lerp(0, ACTS.A1[l][i], a1); return lerp(v, ACTS.A2[l][i], a2); };
+    NEUR.forEach((col, l) => col.forEach(([x, y], i) => circle(ctx, x, y, NR[l], sm(X.net[0] + l * 0.15 + i * 0.03, X.net[0] + l * 0.15 + i * 0.03 + 0.45, t), C.white, 2.4, C.white, act(l, i), netA)));
+    // outputs: "links" / "answer"; the first pass guesses "links?" (Amber, crossed), the second gets "answer"
+    const gq = sm(X.guess[0], X.guess[1], t), fix = sm(X.fix[0], X.fix[1], t);
+    const lk = layout(ctx, [T('links', {f: 'sg'})], 38, 825, 703), lkq = layout(ctx, [T('links', {f: 'sg'}), T('?', {f: 'sg'})], 38, 825, 703), an = layout(ctx, [T('answer', {f: 'sg'})], 38, 825, 813);
+    const lkCol = mixc(mixc(C.white, C.amber, gq), C.fog, fix);
+    if (gq <= 0) drawTex(ctx, lk, {p: seg(X.out[0], X.out[1], t), alpha: netA});
+    else if (fix <= 0) morphTex(ctx, lk, lkq, gq, {alpha: netA, colB: () => lkCol});
+    else morphTex(ctx, lkq, lk, fix, {alpha: netA, colA: () => C.amber, colB: () => lkCol});
+    drawTex(ctx, an, {p: seg(X.out[0], X.out[1], t), alpha: netA});
+    const cr = sm(X.cross[0], X.cross[1], t) * (1 - fix);
+    if (cr > 0) { const cx = lkq.x1 + 28, cy = 690, s = 14; strokePts(ctx, [[cx - s, cy - s], [cx + s, cy + s]], C.amber, 5, 0, SM(cr * 2), netA); strokePts(ctx, [[cx + s, cy - s], [cx - s, cy + s]], C.amber, 5, 0, SM(cr * 2 - 1), netA); }
+    const tk = sm(X.tick[0], X.tick[1], t); if (tk > 0) strokePts(ctx, checkPts(an.x1 + 34, 803, 30), C.white, 5, 0, tk, netA);
+    // examples: three Q -> A cards that fly into the input layer
+    const lowA = 1 - clr;
+    [0, 1, 2].forEach((i) => {
+      const x = 230 + i * 310, y = 1050, appear = sm(X.cards[0] + i * 0.12, X.cards[1] + i * 0.12, t), fly = sm(X.fly[i], X.fly[i] + 0.5, t);
+      if (appear <= 0 || fly >= 1) return;
+      const [tx, ty] = NEUR[0][1 + i], cx = lerp(x, tx, fly), cy = lerp(y, ty, fly), s = lerp(1, 0.12, fly);
+      ctx.save(); ctx.globalAlpha = appear * (1 - fly * 0.6) * lowA; ctx.translate(cx, cy); ctx.scale(s, s);
+      ctx.fillStyle = C.bg; ctx.fillRect(-110, -55, 220, 110); ctx.strokeStyle = C.fog; ctx.lineWidth = 2.5; ctx.strokeRect(-110, -55, 220, 110);
+      ctx.font = `500 30px ${FAM.mono}`; ctx.fillStyle = C.white; ctx.textBaseline = 'middle'; ctx.fillText('Q', -88, -16); ctx.fillStyle = C.fog; ctx.fillText('A', -88, 22);
+      ctx.fillStyle = C.fog; ctx.fillRect(-52, -19, 130 - i * 18, 6); ctx.fillRect(-52, 19, 100 + i * 14, 6); ctx.restore();
+    });
+    // loss chart takes the place of the cards
+    const la = seg(X.loss[0], X.loss[1], t);
+    if (la > 0 && lowA > 0.003) {
+      axes(ctx, AC, la, {alpha: lowA});
+      const yl = layout(ctx, [T('L', {it: true}), T('('), T('w', {it: true}), T(')')], 40, AC.ox + 18, AC.oy - 3.4 * AC.uy - 6), xl = layout(ctx, [T('w', {it: true})], 40, AC.ox + 5.5 * AC.ux, AC.oy + 12);
+      drawTex(ctx, yl, {p: seg(X.loss[0] + 0.2, X.loss[1] + 0.2, t), alpha: lowA}); drawTex(ctx, xl, {p: seg(X.loss[0] + 0.2, X.loss[1] + 0.2, t), alpha: lowA});
+      strokePts(ctx, graphPts(AC, fL, 0.25, 5.0, 120), C.white, 4, 0, sm(X.curve[0], X.curve[1], t), lowA);
+      const s1 = sm(X.hops[0][0], X.hops[0][1], t), s2 = sm(X.hops[1][0], X.hops[1][1], t), w = s2 > 0 ? lerp(LSTEP[1], LSTEP[2], s2) : lerp(LSTEP[0], LSTEP[1], s1), dA = sm(X.curve[1] - 0.1, X.curve[1] + 0.15, t);
+      if (dA > 0) {
+        const hop = (i, p) => { const [gx, gy] = ax2s(AC, LSTEP[i], fL(LSTEP[i])); ghost(ctx, gx, gy, 8, C.amber, p * lowA); curvedArrow(ctx, arcPts(gx + 6, gy - 10, ...ax2s(AC, LSTEP[i + 1], fL(LSTEP[i + 1]) + 0.25), -0.3, 24), C.amber, 3, p, 15, lowA); };
+        if (s1 > 0) hop(0, s1); if (s2 > 0) hop(1, s2);
+        const [dx, dy] = ax2s(AC, w, fL(w)), m = dfL(w) * AC.uy / AC.ux, ang = Math.atan(-m);
+        strokePts(ctx, [[dx - Math.cos(ang) * 90 * dA, dy - Math.sin(ang) * 90 * dA], [dx + Math.cos(ang) * 90 * dA, dy + Math.sin(ang) * 90 * dA]], C.fog, 3, 0, 1, lowA);
+        dot(ctx, dx, dy, 11 * dA, C.white, lowA);
+      }
+    }
+    // takeaway: More examples -> better answers (the one green element)
+    const tp = seg(X.take[0], X.take[1], t);
+    if (tp > 0) {
+      const a = layout(ctx, [T('More examples', {f: 'sg'})], 54, 540, 1110, 'center'), b = layout(ctx, [T('better answers', {f: 'sg', c: C.green})], 54, 540, 1250, 'center');
+      drawTex(ctx, a, {p: cl(tp * 1.8)}); arrow(ctx, 540, 1135, 540, 1195, C.white, 3.5, sm(0.35, 0.6, tp), 18); drawTex(ctx, b, {p: cl(tp * 1.8 - 0.8)});
+    }
+    caption(ctx, t, D);
+  }
+
+  const OPT = {
+    A: {name: 'Ten links → one answer', dur: 6.2, draw: drawA, keys: [0.9, 1.9, 2.7, 4.3, 5.8]},
+    B: {name: 'One word at a time', dur: 6.4, draw: drawB, keys: [1.6, 2.15, 3.3, 4.6, 6.1]},
+    C: {name: 'How it learned', dur: X.D, draw: drawC, keys: [1.5, 3.4, 4.9, 5.8, 7.1]},
+  };
+  return {C, FONTS, options: OPT};
+})();
