@@ -603,6 +603,9 @@ ST('blackout_tease',BLACKOUT,[],(ctx,t)=>{ctx.fillStyle='#000';ctx.fillRect(0,0,
      if(t<45.0||Math.floor(t*2.2)%2===0){ctx.fillStyle=C.green;ctx.fillRect(x0+cw+6,876,22,48)}ctx.textBaseline='alphabetic';ctx.globalAlpha=1}
    if(t>45.85){ctx.fillStyle=`rgba(0,0,0,${seg(t,45.85,46)})`;ctx.fillRect(0,0,1080,1920)}});
 
+/* scene types from style modules (08_templates/styles/<style>/*.js, loaded before this file): {name: {at, trail, draw(ctx, t, text)}} */
+for(const [name,s] of Object.entries(window.SGMM_STYLE_SCENES||{}))ST(name,s.at||0,s.trail||[],(ctx,t)=>s.draw(ctx,t,TX));
+
 /* ================= captions + act tags (from the plan) ================= */
 const ACTCOL={THEN:C.amber,NOW:C.white,NEXT:C.green};
 /* "is already [being written.]" -> brackets are the one green element; \n breaks the line */

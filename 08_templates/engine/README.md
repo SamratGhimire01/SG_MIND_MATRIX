@@ -35,6 +35,7 @@ Each type keeps its EP000 choreography on its own clock. `at` is where it starts
 | `type_hands` | 2.7 s | both hands typing from below, rising to the top screen | – |
 | `ots_screen` | 6.6 s | over the shoulder at the top (NOW) screen; question typed, answer streams | `question` |
 | `look_right` | 5.95 s | head turns right, pan and push into the right (NEXT) screen | `question` (still on the top screen) |
+| `manim_links_answer` | 6.2 s | **NOW in the Manim style** (from `08_templates/styles/manim/sgmm_manim.js`, option A): the question Writes on, ten result rows Create, an Amber box marks the effort, the rows collapse into one written answer, green box round it, "10 links" → "1 answer" | `now_question` `now_answer` [2 lines] `now_from` ["10", " links"] `now_to` ["1", " answer"] |
 | `field_push` | 2.8 s | full-frame NEXT flow field with 3D matte forms converging | – |
 | `build_log` | 9.4 s | from behind, typing; REC · DAY chip, build-log card, three cards, Mac mini wipe | `log_rec` `log_day` `log_kicker` `log_title` `log_sub` `log_cards` (SHIFT/TOOL/BUILD have pictograms) `log_tagline` |
 | `end_push_dark` | 1.45 s | screens go off, push into the dark top screen | – |
@@ -44,6 +45,9 @@ Each type keeps its EP000 choreography on its own clock. `at` is where it starts
 `text` at plan level is shared by every scene (the screens show the collage and chat in several scenes); `scene.text` overrides it. Missing keys fall back to EP000's words.
 
 Captions: `"is already [being written.]"` — brackets are the one green element, `\n` breaks the line. Act tags take their colour from the label (THEN amber, NOW white, NEXT green).
+
+## Style modules
+A style lives in `08_templates/styles/<style>/` and adds scene types through `window.SGMM_STYLE_SCENES = {name: {at, trail, draw(ctx, t, text)}}`; it is loaded before `sgmm_scenes.js` (list: `STYLE_FILES` in `render.mjs` and `sgmm.py`). Draw in 1080×1920 logical pixels, pure function of t, leave act tags and captions to the engine. EP000 still renders byte-identical with the Manim module loaded.
 
 ## `sgmm build` (step 2)
 1. **Split** — finds speech in the take (one file, ~2 s pauses) and matches it to the plan's captions (one caption = one line) by text length, so a pause inside a line stays inside it. Writes `<name>_voice_lines.json`; fix a wrong boundary there and pass it back with `--lines`.

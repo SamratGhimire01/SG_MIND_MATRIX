@@ -1,6 +1,6 @@
 <title>__TITLE__</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap">
 <style>
 /* SGMM storyboard sheet: one dark brand look (Brand Bible), player on the left, key-frame cards on the right; one column on a phone */
 :root{
@@ -115,7 +115,7 @@ $('play').onclick=()=>{if(playing)return stop();playing=true;t0=performance.now(
 scrub.oninput=()=>{stop();seek(+scrub.value)};
 
 /* fonts first, then draw the cards one by one so the page stays responsive */
-const F=['500 40px "JetBrains Mono"','700 40px "JetBrains Mono"','700 40px "Space Grotesk"','500 20px "Space Grotesk"','400 120px "Anton"','700 34px "Oswald"','700 34px "Libre Baskerville"','italic 400 20px "Libre Baskerville"','400 11px "Libre Baskerville"'];
+const F=['500 40px "JetBrains Mono"','700 40px "JetBrains Mono"','700 40px "Space Grotesk"','500 20px "Space Grotesk"','400 120px "Anton"','700 34px "Oswald"','700 34px "Libre Baskerville"','italic 400 20px "Libre Baskerville"','400 11px "Libre Baskerville"','400 52px "STIX Two Text"','italic 400 52px "STIX Two Text"'];
 Promise.race([Promise.all(F.map(f=>document.fonts.load(f))),new Promise(r=>setTimeout(r,4000))]).catch(()=>{}).then(async()=>{
   seek(keys[0]||0);
   for(const [cv,t] of cards){ep.render(cv.getContext('2d'),cv.width,cv.height,t,true);await new Promise(r=>setTimeout(r,0))}

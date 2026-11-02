@@ -156,16 +156,17 @@ window.SGMM_MANIM = (() => {
     }
   }
   const ground = (ctx) => { ctx.fillStyle = C.bg; ctx.fillRect(0, 0, 1080, 1920); };
-  const question = (ctx, t, a, b, y) => { const L = layout(ctx, [T('How did people find answers?', {f: 'sg'})], 56, 540, y, 'center'); drawTex(ctx, L, {p: seg(a, b, t)}); return L; };
+  const question = (ctx, t, a, b, y, q) => { const L = layout(ctx, [T(q || 'How did people find answers?', {f: 'sg'})], 56, 540, y, 'center'); drawTex(ctx, L, {p: seg(a, b, t)}); return L; };
 
   // =====================================================================================================
   // A · TEN LINKS -> ONE ANSWER: a search page of ten result rows is Created, boxed in Amber, then the rows collapse
   //     (Transform) into one written sentence; a green SurroundingRectangle lands on the answer.
   // =====================================================================================================
   const ROWS = (() => { const r = rng(11); return Array.from({length: 10}, (_, i) => ({y: 640 + i * 62, w1: 320 + r() * 380, w2: 160 + r() * 240})); })();
-  function drawA(ctx, t) {
-    const D = OPT.A.dur; ground(ctx); actTag(ctx, t);
-    question(ctx, t, 0.05, 0.9, 500);
+  // tx (plan text): now_question, now_answer [line 1, line 2], now_from ["10", " links"], now_to ["1", " answer"]; chrome = draw act tag + caption (options page only)
+  function drawA(ctx, t, tx, chrome = true) {
+    tx = tx || {}; const D = OPT.A.dur; ground(ctx); if (chrome) actTag(ctx, t);
+    question(ctx, t, 0.05, 0.9, 500, tx.now_question);
     const coll = sm(2.9, 3.55, t), gone = sm(3.2, 3.6, t);
     // ten results: bullet, title line (white), url line (fog); Create with lag
     ROWS.forEach((R, i) => {
@@ -176,8 +177,9 @@ window.SGMM_MANIM = (() => {
       strokePts(ctx, [[x0 + 34, y + 12], [x0 + 34 + R.w2 * k + 1, y + 12]], C.fog, 4, 0, p, a * 0.85);
     });
     // "10 links" under the list, later Transforms into "1 answer"
-    const L10 = layout(ctx, [T('10', {f: 'stix'}), T(' links', {f: 'mono', sz: 0.78})], 50, 540, 1330, 'center');
-    const L1 = layout(ctx, [T('1', {f: 'stix'}), T(' answer', {f: 'mono', sz: 0.78})], 50, 540, 1080, 'center');
+    const [fn, fw] = tx.now_from || ['10', ' links'], [tn, tw] = tx.now_to || ['1', ' answer'];
+    const L10 = layout(ctx, [T(fn, {f: 'stix'}), T(fw, {f: 'mono', sz: 0.78})], 50, 540, 1330, 'center');
+    const L1 = layout(ctx, [T(tn, {f: 'stix'}), T(tw, {f: 'mono', sz: 0.78})], 50, 540, 1080, 'center');
     const mq = sm(4.75, 5.3, t);
     if (mq <= 0) drawTex(ctx, L10, {p: seg(1.5, 2.0, t), col: (g) => (g.ch.match(/\d/) ? C.white : C.fog)});
     else morphTex(ctx, L10, L1, mq, {colA: (g) => (g.ch.match(/\d/) ? C.white : C.fog), colB: (g) => (g.ch.match(/\d/) ? C.white : C.fog)});
@@ -188,12 +190,13 @@ window.SGMM_MANIM = (() => {
     const ar = sm(3.3, 3.75, t); arrow(ctx, 540, 545, 540, 745, C.white, 3.5, ar, 22);
     const fl = seg(3.75, 4.3, t); if (fl > 0 && fl < 1) flash(ctx, [[540, 545], [540, 720]], SM(fl), C.amber, 6, 0.4);
     // the answer, written
-    const A1 = layout(ctx, [T('Card catalogs, librarians', {f: 'sg'})], 56, 540, 850, 'center'), A2 = layout(ctx, [T('and a lot of patience.', {f: 'sg'})], 56, 540, 925, 'center');
+    const [a1, a2] = tx.now_answer || ['Card catalogs, librarians', 'and a lot of patience.'];
+    const A1 = layout(ctx, [T(a1, {f: 'sg'})], 56, 540, 850, 'center'), A2 = layout(ctx, [T(a2, {f: 'sg'})], 56, 540, 925, 'center');
     drawTex(ctx, A1, {p: seg(3.5, 4.4, t)}); drawTex(ctx, A2, {p: seg(3.85, 4.75, t)});
     // the one green element: SurroundingRectangle round the answer
     const g = sm(4.75, 5.2, t);
     if (g > 0) strokePts(ctx, rectPts(Math.min(A1.x0, A2.x0) - 34, 850 - 66, Math.max(A1.x1, A2.x1) + 34, 925 + 32), C.green, 4.5, 0, g);
-    caption(ctx, t, D);
+    if (chrome) caption(ctx, t, D);
   }
 
   // =====================================================================================================
@@ -342,3 +345,8 @@ window.SGMM_MANIM = (() => {
   };
   return {C, FONTS, options: OPT};
 })();
+/* scene types this style gives the engine (sgmm_scenes.js picks up window.SGMM_STYLE_SCENES; load this file first).
+   at = 0: the scene's own clock starts at 0. Samrat picked option A on 2 Nov 2026. */
+window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {
+  manim_links_answer: {at: 0, draw: (ctx, t, tx) => SGMM_MANIM.options.A.draw(ctx, t, tx, false)},
+});
