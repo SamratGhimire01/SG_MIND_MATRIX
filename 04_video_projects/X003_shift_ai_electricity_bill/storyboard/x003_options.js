@@ -133,8 +133,16 @@ window.X003_OPT = (() => {
     K.voxels(c, K.fallIn(L, t, (v) => 0.05 + (v.x + 9) * 0.02 + Math.max(0, v.z) * 0.05), pr); cap(c, t, 'next');
   }
 
-  const engineScene = (fn) => ({at: 0, draw: (ctx, t) => { CH = false; try { fn(ctx, t); } finally { CH = true; } }});
-  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x003_hook_line: engineScene(hookA), x003_then_rack: engineScene(thenA), x003_now_power: engineScene(nowA), x003_next_city: engineScene(nextA)});
+  /* Samrat's picks (2 Nov 2026): all A, each move with its own sound */
+  const SND = {
+    hook: (k, P, c) => { for (let i = 0; i < 8; i++) P('key', c(0.25 + i * 0.08), {g: 0.4}); for (let i = 0; i < 8; i++) P('tick', c(0.95 + i * 0.16), {f: 1800 + i * 120, g: 0.3}); P('ding', c(2.2), {f: 1975, g: 0.22}); },
+    then: (k, P, c) => { P('put', c(0.1), {g: 1.0}); P('thud', c(0.11), {f: 90, g: 0.3}); P('put', c(0.6), {g: 0.8}); [2.4, 3.0, 3.6].forEach((x, i) => { P('slide', c(x - 0.1), {dur: 0.2, g: 0.6}); P('put', c(x), {g: 0.9, pan: 0.4}); P('tear', c(x + 0.12), {g: 0.3}); }); P('stroke', c(4.4), {material: 'marker', dur: 0.5, g: 0.9}); },
+    now: (k, P, c) => { P('whoosh', c(0.8), {dur: 0.9, top: 1300, g: 0.35}); P('tick', c(1.8), {f: 2600, g: 0.4}); P('stroke', c(2.5), {material: 'pen', dur: 0.6, g: 0.4}); P('slide', c(2.6), {dur: 0.6, g: 0.6});
+      P('slide', c(5.0), {dur: 0.8, g: 0.6}); P('ding', c(5.8), {f: 1318.5, g: 0.18}); P('tick', c(6.2), {f: 2400, g: 0.35}); k.ney([[c(6.6), 587.33, 0.9, 1]], {gain: 0.06}); [8.3, 8.8, 9.3].forEach((x) => P('click', c(x), {f: 2400, g: 0.6})); k.daf(c(9.4), 'tek', 0.6); },
+    next: (k, P, c) => { for (let i = 0; i < 14; i++) P('key', c(0.05 + i * 0.1), {g: 0.28}); for (let i = 0; i < 6; i++) P('tick', c(0.8 + i * 0.27), {f: 2000 + i * 150, g: 0.4}); for (let i = 0; i < 9; i++) P('key', c(2.9 + i * 0.17), {g: 0.4, pan: 0.2}); P('ding', c(4.5), {f: 1975, g: 0.2}); },
+  };
+  const engineScene = (fn, sound) => ({at: 0, sound, draw: (ctx, t) => { CH = false; try { fn(ctx, t); } finally { CH = true; } }});
+  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x003_hook_line: engineScene(hookA, SND.hook), x003_then_rack: engineScene(thenA, SND.then), x003_now_power: engineScene(nowA, SND.now), x003_next_city: engineScene(nextA, SND.next)});
   return {CAPS, scenes: [
     {id: 'hook', label: 'Hook', act: 'cold open', lines: 'L01', dur: 2.8, options: [
       {name: 'Chat bubble + power line', draw: hookA, keys: [0.6, 1.6, 2.5], note: 'A chat bubble types "how do I…"; a power line under it lights segment by segment (ticks) and ends in one green spark.'},

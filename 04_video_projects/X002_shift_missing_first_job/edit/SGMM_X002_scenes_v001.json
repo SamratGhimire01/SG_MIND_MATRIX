@@ -1,0 +1,265 @@
+{
+ "episode": "X002",
+ "format": "shift",
+ "version": "v001",
+ "title": "The Missing First Job",
+ "status": "Picks approved (all A) · waiting for the voice take · no MP4 rendered",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "duration": 28.51,
+ "score": "sufi_tension",
+ "bed": "light",
+ "style_files": [
+  "04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js",
+  "04_video_projects/X002_shift_missing_first_job/storyboard/x002_options.js"
+ ],
+ "cues": [
+  {
+   "t": 23.04,
+   "cue": "cut",
+   "reopen": 23.5
+  }
+ ],
+ "text": {},
+ "scenes": [
+  {
+   "id": "hook",
+   "type": "x002_hook_badge",
+   "t": [
+    0,
+    3.0
+   ]
+  },
+  {
+   "id": "then",
+   "type": "x002_then_day1",
+   "t": [
+    2.9,
+    8.7
+   ]
+  },
+  {
+   "id": "now",
+   "type": "x002_now_gap",
+   "t": [
+    8.3,
+    18.5
+   ]
+  },
+  {
+   "id": "next",
+   "type": "x002_next_ladder",
+   "t": [
+    18.1,
+    23.3
+   ]
+  },
+  {
+   "id": "logo",
+   "type": "logo_from_dark",
+   "t": [
+    23.1,
+    25.9
+   ]
+  },
+  {
+   "id": "tease",
+   "type": "blackout_tease",
+   "t": [
+    25.9,
+    28.51
+   ],
+   "text": {
+    "tease": "NEXT SHIFT · TOMORROW MORNING"
+   }
+  }
+ ],
+ "act_tags": [
+  {
+   "t": [
+    3.0,
+    8.2
+   ],
+   "num": "01",
+   "label": "THEN"
+  },
+  {
+   "t": [
+    8.4,
+    18.0
+   ],
+   "num": "02",
+   "label": "NOW"
+  },
+  {
+   "t": [
+    18.2,
+    23.0
+   ],
+   "num": "03",
+   "label": "NEXT"
+  }
+ ],
+ "captions": [
+  {
+   "t": [
+    0.05,
+    2.75
+   ],
+   "text": "AI isn’t taking the last job.\nIt’s taking the first one.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    2.9,
+    5.1
+   ],
+   "text": "Your first job used to be\nthe boring part.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    5.2,
+    8.5
+   ],
+   "text": "Coffee. Spreadsheets. First drafts.\nThat’s how you learned.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    8.3,
+    10.3
+   ],
+   "text": "But now AI does the boring part.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    10.4,
+    11.9
+   ],
+   "text": "So companies hire fewer beginners.",
+   "kind": "fact",
+   "src": "stanford"
+  },
+  {
+   "t": [
+    12.1,
+    15.7
+   ],
+   "text": "One study: young workers in\nAI-exposed jobs are 19%\nbehind their peers.",
+   "kind": "fact",
+   "src": "stanford"
+  },
+  {
+   "t": [
+    15.9,
+    18.2
+   ],
+   "text": "Experienced workers? No gap.",
+   "kind": "fact",
+   "src": "stanford"
+  },
+  {
+   "t": [
+    18.1,
+    20.5
+   ],
+   "text": "So if nobody starts at the bottom…",
+   "kind": "forecast"
+  },
+  {
+   "t": [
+    20.7,
+    23.0
+   ],
+   "text": "who becomes the expert?",
+   "kind": "line"
+  }
+ ],
+ "silences": [
+  [
+   26.2,
+   26.6
+  ]
+ ],
+ "sources": {
+  "stanford": {
+   "title": "Stanford Digital Economy Lab (12 Aug 2026): AI employment gap for young workers widened to 19% (ADP payroll data; descriptive, not causal)",
+   "url": "https://digitaleconomy.stanford.edu/news/canariesaug26/",
+   "note": "one study · a pattern, not proof"
+  }
+ },
+ "notes": [
+  "Script v002 (option A); scenes = the picked drafts, polished in the build.",
+  "Voice: one take, WAV; the build aligns lines with say + DTW.",
+  "Music stops dead after \"who becomes the expert?\", then the logo."
+ ],
+ "publish": {
+  "day": 2,
+  "titles": [
+   "The Missing First Job: AI Is Taking the First Rung",
+   "AI Isn't Taking the Last Job. It's Taking the First.",
+   "Young Workers in AI-Exposed Jobs Are 19% Behind"
+  ],
+  "why": "the topic and the stakes come first, under 60 characters, no hype",
+  "summary": "AI isn't taking the last job — it's taking the first one. One Stanford study (ADP payroll data) finds young workers in AI-exposed jobs about 19% behind their peers, mostly through fewer hires; experienced workers show no gap. If nobody starts at the bottom, who becomes the expert?",
+  "hashtags": [
+   "#AI",
+   "#FutureOfWork",
+   "#ArtificialIntelligence",
+   "#Shorts"
+  ],
+  "tags": [
+   "AI jobs",
+   "entry level jobs",
+   "AI and young workers",
+   "future of work",
+   "first job"
+  ],
+  "pinned": "What did your first job teach you that no course could? The best answers go into a future episode.",
+  "x_post": "AI isn't taking the last job. It's taking the first one.\nOne study: young workers in AI-exposed jobs are 19% behind their peers. Experienced workers: no gap.\n\nIf nobody starts at the bottom, who becomes the expert? #AI",
+  "shorts_frame": "the green −19% (~0:13)",
+  "thumbs": {
+   "A": {
+    "small": "AI ISN’T TAKING THE LAST JOB.",
+    "big": "THE FIRST."
+   },
+   "B": {
+    "t": 7.0,
+    "y": 500,
+    "lines": [
+     "DAY",
+     "[ONE.]"
+    ]
+   },
+   "C": {
+    "t": 12.5,
+    "y": 420,
+    "lines": [
+     "−19%",
+     "[JUNIORS.]"
+    ]
+   },
+   "vertical": {
+    "lines": [
+     "NOT THE",
+     "LAST JOB.",
+     "THE"
+    ],
+    "big": [
+     "FIRST."
+    ]
+   },
+   "names": {
+    "A": "thefirst",
+    "B": "dayone",
+    "C": "minus19"
+   },
+   "pick": "A"
+  }
+ }
+}

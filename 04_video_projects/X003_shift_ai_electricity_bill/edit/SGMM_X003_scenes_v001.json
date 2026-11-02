@@ -1,0 +1,265 @@
+{
+ "episode": "X003",
+ "format": "shift",
+ "version": "v001",
+ "title": "AI’s Electricity Bill",
+ "status": "Picks approved (all A) · waiting for the voice take · no MP4 rendered",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "duration": 28.31,
+ "score": "sufi_tension",
+ "bed": "light",
+ "style_files": [
+  "04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js",
+  "04_video_projects/X003_shift_ai_electricity_bill/storyboard/x003_options.js"
+ ],
+ "cues": [
+  {
+   "t": 22.84,
+   "cue": "cut",
+   "reopen": 23.3
+  }
+ ],
+ "text": {},
+ "scenes": [
+  {
+   "id": "hook",
+   "type": "x003_hook_line",
+   "t": [
+    0,
+    3.0
+   ]
+  },
+  {
+   "id": "then",
+   "type": "x003_then_rack",
+   "t": [
+    2.9,
+    8.1
+   ]
+  },
+  {
+   "id": "now",
+   "type": "x003_now_power",
+   "t": [
+    7.7,
+    17.9
+   ]
+  },
+  {
+   "id": "next",
+   "type": "x003_next_city",
+   "t": [
+    17.5,
+    23.1
+   ]
+  },
+  {
+   "id": "logo",
+   "type": "logo_from_dark",
+   "t": [
+    22.9,
+    25.7
+   ]
+  },
+  {
+   "id": "tease",
+   "type": "blackout_tease",
+   "t": [
+    25.7,
+    28.31
+   ],
+   "text": {
+    "tease": "NEXT SHIFT · TOMORROW MORNING"
+   }
+  }
+ ],
+ "act_tags": [
+  {
+   "t": [
+    3.0,
+    7.6
+   ],
+   "num": "01",
+   "label": "THEN"
+  },
+  {
+   "t": [
+    7.8,
+    17.4
+   ],
+   "num": "02",
+   "label": "NOW"
+  },
+  {
+   "t": [
+    17.6,
+    22.8
+   ],
+   "num": "03",
+   "label": "NEXT"
+  }
+ ],
+ "captions": [
+  {
+   "t": [
+    0.05,
+    2.75
+   ],
+   "text": "Every answer AI gives you\nruns on electricity.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    2.9,
+    5.1
+   ],
+   "text": "Data centres used to\njust store things.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    5.2,
+    7.8
+   ],
+   "text": "Photos. Videos. Web pages.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    7.7,
+    10.1
+   ],
+   "text": "But now they think —\nand thinking takes power.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    10.2,
+    12.5
+   ],
+   "text": "Last year, data centres used\n485 terawatt-hours.",
+   "kind": "fact",
+   "src": "iea"
+  },
+  {
+   "t": [
+    12.7,
+    15.7
+   ],
+   "text": "By 2030: almost double — about\n3% of the world’s electricity.",
+   "kind": "forecast",
+   "src": "iea"
+  },
+  {
+   "t": [
+    15.9,
+    17.6
+   ],
+   "text": "And the AI part triples.",
+   "kind": "forecast",
+   "src": "iea"
+  },
+  {
+   "t": [
+    17.5,
+    20.1
+   ],
+   "text": "So the next limit on AI may not\nbe chips… but power.",
+   "kind": "forecast"
+  },
+  {
+   "t": [
+    20.3,
+    22.8
+   ],
+   "text": "Who gets the power —\nand who pays the bill?",
+   "kind": "line"
+  }
+ ],
+ "silences": [
+  [
+   26.0,
+   26.4
+  ]
+ ],
+ "sources": {
+  "iea": {
+   "title": "IEA, Key Questions on Energy and AI (2026): data centres 485 TWh (2025) → ~950 TWh (2030), ~3% of global electricity; AI-focused use triples",
+   "url": "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary",
+   "note": "2030 = projection"
+  }
+ },
+ "notes": [
+  "Script v002 (option A); scenes = the picked drafts, polished in the build.",
+  "Voice: one take, WAV; the build aligns lines with say + DTW.",
+  "Music stops dead after \"who pays the bill?\", then the logo."
+ ],
+ "publish": {
+  "day": 3,
+  "titles": [
+   "AI's Electricity Bill: Who Pays for the Power?",
+   "Every AI Answer Runs on Electricity. Here's the Bill.",
+   "Data Centres Could Use 3% of the World's Power"
+  ],
+  "why": "the stakes (your answer, the bill) come first, under 60 characters, no hype",
+  "summary": "Every answer AI gives you runs on electricity. The IEA says data centres used 485 TWh in 2025 and could reach about 950 TWh by 2030 — around 3% of the world's electricity — with the AI part tripling. Who gets the power, and who pays the bill?",
+  "hashtags": [
+   "#AI",
+   "#Energy",
+   "#ArtificialIntelligence",
+   "#Shorts"
+  ],
+  "tags": [
+   "AI electricity",
+   "data centres",
+   "AI energy use",
+   "IEA",
+   "AI power demand"
+  ],
+  "pinned": "Would you pay more for AI if it meant cleaner power? Tell me why. The best answers go into a future episode.",
+  "x_post": "Every answer AI gives you runs on electricity.\nIEA: data centres used 485 TWh last year — almost double by 2030, about 3% of the world's power. The AI part triples.\n\nWho pays the bill? #AI",
+  "shorts_frame": "the green ≈3% wedge (~0:15)",
+  "thumbs": {
+   "A": {
+    "small": "EVERY AI ANSWER",
+    "big": "RUNS ON POWER."
+   },
+   "B": {
+    "t": 6.0,
+    "y": 500,
+    "lines": [
+     "THEY STORED",
+     "[THINGS.]"
+    ]
+   },
+   "C": {
+    "t": 15.5,
+    "y": 420,
+    "lines": [
+     "≈3% OF",
+     "[WORLD POWER.]"
+    ]
+   },
+   "vertical": {
+    "lines": [
+     "EVERY",
+     "AI ANSWER",
+     "RUNS ON"
+    ],
+    "big": [
+     "POWER."
+    ]
+   },
+   "names": {
+    "A": "power",
+    "B": "stored",
+    "C": "threepercent"
+   },
+   "pick": "A"
+  }
+ }
+}

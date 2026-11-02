@@ -143,8 +143,18 @@ window.X002_OPT = (() => {
     K.voxels(c, K.fallIn(list, t, (v) => 0.05 + Math.max(0, v.z) * 0.12), pr); cap(c, t, 'next');
   }
 
-  const engineScene = (fn) => ({at: 0, draw: (ctx, t) => { CH = false; try { fn(ctx, t); } finally { CH = true; } }});
-  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x002_hook_badge: engineScene(hookA), x002_then_day1: engineScene(thenA), x002_now_gap: engineScene(nowA), x002_next_ladder: engineScene(nextA)});
+  /* Samrat's picks (2 Nov 2026): all A. Every move has its own sound (sgmm-quality-gates: a beat seen and heard every 1.5-2 s) */
+  const SND = {
+    hook: (k, P, c) => { P('tick', c(0.1), {f: 2200, g: 0.3}); P('put', c(0.55), {g: 1.0}); P('thud', c(0.56), {f: 120, g: 0.3}); P('slide', c(1.6), {dur: 0.55, g: 0.8}); P('whoosh', c(2.15), {dur: 0.5, top: 1600, g: 0.35}); },
+    then: (k, P, c) => { P('put', c(0.1), {g: 1.0}); P('thud', c(0.11), {f: 100, g: 0.3}); [2.4, 2.95, 3.5].forEach((x, i) => { P('put', c(x), {g: 0.9, pan: -0.4 + 0.4 * i}); P('paper', c(x + 0.02), {dur: 0.2, g: 0.5}); P('tear', c(x + 0.15), {g: 0.35}); });
+      P('put', c(4.2), {g: 0.9}); P('stroke', c(4.6), {material: 'marker', dur: 0.4, g: 0.8}); P('stroke', c(4.9), {material: 'marker', dur: 0.5, g: 0.9}); },
+    now: (k, P, c) => { P('tick', c(0.1), {f: 2000, g: 0.35}); P('stroke', c(0.3), {material: 'pen', dur: 0.5, g: 0.35}); [0.9, 1.15, 1.4].forEach((x) => P('whoosh', c(x), {dur: 0.4, top: 1500, g: 0.3}));
+      P('slide', c(2.1), {dur: 0.7, g: 0.6}); for (let i = 0; i < 14; i++) P('tick', c(3.8 + i * 0.057), {f: 2200 + i * 50, g: 0.3}); k.ney([[c(4.6), 587.33, 0.9, 1]], {gain: 0.06}); k.daf(c(4.8), 'tek', 0.6);
+      P('slide', c(5.4), {dur: 0.4, g: 0.6}); P('slide', c(5.8), {dur: 0.5, g: 0.6}); P('whoosh', c(7.4), {dur: 0.4, top: 1100, g: 0.35}); P('slide', c(7.7), {dur: 0.4, g: 0.6}); P('slide', c(8.1), {dur: 0.5, g: 0.6}); P('ding', c(8.6), {f: 1318.5, g: 0.2}); },
+    next: (k, P, c) => { for (let i = 0; i < 16; i++) P('key', c(0.05 + i * 0.06), {g: 0.3}); for (let i = 0; i < 6; i++) P('click', c(1.2 + i * 0.15), {f: 2600 - i * 120, g: 0.45}); P('ding', c(2.6), {f: 1975, g: 0.2}); P('whoosh', c(3.0), {dur: 1.2, top: 1400, g: 0.2}); },
+  };
+  const engineScene = (fn, sound) => ({at: 0, sound, draw: (ctx, t) => { CH = false; try { fn(ctx, t); } finally { CH = true; } }});
+  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x002_hook_badge: engineScene(hookA, SND.hook), x002_then_day1: engineScene(thenA, SND.then), x002_now_gap: engineScene(nowA, SND.now), x002_next_ladder: engineScene(nextA, SND.next)});
   return {CAPS, scenes: [
     {id: 'hook', label: 'Hook', act: 'cold open', lines: 'L01', dur: 2.8, options: [
       {name: 'Badge slides off', draw: hookA, keys: [0.4, 1.4, 2.4], note: 'Black; a JUNIOR badge drops onto a desk line, sits, then slides off the edge (thud, slide). Shows "the first job goes" in one image.'},
