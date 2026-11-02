@@ -18,6 +18,6 @@ Plan keys added for this step (the engine ignores them): `format`, `version`, `s
 Previews of the empty templates: `preview/`. First filled plan: `04_video_projects/X001_shift_finding_answers/` (storyboard https://claude.ai/artifact/CRpVWcRroWzYrrGRQeBHa8).
 
 ## Before the first render of these formats
-- **Music bed (step 4b):** `"score": null` for now. The Sufi tension score is timed to EP000's 46 s; these formats need a score built from scene cues.
+- Music: done — the templates use `"score": "sufi_tension"` (fits any plan; see the engine README).
 - **TIP** wants Papercraft or Claymation (cadence) — not built; uses the studio + cards meanwhile.
 - **LOG** wants a real OBS clip — needs a `real_clip` scene type.
