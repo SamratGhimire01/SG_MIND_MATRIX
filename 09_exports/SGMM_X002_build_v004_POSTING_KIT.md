@@ -20,6 +20,8 @@ Why A: the topic and the stakes come first, under 60 characters, no hype. No has
 ```
 AI isn't taking the last job — it's taking the first one. One Stanford study (ADP payroll data) finds young workers in AI-exposed jobs about 19% behind their peers, mostly through fewer hires; experienced workers show no gap. If nobody starts at the bottom, who becomes the expert?
 
+Source (one study): Stanford Digital Economy Lab, Aug 2026 — https://digitaleconomy.stanford.edu/news/canariesaug26/
+
 SG Mind Matrix documents the AI shift — then, now, next — with honest explainers, practical AI tips and real builds made in public.
 
 New episode every Saturday. Subscribe and join the Matrix.

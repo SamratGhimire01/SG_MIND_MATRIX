@@ -20,6 +20,8 @@ Why A: the stakes (your answer, the bill) come first, under 60 characters, no hy
 ```
 Every answer AI gives you runs on electricity. The IEA says data centres used 485 TWh in 2025 and could reach about 950 TWh by 2030 — around 3% of the world's electricity — with the AI part tripling. Who gets the power, and who pays the bill?
 
+Source: IEA, Key Questions on Energy and AI (2026) — https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary (2030 = projection)
+
 SG Mind Matrix documents the AI shift — then, now, next — with honest explainers, practical AI tips and real builds made in public.
 
 New episode every Saturday. Subscribe and join the Matrix.
