@@ -44,6 +44,13 @@ Brand rules live in `01_brand/SGMM_Brand_Bible.md` and the `sg-mind-matrix-brand
 - Sound design must match the material: **real paper sounds for page turns (never tick-tick)**, book scrape, tape tear, marker stroke, keys, a clock tick only under "waited".
 - Keep effects in front, music under, max ~3 layers, silence around the key hit.
 
+## Samrat's kit (decided 2 Nov 2026)
+- Phone: **realme 11 Pro 5G** (Android), camera app **Open Camera** (lock exposure + WB, 4K 30 fps, beauty/AI/HDR off). He records himself his own way — adapt to his clips; shot lists are suggestions only.
+- Mic: **phone mic only** (no purchase). Always run the approved voice chain + automix.
+- Editing: **CapCut only** (no DaVinci Resolve). Deliver an assembled master **and** numbered clips ready to join.
+- Transfer: LocalSend or USB-C (never WhatsApp/Telegram).
+- On camera: possibly Samrat in a plain matte mask (no cliché masks), silhouette, rare.
+
 ## Workflow Samrat expects
 1. Storyboard first as an artifact (playable animatic + shot cards with options + timeline lanes), wait for OK.
 2. Apply notes exactly and only what was asked ("only change these two things" means only those).

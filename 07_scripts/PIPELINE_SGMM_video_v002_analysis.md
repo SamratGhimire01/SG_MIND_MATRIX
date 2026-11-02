@@ -8,6 +8,11 @@ Builds on `PIPELINE_SGMM_video_v001.md`. New inputs from Samrat:
 
 ---
 
+## 0. Samrat's decisions (2 Nov 2026) — these override anything below
+- **Camera:** Open Camera on the realme 11 Pro 5G. Samrat records himself his own way; the pipeline adapts to his clips (no strict shot list required — it's a suggestion only).
+- **Editing:** **CapCut only** (no DaVinci Resolve). Claude makes all the video; CapCut is just for joining. So the pipeline delivers **numbered, ready-to-join clips** (`01_hook.mp4`, `02_then.mp4`, …) **plus one fully assembled master** — CapCut is optional polish, never required.
+- **Mic:** the **phone mic**, no purchase. The approved crisp+big voice chain stays mandatory; recording rules: 15 cm, aimed at the mouth, noise suppression OFF, quiet soft room.
+
 ## 1. The problems right now — and how we solve them
 
 | # | Problem | Why it matters | Fix built into the pipeline |
@@ -49,7 +54,7 @@ IDEA ─┤G1├─ SCRIPT ─┤G2├─ SCENE PLAN + STORYBOARD ─┤G3├─
 **Long-form (8–15 min, 1920×1080 or 4K, 30 fps)** — "mostly AI-generated" but anchored by real footage:
 - Spine = Samrat's narration + his footage (hands, screen recordings, studio wides).
 - AI segments per act: Collage (THEN), Diagram (NOW), Field/3D (NEXT), Swiss chapter cards, lower-thirds.
-- Output: segments + a **DaVinci Resolve timeline (FCPXML)** with voice, music bed, segments and footage placed; Samrat finishes and approves in Resolve.
+- Output: an **assembled master** (voice, music, segments and footage already placed) + the same as **numbered clips** for CapCut if Samrat wants to re-order or trim.
 - Chapters + sources auto-written into the description.
 
 ## 4. What to get / download
@@ -77,7 +82,7 @@ Phone video notes: shoot **4K 30 fps** (the pipeline conforms it to the 60 fps S
 - **LocalSend** for Mac (receives phone files)
 - **Playwright + Chromium** (`npx playwright install chromium`) for the render engine.
 - **Fonts:** Space Grotesk, JetBrains Mono, Anton, Libre Baskerville, Oswald.
-- **DaVinci Resolve 21** (long-form finishing), **OBS** (screen capture), CapCut optional.
+- **CapCut** desktop (joining/trims only), **OBS** (screen capture). No DaVinci Resolve.
 
 ### What access to give Claude on the Mac (least needed)
 - **Only the repo folder** (`SG_MIND_MATRIX`) **plus one inbox folder** for footage/voice (e.g. `~/Movies/SGMM_Inbox`) — not your whole home folder, not Full Disk Access.
@@ -87,10 +92,10 @@ Phone video notes: shoot **4K 30 fps** (the pipeline conforms it to the 60 fps S
 - Keys (Anthropic, Google, X) go in a local `.env`, never in git.
 
 ## 5. Open questions for Samrat
-1. ~~Which iPhone?~~ → realme 11 Pro 5G. Check if Blackmagic Camera installs from Google Play; if not, use Open Camera.
+1. ~~Phone/camera?~~ → realme 11 Pro 5G with Open Camera.
 2. Mask: **balaclava-style or a simple matte face mask?** Black or Deep Forest?
-3. Long-form finishing in **DaVinci Resolve** (recommended) or CapCut?
-4. Mic: buy one now, or keep the phone for the next few videos?
+3. ~~Resolve or CapCut?~~ → CapCut.
+4. ~~Mic?~~ → phone mic.
 
 ## Sources (2 Nov 2026)
 - YouTube inauthentic-content policy: techcrunch.com/2026/07/20/youtube-clarifies-policies-around-ai-slop-and-upsetting-videos · creatorblade.com/blog/youtube-inauthentic-content-policy-2026-stay-monetized · scenema.ai/articles/monetize-your-youtube-channel-with-ai-video · vexub.com/blog/ai-generated-video-monetization-policies

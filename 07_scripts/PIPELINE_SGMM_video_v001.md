@@ -60,7 +60,7 @@ EP000 taught us: Samrat's real pace differs from the planned windows. So the pla
 | Format | 1080×1920, **60 fps** | 1920×1080 (or 4K), **30 fps** (render time: 15 min @60 fps = 54k frames; @30 = 27k) |
 | Structure | Hook in pitch black (frame 1 must read) → THEN → NOW → NEXT → logo from the dark → blackout tease; seamless loop | Cold open (30 s) → promise → chapters, each THEN/NOW/NEXT → honest section → invitation; YouTube chapters in the description |
 | Picture | 100% rendered by the engine (+ optional phone clips) | **Real footage + narration is the spine**; the engine renders 3–6 segments per episode (collage, diagram, field, title cards, lower-thirds) |
-| Edit | Fully automatic | Engine outputs segments + a **rough-cut timeline for DaVinci Resolve** (EDL/FCPXML) with voice, music and segments placed; Samrat finishes in Resolve |
+| Edit | Fully automatic | Engine outputs segments + a **assembled master + numbered clips for CapCut** (Samrat uses CapCut only for joining/trims) |
 | Score | Full Sufi tension score | Same kit, lighter: bed under talking, the big cues only at act changes; music ducks harder under long narration |
 | Voice | One file, ~14 lines | Record per chapter; same auto-split, chain and automix |
 | Deliverables | final, clean, stems, SRT, cover, kit | segments, Resolve timeline, voice/music stems, SRT, 3 thumbnails (Test & Compare), chapters, kit |
@@ -112,6 +112,6 @@ sgmm qc EP001 && sgmm package EP001          # 6–7
 2. `sgmm build`: voice split → retime → render → score from cues → chain → automix (all exist; wire them together).
 3. `sgmm qc` + `sgmm package` (thumbnail + posting kit generation).
 4. Make the **3 X videos** (shift / tip / log) with it as the first real test.
-5. Long-form: segment rendering at 30 fps + Resolve rough-cut export.
+5. Long-form: segment rendering at 30 fps + assembled master + numbered clips for CapCut.
 6. Add Samrat's 3–4 styles.
 7. Later: plug into the SGMM Studio app (`07_scripts/IDEA_SGMM_Studio_app.md`).
