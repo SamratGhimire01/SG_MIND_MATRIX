@@ -21,7 +21,7 @@ Read first: `01_brand/SGMM_Brand_Bible.md` (look + truth; it wins on appearance)
 Naming: `SGMM_EP###_{asset}_v###.ext`.
 
 ## Video production
-Write every script with `.claude/skills/sgmm-scriptwriting/SKILL.md` (hook, but/therefore, loop ending, 2 options). Follow `.claude/skills/sgmm-video-production/SKILL.md` for every SGMM video and `.claude/skills/sgmm-publishing/SKILL.md` when posting: Samrat's approved look, hands/keyboard, screens mapping, the Sufi tension score and the render pipeline. Record new preferences there.
+Before starting and before sending anything, check `.claude/skills/sgmm-quality-gates/SKILL.md` (all of Samrat's rules, mapped to the pipeline). Write every script with `.claude/skills/sgmm-scriptwriting/SKILL.md` (hook, but/therefore, loop ending, 2 options). Follow `.claude/skills/sgmm-video-production/SKILL.md` for every SGMM video and `.claude/skills/sgmm-publishing/SKILL.md` when posting: Samrat's approved look, hands/keyboard, screens mapping, the Sufi tension score and the render pipeline. Record new preferences there.
 
 ## Style library
 Extra explainer styles (recoloured to SGMM): `08_templates/styles/STYLE_LIBRARY_v001.md`.

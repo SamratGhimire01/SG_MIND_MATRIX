@@ -1,6 +1,6 @@
 # X001 "The End of the Click" — posting kit (SGMM_X001_build_v004)
 
-**Upload this file:** `SGMM_X001_build_v004_1080x1920_60fps.mp4` (31.212 s, vertical → YouTube treats it as a Short).
+**Upload this file:** `SGMM_X001_final_v004_1080x1920_60fps.mp4` (31.212 s, vertical → YouTube treats it as a Short).
 Captions file for YouTube: `SGMM_X001_build_v004_captions_en.srt`. QC: `SGMM_X001_build_v004_qc.md` (run `sgmm qc` before posting).
 
 ---
