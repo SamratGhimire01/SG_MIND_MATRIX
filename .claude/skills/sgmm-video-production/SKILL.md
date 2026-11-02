@@ -68,6 +68,7 @@ Samrat added 8 explainer looks (Editorial Collage, Constructivist, Manim, Paperc
 6. Record every new preference in this file.
 
 ## Topics (2 Nov 2026)
+- **Scripts:** write them with the `sgmm-scriptwriting` skill (Samrat found v001 of X001 not engaging; always send 2 options).
 - **Never reuse EP000's topic** (library → search → ask). Every SHIFT needs a new topic. X001 = "The End of the Click".
 - Verify every number at its original source before scripting; list sources in the video's `research/` folder; flag mis-attributions to Samrat (the 65% → high 20s figure is People Inc., not Condé Nast).
 
