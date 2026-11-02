@@ -10,8 +10,7 @@
   1920
  ],
  "duration": 28.51,
- "score": "sufi_tension",
- "bed": "light",
+ "score": "sgmm_signal",
  "style_files": [
   "04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js",
   "04_video_projects/X002_shift_missing_first_job/storyboard/x002_options.js"

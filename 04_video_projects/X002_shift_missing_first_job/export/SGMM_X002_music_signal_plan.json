@@ -1,0 +1,329 @@
+{
+ "episode": "X002",
+ "format": "shift",
+ "version": "v001",
+ "title": "The Missing First Job",
+ "status": "Picks approved (all A) · waiting for the voice take · no MP4 rendered",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "duration": 35.973,
+ "score": "sgmm_signal",
+ "bed": "light",
+ "style_files": [
+  "04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js",
+  "04_video_projects/X002_shift_missing_first_job/storyboard/x002_options.js"
+ ],
+ "cues": [
+  {
+   "t": 23.04,
+   "cue": "cut",
+   "reopen": 23.5
+  }
+ ],
+ "text": {},
+ "scenes": [
+  {
+   "id": "hook",
+   "type": "x002_hook_badge",
+   "t": [
+    0,
+    4.752
+   ],
+   "hold": [
+    [
+     2.25,
+     1.752
+    ]
+   ]
+  },
+  {
+   "id": "then",
+   "type": "x002_then_day1",
+   "t": [
+    4.652,
+    11.192
+   ],
+   "hold": [
+    [
+     6.352,
+     0.129
+    ],
+    [
+     9.881,
+     0.611
+    ]
+   ]
+  },
+  {
+   "id": "now",
+   "type": "x002_now_gap",
+   "t": [
+    10.792000000000002,
+    25.963000000000005
+   ],
+   "hold": [
+    [
+     12.292,
+     0.384
+    ],
+    [
+     14.276,
+     1.638
+    ],
+    [
+     19.714,
+     2.484
+    ],
+    [
+     24.698,
+     0.465
+    ]
+   ]
+  },
+  {
+   "id": "next",
+   "type": "x002_next_ladder",
+   "t": [
+    25.563000000000006,
+    30.763
+   ]
+  },
+  {
+   "id": "logo",
+   "type": "logo_from_dark",
+   "t": [
+    30.563000000000006,
+    33.36300000000001
+   ]
+  },
+  {
+   "id": "tease",
+   "type": "blackout_tease",
+   "t": [
+    33.36300000000001,
+    35.973000000000006
+   ],
+   "text": {
+    "tease": "NEXT SHIFT · TOMORROW MORNING"
+   }
+  }
+ ],
+ "act_tags": [
+  {
+   "t": [
+    4.752,
+    10.692
+   ],
+   "num": "01",
+   "label": "THEN"
+  },
+  {
+   "t": [
+    10.892000000000001,
+    25.463000000000005
+   ],
+   "num": "02",
+   "label": "NOW"
+  },
+  {
+   "t": [
+    25.663,
+    30.463000000000005
+   ],
+   "num": "03",
+   "label": "NEXT"
+  }
+ ],
+ "captions": [
+  {
+   "t": [
+    0.0,
+    4.602
+   ],
+   "text": "AI isn’t taking the last job.\nIt’s taking the first one.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    4.652,
+    7.031
+   ],
+   "text": "Your first job used to be\nthe boring part.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    7.081,
+    10.742
+   ],
+   "text": "Coffee. Spreadsheets. First drafts.\nThat’s how you learned.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    10.792,
+    13.226
+   ],
+   "text": "But now AI does the boring part.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    13.276,
+    16.564
+   ],
+   "text": "So companies hire fewer beginners.",
+   "kind": "fact",
+   "src": "stanford"
+  },
+  {
+   "t": [
+    16.614,
+    22.848
+   ],
+   "text": "One study: young workers in\nAI-exposed jobs are 19%\nbehind their peers.",
+   "kind": "fact",
+   "src": "stanford"
+  },
+  {
+   "t": [
+    22.898,
+    25.513
+   ],
+   "text": "Experienced workers? No gap.",
+   "kind": "fact",
+   "src": "stanford"
+  },
+  {
+   "t": [
+    25.563,
+    28.003
+   ],
+   "text": "So if nobody starts at the bottom…",
+   "kind": "forecast"
+  },
+  {
+   "t": [
+    28.163,
+    29.403
+   ],
+   "text": "who becomes the expert?",
+   "kind": "line"
+  }
+ ],
+ "silences": [
+  [
+   33.663000000000004,
+   34.06300000000001
+  ]
+ ],
+ "sources": {
+  "stanford": {
+   "title": "Stanford Digital Economy Lab (12 Aug 2026): AI employment gap for young workers widened to 19% (ADP payroll data; descriptive, not causal)",
+   "url": "https://digitaleconomy.stanford.edu/news/canariesaug26/",
+   "note": "one study · a pattern, not proof"
+  }
+ },
+ "notes": [
+  "Script v002 (option A); scenes = the picked drafts, polished in the build.",
+  "Voice: one take, WAV; the build aligns lines with say + DTW.",
+  "Music stops dead after \"who becomes the expert?\", then the logo."
+ ],
+ "publish": {
+  "day": 2,
+  "titles": [
+   "The Missing First Job: AI Is Taking the First Rung",
+   "AI Isn't Taking the Last Job. It's Taking the First.",
+   "Young Workers in AI-Exposed Jobs Are 19% Behind"
+  ],
+  "why": "the topic and the stakes come first, under 60 characters, no hype",
+  "summary": "AI isn't taking the last job — it's taking the first one. One Stanford study (ADP payroll data) finds young workers in AI-exposed jobs about 19% behind their peers, mostly through fewer hires; experienced workers show no gap. If nobody starts at the bottom, who becomes the expert?",
+  "hashtags": [
+   "#AI",
+   "#FutureOfWork",
+   "#ArtificialIntelligence",
+   "#Shorts"
+  ],
+  "tags": [
+   "AI jobs",
+   "entry level jobs",
+   "AI and young workers",
+   "future of work",
+   "first job"
+  ],
+  "pinned": "What did your first job teach you that no course could? The best answers go into a future episode.",
+  "x_post": "AI isn't taking the last job. It's taking the first one.\nOne study: young workers in AI-exposed jobs are 19% behind their peers. Experienced workers: no gap.\n\nIf nobody starts at the bottom, who becomes the expert? #AI",
+  "shorts_frame": "the green −19% (~0:13)",
+  "thumbs": {
+   "A": {
+    "small": "AI ISN’T TAKING THE LAST JOB.",
+    "big": "THE FIRST."
+   },
+   "B": {
+    "t": 7.0,
+    "y": 500,
+    "lines": [
+     "DAY",
+     "[ONE.]"
+    ]
+   },
+   "C": {
+    "t": 12.5,
+    "y": 420,
+    "lines": [
+     "−19%",
+     "[JUNIORS.]"
+    ]
+   },
+   "vertical": {
+    "lines": [
+     "NOT THE",
+     "LAST JOB.",
+     "THE"
+    ],
+    "big": [
+     "FIRST."
+    ]
+   },
+   "names": {
+    "A": "thefirst",
+    "B": "dayone",
+    "C": "minus19"
+   },
+   "pick": "A"
+  }
+ },
+ "warp": [
+  [
+   2.25,
+   1.752
+  ],
+  [
+   4.6,
+   0.129
+  ],
+  [
+   8.0,
+   0.611
+  ],
+  [
+   9.8,
+   0.384
+  ],
+  [
+   11.4,
+   1.638
+  ],
+  [
+   15.2,
+   2.484
+  ],
+  [
+   17.7,
+   0.465
+  ]
+ ]
+}
