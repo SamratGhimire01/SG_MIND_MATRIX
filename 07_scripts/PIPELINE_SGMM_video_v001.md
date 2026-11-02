@@ -109,6 +109,7 @@ sgmm qc EP001 && sgmm package EP001          # 6–7
 
 ## 9. Build plan (when approved)
 1. Extract the EP000 scenes into a **scene library** (one module per scene type) + `scenes.json` loader. Re-render EP000 from a JSON plan to prove it matches.
+   **Done 2 Nov 2026** → `08_templates/engine/` (12 scene types, `render.mjs`); EP000 plan `04_video_projects/EP000_matrix_online/edit/SGMM_EP000_scenes_v001.json` renders byte-identical to storyboard v008.
 2. `sgmm build`: voice split → retime → render → score from cues → chain → automix (all exist; wire them together).
 3. `sgmm qc` + `sgmm package` (thumbnail + posting kit generation).
 4. Make the **3 X videos** (shift / tip / log) with it as the first real test.
