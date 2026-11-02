@@ -22,3 +22,6 @@ Naming: `SGMM_EP###_{asset}_v###.ext`.
 
 ## Video production
 Follow `.claude/skills/sgmm-video-production/SKILL.md` for every SGMM video and `.claude/skills/sgmm-publishing/SKILL.md` when posting: Samrat's approved look, hands/keyboard, screens mapping, the Sufi tension score and the render pipeline. Record new preferences there.
+
+## Parked ideas
+- **SGMM Studio app** (research + analytics + scheduling + comments + Video Lab pipeline): full spec, research and build order in `07_scripts/IDEA_SGMM_Studio_app.md`. Read it first when Samrat says "let's build the Studio/app/pipeline".
