@@ -26,6 +26,9 @@ Follow `.claude/skills/sgmm-video-production/SKILL.md` for every SGMM video and 
 ## Style library
 Extra explainer styles (recoloured to SGMM): `08_templates/styles/STYLE_LIBRARY_v001.md`.
 
+## Cadence
+3 X videos every day (SHIFT / TIP / LOG) + 1 long-form every Saturday: `07_scripts/CADENCE_SGMM_weekly_v001.md`.
+
 ## Parked ideas
 - **Video pipeline** (Shorts + long-form, scene-plan JSON + reusable engine): design in `07_scripts/PIPELINE_SGMM_video_v001.md`; problems, fixes, approval gates, phone (realme 11 Pro 5G + Open Camera)/Mac setup, CapCut-only editing in `07_scripts/PIPELINE_SGMM_video_v002_analysis.md`.
 - **SGMM Studio app** (research + analytics + scheduling + comments + Video Lab pipeline): full spec, research and build order in `07_scripts/IDEA_SGMM_Studio_app.md`. Read it first when Samrat says "let's build the Studio/app/pipeline".

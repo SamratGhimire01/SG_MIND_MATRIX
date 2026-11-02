@@ -41,6 +41,9 @@ Brand rules live in `01_brand/SGMM_Brand_Bible.md` and the `sg-mind-matrix-brand
 ## Extra styles (added 2 Nov 2026)
 Samrat added 8 explainer looks (Editorial Collage, Constructivist, Manim, Papercraft, Origami, Claymation, Voxel, Y2K Chrome). Always recolour to SGMM and follow `08_templates/styles/STYLE_LIBRARY_v001.md` (palette remap, where each style fits, rules). Storyboard grid first, wait for his OK, then build.
 
+## Cadence (decided 2 Nov 2026)
+3 X videos a day (SHIFT morning, TIP afternoon, LOG evening) + Saturday long-form. Formats, styles and weekly batching: `07_scripts/CADENCE_SGMM_weekly_v001.md`.
+
 ## Sound (approved: "the sound is good")
 - Mood: **ominous, important, ambiguous — Sufi with horror tension.** Original synthesized score, owned, no samples, no Content ID risk.
 - Palette: **ney** (breathy reed flute) in **Hijaz on D** (D Eb F# G A Bb C) · **daf** frame drum in 6/8 (`dum . tek dum tek .`, eighth = 0.2 s) that builds · tanpura-style **drone** D2/A2/D3 · breath **choir** ("ah" formants) on big moments · **D/Eb dissonance** that never resolves · **heartbeat** in the dark · **silence as the hit** (cut the music bus and its reverb tail dead).
