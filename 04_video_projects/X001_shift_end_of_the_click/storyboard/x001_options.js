@@ -163,8 +163,8 @@ window.X001_OPT = (() => {
     hilite(c, 170, 760 + 2 * 66 - 20, 520, 36, seg(3.0, 3.4, q12(t)));
     const cl1 = seg(3.3, 3.7, q12(t)); if (cl1 > 0) cursor(c, lerp(980, 720, SM(cl1)), lerp(1500, 905, SM(cl1)), 1.5, C.card, {shadow: true, stroke: C.ink, press: t > 3.7 && t < 3.85});
     markerRing(c, 520, 760 + 2 * 66, 440, 58, seg(3.75, 4.2, t), C.green, 5);
-    const ws = drop(t, 4.0); if (ws) { piece(c, 820, 1225 + ws.y, 0.06, 360, 170, C.card, 44, (cc) => { cc.font = `400 64px ${ANTON}`; cc.fillStyle = C.ink; cc.textAlign = 'center'; cc.fillText('WEBSITE', 0, 22); }); tape(c, 820, 1143 + ws.y, 120, 34, -0.1); }
-    const cf = seg(4.25, 4.6, q12(t)); if (cf > 0) coin(c, lerp(720, 880, cf), lerp(1000, 1210, cf * cf), 52, {halftone: true, rot: cf});
+    const ws = drop(t, 4.0); if (ws) { piece(c, 760, 1225 + ws.y, 0.06, 360, 170, C.card, 44, (cc) => { cc.font = `400 64px ${ANTON}`; cc.fillStyle = C.ink; cc.textAlign = 'center'; cc.fillText('WEBSITE', 0, 22); }); tape(c, 760, 1143 + ws.y, 120, 34, -0.1); }
+    const cf = seg(4.25, 4.6, q12(t)); if (cf > 0) coin(c, lerp(720, 925, cf), lerp(1000, 1150, cf * cf), 52, {halftone: true, rot: cf});
     finish(c, t); caption(c, t, CAPS.then);
   }
   function thenB(c, t) { // the deal as a cut-out diagram: YOU -> SEARCH -> WEBSITE, ink arrows, the coin travels the chain
@@ -287,9 +287,24 @@ window.X001_OPT = (() => {
   }
 
   /* Samrat's picks (2 Nov 2026): hook A, THEN A, NOW A, NEXT A -> engine scene types (each on its own clock from 0) */
-  const engineScene = (fn) => ({at: 0, draw: (ctx, t) => { CHROME = false; try { fn(ctx, t); } finally { CHROME = true; } }});
+  const engineScene = (fn, sound) => ({at: 0, sound, draw: (ctx, t) => { CHROME = false; try { fn(ctx, t); } finally { CHROME = true; } }});
+  /* sounds from the approved Sufi kit, on each scene's own clock (c = scene time -> plan time) */
+  const coinDrop = (k, P, t) => { P('put', t, {g: 0.9}); P('ding', t + 0.02, {f: 1975, g: 0.22}); P('ding', t + 0.16, {f: 1975, g: 0.08}); };
+  const SND = {
+    hook: (k, P, c) => { k.tone(c(0.2), {f: [[0, 60], [0.2, 40]], dur: 0.3, gain: 0.5, bus: 'music'}); P('tick', c(1.0), {f: 3200, g: 0.35}); P('whoosh', c(1.55), {dur: 0.5, top: 1800, g: 0.25}); coinDrop(k, P, c(1.95)); },
+    then: (k, P, c) => { P('put', c(0.05), {g: 0.9}); P('slide', c(0.5), {dur: 0.25, g: 0.7}); P('put', c(0.62), {g: 0.6});
+      for (let i = 0; i < 10; i++) P('paper', c(1.0 + i * 0.1), {dur: 0.18, g: 0.35 + 0.03 * i, pan: i % 2 ? 0.2 : -0.2});
+      P('stroke', c(3.0), {material: 'marker', dur: 0.4, g: 0.8}); P('click', c(3.72), {f: 2200, g: 0.9}); P('stroke', c(3.75), {material: 'marker', dur: 0.45, g: 0.9, pan: 0.2});
+      P('put', c(4.0), {g: 0.9, pan: 0.4}); P('tear', c(4.05), {g: 0.5, pan: 0.4}); coinDrop(k, P, c(4.6)); },
+    now: (k, P, c) => { for (let i = 0; i < 10; i++) P('tick', c(0.05 + i * 0.05), {f: 1800, g: 0.2, pan: -0.2}); P('stroke', c(1.0), {material: 'pen', dur: 1.0, g: 0.35});
+      P('tick', c(2.45), {f: 2600, g: 0.4}); P('whoosh', c(2.5), {dur: 0.9, top: 1300, g: 0.4});
+      P('stroke', c(4.1), {material: 'pen', dur: 0.9, g: 0.45}); k.daf(c(5.3), 'tek', 0.6); k.ney([[c(5.1), 587.33, 0.9, 1]], {gain: 0.06});
+      P('whoosh', c(7.1), {dur: 0.5, top: 1100, g: 0.3}); P('stroke', c(7.6), {material: 'pen', dur: 1.2, g: 0.4}); k.daf(c(9.2), 'tek', 0.7); },
+    next: (k, P, c) => { for (let i = 0; i < 18; i++) P('key', c(0.6 + i * 0.1), {g: 0.3 + 0.02 * (i % 4), pan: -0.3 + (i % 5) * 0.15}); P('click', c(1.3), {f: 3000, g: 0.4});
+      P('ding', c(3.0), {f: 1318.5, g: 0.12}); },
+  };
   window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {
-    x001_hook_link: engineScene(hookA), x001_then_search: engineScene(thenA), x001_now_answer: engineScene(nowA), x001_next_voxel: engineScene(nextA)});
+    x001_hook_link: engineScene(hookA, SND.hook), x001_then_search: engineScene(thenA, SND.then), x001_now_answer: engineScene(nowA, SND.now), x001_next_voxel: engineScene(nextA, SND.next)});
   return {CAPS, scenes: [
     {id: 'hook', label: 'Hook', act: 'cold open', lines: 'L01', dur: 2.6, options: [
       {name: 'Dark link', draw: hookA, keys: [0.6, 1.2, 1.9], note: 'Pitch black; one link fades in, the cursor hovers, then drifts away; a coin falls past. Most literal match to the line; Manim-clean.'},

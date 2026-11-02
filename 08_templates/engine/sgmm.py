@@ -22,6 +22,7 @@ MAX_TEMPO = 1.10             # speed up at most 10%, pitch kept; never cut words
 GAP = .15                    # min gap kept between lines when moving one earlier
 TAIL_OK = .10                # a line may run this far past its slot (breath / room tail, not words)
 CAP_TAIL = .25               # caption stays this long after the voice ends
+HOLD_BEFORE = .5            # inserted time goes this far before the line's slot end
 TARGET, DIP_MIN, DIP_MAX = 15.0, 4.0, 18.0   # automix: voice over background per line (approved v004)
 LUFS, TP = -14.0, -1.5
 
@@ -32,9 +33,10 @@ def sh(*a, out=False):
 
 
 def load(path, ch=1):
-    raw = sh('ffmpeg', '-v', 'error', '-i', path, '-ac', ch, '-ar', SR, '-f', 'f32le', '-', out=True)
-    a = np.frombuffer(raw, np.float32).astype(np.float64)
-    return a.reshape(-1, ch) if ch > 1 else a
+    # decode as stereo (a mono file is duplicated), then average for mono: ffmpeg's own -ac 1 sums L+R and can pass full scale
+    raw = sh('ffmpeg', '-v', 'error', '-i', path, '-ac', 2, '-ar', SR, '-f', 'f32le', '-', out=True)
+    a = np.frombuffer(raw, np.float32).astype(np.float64).reshape(-1, 2)
+    return a if ch == 2 else a.mean(1)
 
 
 def save(path, a, bits=16):
@@ -98,8 +100,9 @@ def group_runs(runs, sizes):
 
 # ---------------- 2. re-time the plan to the real voice ----------------
 def shift_plan(plan, T, dt):
-    """insert dt seconds at plan time T: everything from T on moves later; a scene running across T plays dt longer"""
+    """insert dt seconds at plan time T: everything from T on moves later; a scene running across T holds its picture at T for dt"""
     for s in plan['scenes']:
+        if s['t'][0] < T < s['t'][1]: s['hold'] = s.get('hold', []) + [[round(T, 4), round(dt, 4)]]
         s['t'] = [x + dt if x >= T else x for x in s['t']]
     for k in ('captions', 'act_tags'):
         for c in plan.get(k, []): c['t'] = [x + dt if x >= T else x for x in c['t']]
@@ -120,8 +123,9 @@ def retime(plan, durs):
         need = d / tempo - slot
         if need > 1e-6:
             need = round(need + .02, 3)
-            shift_plan(plan, t1, need)
-            warp.append([round(t1 - added, 4), need]); added += need
+            T = max(t0, t1 - HOLD_BEFORE)   # hold the picture just before the slot ends (a finished frame, not mid-transition)
+            shift_plan(plan, T, need)
+            warp.append([round(T - added, 4), need]); added += need
         placed.append((round(t0, 4), tempo))
     for i, (t0, tempo) in enumerate(placed):
         end = t0 + durs[i] / tempo + CAP_TAIL
@@ -327,7 +331,7 @@ def qc(prefix):
         s = db(mix[int(a * SR):int(b * SR)])
         chk(f'silence {a:.2f}–{b:.2f} s', s <= SILENT, f'{s:.1f} dBFS (≤ {SILENT:.0f})')
 
-    joins = [(0.0, 'first frame')] + [(s['t'][0] + .05, s.get('id', s['type'])) for s in plan['scenes'][1:]] + [(dur - 1 / fps, 'last frame')]
+    joins = [(0.0, 'first frame')] + [(s['t'][0] + .05, s.get('id', s['type'])) for s in plan['scenes'][1:]] + [((round(dur * fps) - 1) / fps, 'last frame')]
     sheet = prefix + '_contact.png'
     contact_sheet(final, [(t, f'{t:5.2f}s {lab}') for t, lab in joins], sheet)
 
@@ -509,7 +513,7 @@ def selftest():
     p = base(); pl = retime(p, [.8, 1.5, 1]); assert pl[1] == (2.6, 1) and 'warp' not in p             # earlier first (to prev end + GAP + ...)
     p = base(); pl = retime(p, [.8, 2.3, 1]); assert pl[1][0] == 1.95 and pl[1][1] > 1 and 'warp' not in p  # then speed up <=10%
     p = base(); pl = retime(p, [.8, 3.5, 1])                                                          # then insert time
-    assert p['warp'] and p['duration'] > 10 and p['scenes'][1]['t'][0] > 5 and pl[2][0] > 6 and p['scenes'][0]['t'][1] > 5  # scene across the insert plays longer
+    assert p['warp'] and p['duration'] > 10 and p['scenes'][1]['t'][0] > 5 and pl[2][0] > 6 and p['scenes'][0]['t'][1] > 5 and p['scenes'][0]['hold']  # scene across the insert holds
     assert srt([{'t': [0.05, 1.3], 'text': 'This is [SG Mind Matrix].'}, {'t': [61.5, 62], 'text': 'a\nb'}]) == \
         '1\n00:00:00,050 --> 00:00:01,300\nThis is SG Mind Matrix.\n\n2\n00:01:01,500 --> 00:01:02,000\na b\n'
     print('selftest ok')

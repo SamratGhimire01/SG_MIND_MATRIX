@@ -1,0 +1,35 @@
+1
+00:00:00,000 --> 00:00:02,950
+Every time you don’t click a link… someone loses money.
+
+2
+00:00:03,000 --> 00:00:04,070
+The old deal was simple.
+
+3
+00:00:05,000 --> 00:00:08,740
+You searched. Ten blue links. One click paid the website.
+
+4
+00:00:08,800 --> 00:00:10,760
+But now AI answers on top.
+
+5
+00:00:11,200 --> 00:00:12,420
+So you don’t click.
+
+6
+00:00:12,470 --> 00:00:18,143
+One study: Google traffic to publishers fell 40% in a year.
+
+7
+00:00:18,193 --> 00:00:22,008
+Condé Nast told its teams: plan as if search is zero.
+
+8
+00:00:22,058 --> 00:00:25,048
+So websites may write for AIs… not for you.
+
+9
+00:00:25,098 --> 00:00:27,708
+And when no one clicks… who gets paid?

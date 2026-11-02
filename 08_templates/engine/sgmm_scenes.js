@@ -442,7 +442,7 @@ const FULLFLOW=()=>{const R=icen('right'),w=1920*R.w/R.h;return{x:540-w/2,y:0,w,
 const OFF=new Map();const offFor=(W,H)=>{const k=W+'x'+H;if(!OFF.has(k))OFF.set(k,layer(W,H));return OFF.get(k)};
 
 /* ================= sound: a compact kit (ideas from the reference kit: buses, compressor, room reverb, seeded noise, paper/stroke/key primitives) ================= */
-function makeKit(ctx,start,mute,warp){const T0=start||0,base=ctx.currentTime+.03,SR=ctx.sampleRate,TINY=1e-4,W=warp||(t=>t),at=t=>(Math.round((base+(W(t)-T0))*SR)+.25)/SR;
+function makeKit(ctx,start,mute,warp){let useW=true;const T0=start||0,base=ctx.currentTime+.03,SR=ctx.sampleRate,TINY=1e-4,W0=warp||(t=>t),W=t=>useW?W0(t):t,at=t=>(Math.round((base+(W(t)-T0))*SR)+.25)/SR;
   const master=ctx.createGain();master.gain.value=.9;const comp=ctx.createDynamicsCompressor();comp.threshold.value=-16;comp.knee.value=8;comp.ratio.value=3;comp.attack.value=.004;comp.release.value=.18;comp.connect(master);master.connect(ctx.destination);
   const bus={};for(const [n,g] of Object.entries({sfx:.85,amb:.5,music:.5})){bus[n]=ctx.createGain();bus[n].gain.value=g;const z=ctx.createGain();z.gain.value=(mute==='music'&&n==='music')||(mute==='sfx'&&n!=='music')?0:1;bus[n].connect(z);z.connect(comp)}
   const verb=ctx.createConvolver();{const n=Math.floor(1.6*SR),ir=ctx.createBuffer(2,n,SR);for(let c=0;c<2;c++){const r=rng(77+c),d=ir.getChannelData(c);let lp=0;for(let i=0;i<n;i++){const u=i/n;lp+=(.6-.45*u)*((r()*2-1)-lp);d[i]=lp*Math.pow(1-u,3)}}verb.buffer=ir}
@@ -499,7 +499,8 @@ function makeKit(ctx,start,mute,warp){const T0=start||0,base=ctx.currentTime+.03
     out(gg,{bus:'music',verb:.65,pan:(i-(fs.length-1)/2)*.35});os.start(a0);os.stop(at(t1)+.05)})}
   /* cut every musical sound dead (bus and its reverb tail), then reopen */
   function cut(t,reopen){const a=at(t);for(const p of [bus.music.gain,voutM.gain,vinM.gain]){const v=p===bus.music.gain?.5:1;p.setValueAtTime(v,a-.012);p.linearRampToValueAtTime(0,a);if(reopen){p.setValueAtTime(0,at(reopen));p.linearRampToValueAtTime(v,at(reopen)+.02)}}}
-  return{tone,noise,play:(n,t,o)=>S[n](t,o||{}),bus,ney,daf,drone,choir,cut}}
+  /* setWarp(false): times are already in the re-timed plan (the scene-built score); hand-written cue sheets and plan cues keep the warp */
+  return{tone,noise,play:(n,t,o)=>S[n](t,o||{}),bus,ney,daf,drone,choir,cut,setWarp:on=>{useW=on}}}
 /* the score: same times as the picture */
 const KEYT=Array.from({length:60},()=>13+R0()*5.5).sort((a,b)=>a-b);
 function score(k){const P=(n,t,o)=>k.play(n,t,o);
@@ -617,7 +618,7 @@ const SCENE_SOUND={
 const inWindow=(k,a,b)=>{const ok=t=>t>=a-.05&&t<b;return{...k,play:(n,t,o)=>{if(ok(t))k.play(n,t,o)},tone:(t,p)=>{if(ok(t))k.tone(t,p)},noise:(t,p)=>{if(ok(t))k.noise(t,p)},
   daf:(t,...r)=>{if(ok(t))k.daf(t,...r)},ney:(ph,o)=>{if(ph.length&&ok(ph[0][0]))k.ney(ph,o)},choir:(t0,...r)=>{if(ok(t0))k.choir(t0,...r)},drone:(t0,...r)=>{if(ok(t0))k.drone(t0,...r)}}};
 function sufiTension(k,plan,scenes){
-  const D=plan.duration,find=ty=>scenes.find(s=>s.type===ty),clock=s=>x=>x-s.off;
+  const D=plan.duration,find=ty=>scenes.find(s=>s.type===ty),clock=s=>x=>{let p=x-s.off;for(const [T,dt] of s.hold||[])if(p>=T)p+=dt;return p};
   const hook=find('enter_in_dark'),field=find('field_push'),logo=find('logo_from_dark'),tease=find('blackout_tease');
   const press=hook?clock(hook)(PRESS):0,hit=field?clock(field)(28.0):null;
   const A={press,hit,cut:hit!=null?hit-.52:null,logoHit:logo?clock(logo)(41.0):null,blackout:tease?tease.a:logo?clock(logo)(BLACKOUT):D};
@@ -629,7 +630,7 @@ function sufiTension(k,plan,scenes){
   const then=find('collage_library')||find('build_log')||find('ots_screen')||scenes[1],open=then?Math.min(then.a,press+4.05):press+4.05;
   if(open-press>1.2){k.choir(press+.15,open,[HZ.D3,HZ.A3],.8);k.ney([[press+.6,HZ.A4,Math.min(1.5,open-press-.7),1]].concat(open-press>3.6?[[press+2.1,HZ.G4,1.5,.9]]:[]),{gain:.075,pan:.15})}
   /* NOW: the daf enters (dum . tek dum tek .) and builds until the dead stop / the mark */
-  const now=scenes.find(s=>['type_hands','ots_screen'].includes(s.type)||/^manim_/.test(s.type)),end=A.cut??(A.logoHit!=null?A.logoHit-.5:A.blackout-.5);
+  const now=scenes.find(s=>['type_hands','ots_screen'].includes(s.type)||/^manim_|_now_/.test(s.type)),end=A.cut??(A.logoHit!=null?A.logoHit-.5:A.blackout-.5);
   if(now&&end-now.a>1.5){const t0=now.a+.6,span=end-t0;for(let t=t0,i=0;t<end-.02;t+=EIGHTH,i++){const kind=PAT6[i%6];if(!kind)continue;const u=(t-t0)/span;k.daf(t,kind,.28+.62*u*u,(i%2?.15:-.15))}}
 }
 
@@ -688,12 +689,14 @@ function drawCaps(ctx,t,CAPS){for(const [a,b,parts] of CAPS){if(t<a||t>b)continu
 /* ================= a plan -> a playable episode ================= */
 function load(plan){
   const scenes=plan.scenes.map(s=>{const ty=TYPES[s.type];if(!ty)throw new Error(`unknown scene type "${s.type}" (have: ${Object.keys(TYPES).join(', ')})`);
-    const [a,b]=s.t,off=ty.at-a;return{type:s.type,a,b,off,fn:ty.fn,tx:{...plan.text,...s.text},trail:ty.trail.map(([x,y,k])=>[x-off,y-off,k])}});
+    const [a,b]=s.t,off=ty.at-a;return{type:s.type,a,b,off,hold:s.hold||[],fn:ty.fn,tx:{...plan.text,...s.text},trail:ty.trail.map(([x,y,k])=>[x-off,y-off,k])}});
   const CAPS=(plan.captions||[]).map(c=>[c.t[0],c.t[1],capParts(c.text)]);
   const TAGS=(plan.act_tags||[]).map(g=>[g.t[0],g.t[1],g.num,g.label,ACTCOL[g.label]||C.white]);
   const TRAIL=scenes.flatMap(s=>s.trail),DUR=plan.duration;
   const trailK=t=>{for(const [a,b,k] of TRAIL){if(t>=a&&t<b)return k*Math.min(seg(t,a,a+.15),1-seg(t,b-.15,b))}return 0};
-  const draw=(c,s,t)=>{TX=s.tx;c.save();s.fn(c,t+s.off);c.restore()};
+  /* hold: [[T, dt]] from sgmm build — the scene freezes at plan time T for dt seconds (time inserted for a long voice line) */
+  const local=(s,t)=>{for(let i=s.hold.length-1;i>=0;i--){const [T,dt]=s.hold[i];if(t>=T+dt)t-=dt;else if(t>=T)t=T}return t+s.off};
+  const draw=(c,s,t)=>{TX=s.tx;c.save();s.fn(c,local(s,t));c.restore()};
   function render(ctx,W,H,t,caps=true){const S=W/1080;ctx.setTransform(S,0,0,H/1920,0,0);ctx.globalAlpha=1;ctx.filter='none';ctx.globalCompositeOperation='source-over';ctx.fillStyle=C.void;ctx.fillRect(0,0,1080,1920);
     const act=scenes.filter(s=>t>=s.a&&t<s.b);
     act.forEach((s,i)=>{if(i===0){draw(ctx,s,t);return}const al=ss(seg(t,s.a,act[i-1].b));const oc2=offFor(W,H),o=oc2.getContext('2d');o.setTransform(S,0,0,H/1920,0,0);o.globalAlpha=1;o.filter='none';o.fillStyle=C.void;o.fillRect(0,0,1080,1920);draw(o,s,t);
@@ -710,7 +713,7 @@ function load(plan){
     audio:async(mute)=>{const sc=plan.score==null?()=>{}:SCORES[plan.score];if(!sc)throw new Error(`unknown score "${plan.score}"`);const sr=48000,off=new OfflineAudioContext(2,sr*DUR,sr);
     /* warp: [[t, +seconds],...] from sgmm build when the real voice needed more time; the cue sheet's times move with the picture */
     const WP=plan.warp||[],warp=t=>{let d=0;for(const [p,dt] of WP)if(t>=p)d+=dt;return t+d};
-    const kk=makeKit(off,0,mute,WP.length?warp:null);sc(kk,plan,scenes);
+    const kk=makeKit(off,0,mute,WP.length?warp:null);if(sc===sufiTension)kk.setWarp(false);sc(kk,plan,scenes);kk.setWarp(true);
     /* cues from the plan: {"t":28,"cue":"impact","g":1.2} (one-shots: key tick click thud impact whoosh riser paper slide put tear stroke ding) | {"cue":"daf","kind":"dum"} | {"cue":"cut","reopen":28} */
     for(const {t,cue,...o} of plan.cues||[]){if(cue==='daf')kk.daf(t,o.kind||'dum',o.g??1,o.pan||0);else if(cue==='cut')kk.cut(t,o.reopen);else kk.play(cue,t,o)}const buf=await off.startRendering();
     const L=buf.getChannelData(0),R=buf.getChannelData(1),N=L.length;let pk=0;for(let i=0;i<N;i++)pk=Math.max(pk,Math.abs(L[i]),Math.abs(R[i]));const g=mute?1:(pk>0?.891/pk:1);
