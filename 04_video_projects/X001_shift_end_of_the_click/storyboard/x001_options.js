@@ -330,6 +330,8 @@ window.X001_OPT = (() => {
   };
   window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {
     x001_hook_link: engineScene(hookA, SND.hook), x001_then_search: engineScene(thenA, SND.then), x001_now_answer: engineScene(nowA, SND.now), x001_next_voxel: engineScene(nextA, SND.next)});
+  // the drawing kit, shared with later videos (collage, voxel, coin, cursor, act tag, caption)
+  window.SGMM_KIT = {C, TAU, q12, ANTON, SERIF, actTag, caption, coin, cursor, tornPoly, piece, tape, hilite, markerRing, strip, paperBg, finish, drop, YAW, proj, voxels, fallIn, voxGround, pageVox, machineVox, coinVox, setChrome: (v) => { CHROME = v; }};
   return {CAPS, scenes: [
     {id: 'hook', label: 'Hook', act: 'cold open', lines: 'L01', dur: 2.6, options: [
       {name: 'Dark link', draw: hookA, keys: [0.6, 1.2, 1.9], note: 'Pitch black; one link fades in, the cursor hovers, then drifts away; a coin falls past. Most literal match to the line; Manim-clean.'},
