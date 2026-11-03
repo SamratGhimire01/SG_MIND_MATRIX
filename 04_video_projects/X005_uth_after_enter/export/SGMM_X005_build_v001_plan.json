@@ -1,0 +1,314 @@
+{
+ "episode": "X005",
+ "format": "under_the_hood",
+ "version": "v001",
+ "title": "What Happens After You Press Enter",
+ "status": "Picks approved · built from the ElevenLabs take · draft for Samrat",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "score": "sgmm_signal",
+ "style_files": [
+  "04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js",
+  "08_templates/styles/pop/sgmm_pop.js",
+  "04_video_projects/X005_uth_after_enter/storyboard/x005_options.js"
+ ],
+ "text": {},
+ "captions": [
+  {
+   "t": [
+    0.11,
+    3.79
+   ],
+   "text": "You press *Enter*…\nand the answer starts *typing back*.",
+   "kind": "line",
+   "style": "pop",
+   "mode": "dark"
+  },
+  {
+   "t": [
+    4.51,
+    5.91
+   ],
+   "text": "But here’s the\n*interesting part?*",
+   "kind": "line",
+   "style": "pop",
+   "mode": "dark"
+  },
+  {
+   "t": [
+    6.17,
+    9.68
+   ],
+   "text": "The model doesn’t look up\na finished answer… it *writes it*.",
+   "kind": "line",
+   "style": "pop",
+   "mode": "light"
+  },
+  {
+   "t": [
+    10.09,
+    11.85
+   ],
+   "text": "One *small piece*\nat a time!",
+   "kind": "line",
+   "style": "pop",
+   "mode": "light"
+  },
+  {
+   "t": [
+    12.18,
+    15.09
+   ],
+   "text": "Look, first your message\nis cut into *tokens*.",
+   "kind": "fact",
+   "src": "anthropic",
+   "style": "pop",
+   "mode": "light"
+  },
+  {
+   "t": [
+    15.16,
+    17.91
+   ],
+   "text": "A token is about a word…\nor *part of one*.",
+   "kind": "fact",
+   "src": "openai_tokens",
+   "style": "pop",
+   "mode": "light"
+  },
+  {
+   "t": [
+    18.3,
+    20.92
+   ],
+   "text": "Then each token becomes\na *list of numbers*.",
+   "kind": "fact",
+   "src": "vaswani",
+   "style": "pop",
+   "mode": "dark"
+  },
+  {
+   "t": [
+    21.24,
+    26.26
+   ],
+   "text": "Now *attention*: every word checks\nwhich words matter to it.",
+   "kind": "fact",
+   "src": "vaswani",
+   "style": "pop",
+   "mode": "dark"
+  },
+  {
+   "t": [
+    26.71,
+    29.84
+   ],
+   "text": "Then it scores every\npossible *next word*.",
+   "kind": "fact",
+   "src": "anthropic",
+   "style": "pop",
+   "mode": "dark"
+  },
+  {
+   "t": [
+    30.01,
+    33.52
+   ],
+   "text": "It picks one… adds it…\nand *guesses again*.",
+   "kind": "fact",
+   "src": "anthropic",
+   "style": "pop",
+   "mode": "dark"
+  },
+  {
+   "t": [
+    34.11,
+    37.42
+   ],
+   "text": "That’s why you see it *typing*…\npiece by piece.",
+   "kind": "fact",
+   "src": "openai_latency",
+   "style": "pop",
+   "mode": "light"
+  },
+  {
+   "t": [
+    37.65,
+    38.73
+   ],
+   "text": "This is called…",
+   "kind": "fact",
+   "src": "anthropic",
+   "style": "pop",
+   "mode": "light"
+  },
+  {
+   "t": [
+    39.28,
+    43.23
+   ],
+   "text": "But there’s a *twist!*",
+   "kind": "line",
+   "style": "pop",
+   "mode": "dark"
+  },
+  {
+   "t": [
+    43.29,
+    47.26
+   ],
+   "text": "It picks the *likely* word…\nnot a checked fact.",
+   "kind": "fact",
+   "src": "kalai2025",
+   "style": "pop",
+   "mode": "dark"
+  },
+  {
+   "t": [
+    47.31,
+    52.04
+   ],
+   "text": "That’s why AI can sound *sure*…\nand still be *wrong*.",
+   "kind": "fact",
+   "src": "kalai2025",
+   "style": "pop",
+   "mode": "dark"
+  },
+  {
+   "t": [
+    52.09,
+    55.64
+   ],
+   "text": "So AI doesn’t *find* your answer…\nit *writes* it!",
+   "kind": "line",
+   "style": "pop",
+   "mode": "light"
+  },
+  {
+   "t": [
+    56.28,
+    57.61
+   ],
+   "text": "Now you see the code.",
+   "kind": "line",
+   "style": "hidden"
+  }
+ ],
+ "duration": 59.86,
+ "cues": [
+  {
+   "t": 59.56,
+   "cue": "cut",
+   "reopen": 60.86
+  }
+ ],
+ "scenes": [
+  {
+   "id": "hook",
+   "type": "x005_hook",
+   "t": [
+    0.0,
+    6.27
+   ],
+   "text": {
+    "speed": 1.0207
+   }
+  },
+  {
+   "id": "claim",
+   "type": "x005_claim",
+   "t": [
+    6.02,
+    12.28
+   ],
+   "text": {
+    "speed": 1.1182
+   }
+  },
+  {
+   "id": "tokens",
+   "type": "x005_tokens",
+   "t": [
+    12.03,
+    21.34
+   ],
+   "text": {
+    "speed": 1.203
+   }
+  },
+  {
+   "id": "attend",
+   "type": "x005_attend",
+   "t": [
+    21.09,
+    34.21
+   ],
+   "text": {
+    "speed": 0.8537
+   }
+  },
+  {
+   "id": "name",
+   "type": "x005_name",
+   "t": [
+    33.96,
+    41.75
+   ],
+   "text": {
+    "speed": 0.9756
+   }
+  },
+  {
+   "id": "twist",
+   "type": "x005_twist",
+   "t": [
+    41.5,
+    52.19
+   ],
+   "text": {
+    "speed": 0.9729
+   }
+  },
+  {
+   "id": "end",
+   "type": "x005_end",
+   "t": [
+    51.94,
+    59.86
+   ],
+   "text": {
+    "speed": 1.0101
+   }
+  }
+ ],
+ "act_tags": [],
+ "sources": {
+  "anthropic": {
+   "title": "Anthropic — Glossary (tokens, next-word pretraining, temperature, TTFT)",
+   "url": "https://platform.claude.com/docs/en/about-claude/glossary"
+  },
+  "openai_tokens": {
+   "title": "OpenAI — What are tokens and how to count them (1 token ≈ ¾ word)",
+   "url": "https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them"
+  },
+  "vaswani": {
+   "title": "Vaswani et al., Attention Is All You Need (2017)",
+   "url": "https://arxiv.org/abs/1706.03762"
+  },
+  "openai_latency": {
+   "title": "OpenAI — Latency optimization (streaming)",
+   "url": "https://developers.openai.com/api/docs/guides/latency-optimization"
+  },
+  "kalai2025": {
+   "title": "Kalai, Nachum, Vempala, Zhang — Why Language Models Hallucinate (2025)",
+   "url": "https://arxiv.org/abs/2509.04664"
+  }
+ },
+ "notes": [
+  "First Pop Explainer. Script v002 (A), picks all A. Mechanism simplified (tag on screen). Ends on the catchphrase card (no logo: it would push past 60 s).",
+  "Voice: ElevenLabs take (free tier = draft; regenerate on Starter before a monetised post)."
+ ]
+}

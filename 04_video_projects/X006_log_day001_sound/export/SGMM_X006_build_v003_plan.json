@@ -1,0 +1,161 @@
+{
+ "episode": "X006",
+ "format": "log",
+ "version": "v001",
+ "title": "LOG Day 001 — Why Our Sound Felt Worse",
+ "status": "Picks approved · built from the ElevenLabs take · draft for Samrat",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "score": "sgmm_signal",
+ "style_files": [
+  "04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js",
+  "08_templates/styles/pop/sgmm_pop.js",
+  "04_video_projects/X006_log_day001_sound/storyboard/x006_options.js"
+ ],
+ "text": {},
+ "captions": [
+  {
+   "t": [
+    0.11,
+    3.16
+   ],
+   "text": "Today I found out why\nour videos sound worse.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    3.27,
+    6.48
+   ],
+   "text": "I measured our mix against\nan explainer that sounds great.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    6.76,
+    11.3
+   ],
+   "text": "Same voice level… but we had\n16 dB more deep bass.",
+   "kind": "fact",
+   "src": "own"
+  },
+  {
+   "t": [
+    11.42,
+    14.9
+   ],
+   "text": "Theirs sits in the centre.\nOurs spreads wide.",
+   "kind": "fact",
+   "src": "own"
+  },
+  {
+   "t": [
+    15.06,
+    19.78
+   ],
+   "text": "So tomorrow: cut the bass,\npull it to the middle,\nmore small hits.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    19.96,
+    21.95
+   ],
+   "text": "Day 002 starts… now.",
+   "kind": "line"
+  }
+ ],
+ "act_tags": [],
+ "duration": 27.41,
+ "cues": [
+  {
+   "t": 21.94,
+   "cue": "cut",
+   "reopen": 22.4
+  }
+ ],
+ "silences": [
+  [
+   25.1,
+   25.5
+  ]
+ ],
+ "scenes": [
+  {
+   "id": "hook",
+   "type": "x006_hook",
+   "t": [
+    0.0,
+    3.37
+   ],
+   "text": {
+    "speed": 0.8902
+   }
+  },
+  {
+   "id": "find",
+   "type": "x006_find",
+   "t": [
+    3.12,
+    11.52
+   ],
+   "text": {
+    "speed": 0.7381
+   }
+  },
+  {
+   "id": "stereo",
+   "type": "x006_stereo",
+   "t": [
+    11.27,
+    15.16
+   ],
+   "text": {
+    "speed": 0.8226
+   }
+  },
+  {
+   "id": "fix",
+   "type": "x006_fix",
+   "t": [
+    14.91,
+    22.0
+   ],
+   "text": {
+    "speed": 0.8745
+   }
+  },
+  {
+   "id": "logo",
+   "type": "logo_from_dark",
+   "t": [
+    22.0,
+    24.8
+   ]
+  },
+  {
+   "id": "tease",
+   "type": "blackout_tease",
+   "t": [
+    24.8,
+    27.41
+   ],
+   "text": {
+    "tease": "NEXT LOG · TOMORROW EVENING"
+   }
+  }
+ ],
+ "sources": {
+  "own": {
+   "title": "Our own measurement (3 Nov 2026): energy below 80 Hz −29 dB (reference explainers) vs −13.4 dB (our X003 v006); stereo side −28…−30 vs −20 dB",
+   "url": ".claude/skills/sgmm-video-production/POP_EXPLAINER.md"
+  }
+ },
+ "notes": [
+  "Picks all A. The screen-capture frame is a placeholder until Samrat records his screen (never a drawn fake screen).",
+  "Voice: ElevenLabs take (free tier = draft)."
+ ]
+}

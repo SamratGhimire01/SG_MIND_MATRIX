@@ -1,0 +1,192 @@
+{
+ "episode": "X004",
+ "format": "shift",
+ "version": "v001",
+ "title": "The Trust Gap",
+ "status": "Picks approved · built from the ElevenLabs take · draft for Samrat",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "score": "sgmm_signal",
+ "style_files": [
+  "04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js",
+  "08_templates/styles/pop/sgmm_pop.js",
+  "04_video_projects/X004_shift_trust_gap/storyboard/x004_options.js"
+ ],
+ "text": {},
+ "captions": [
+  {
+   "t": [
+    0.1,
+    3.73
+   ],
+   "text": "It answered in two seconds.\nDid you check it?",
+   "kind": "line"
+  },
+  {
+   "t": [
+    3.78,
+    8.39
+   ],
+   "text": "Coders used to ask strangers\non forums… and wait hours\nfor a tick.",
+   "kind": "line"
+  },
+  {
+   "t": [
+    8.7,
+    13.05
+   ],
+   "text": "But now, more than seven in ten\nuse AI every day.",
+   "kind": "fact",
+   "src": "so2026"
+  },
+  {
+   "t": [
+    13.47,
+    18.86
+   ],
+   "text": "So they trust it? Only 16%\ntrust it with most tasks.",
+   "kind": "fact",
+   "src": "so2026"
+  },
+  {
+   "t": [
+    19.0,
+    22.52
+   ],
+   "text": "Most trust it only when\nthey can check the answer.",
+   "kind": "fact",
+   "src": "so2026"
+  },
+  {
+   "t": [
+    22.57,
+    26.79
+   ],
+   "text": "So the next skill may not be\nasking… but *checking*.",
+   "kind": "forecast",
+   "style": "pop",
+   "mode": "dark"
+  },
+  {
+   "t": [
+    26.84,
+    29.8
+   ],
+   "text": "Because when it answers\nin *two seconds*—",
+   "kind": "line",
+   "style": "pop",
+   "mode": "dark"
+  }
+ ],
+ "act_tags": [
+  {
+   "t": [
+    3.73,
+    8.6
+   ],
+   "num": "01",
+   "label": "THEN"
+  },
+  {
+   "t": [
+    8.65,
+    22.47
+   ],
+   "num": "02",
+   "label": "NOW"
+  }
+ ],
+ "duration": 35.31,
+ "cues": [
+  {
+   "t": 29.84,
+   "cue": "cut",
+   "reopen": 30.3
+  }
+ ],
+ "silences": [
+  [
+   33.0,
+   33.4
+  ]
+ ],
+ "scenes": [
+  {
+   "id": "hook_answer",
+   "type": "x004_hook_answer",
+   "t": [
+    0.0,
+    3.88
+   ],
+   "text": {
+    "speed": 0.7216
+   }
+  },
+  {
+   "id": "then_forum",
+   "type": "x004_then_forum",
+   "t": [
+    3.63,
+    8.8
+   ],
+   "text": {
+    "speed": 0.8897
+   }
+  },
+  {
+   "id": "now_trust",
+   "type": "x004_now_trust",
+   "t": [
+    8.55,
+    22.67
+   ],
+   "text": {
+    "speed": 0.6374
+   }
+  },
+  {
+   "id": "next_check",
+   "type": "x004_next_check",
+   "t": [
+    22.42,
+    29.9
+   ],
+   "text": {
+    "speed": 0.7487
+   }
+  },
+  {
+   "id": "logo",
+   "type": "logo_from_dark",
+   "t": [
+    29.9,
+    32.7
+   ]
+  },
+  {
+   "id": "tease",
+   "type": "blackout_tease",
+   "t": [
+    32.7,
+    35.31
+   ],
+   "text": {
+    "tease": "NEXT SHIFT · TOMORROW MORNING"
+   }
+  }
+ ],
+ "sources": {
+  "so2026": {
+   "title": "Stack Overflow Developer Survey 2026 — AI (30,903 valid responses, fielded 23 Jun – 5 Aug 2026): 73% use coding assistants/agents daily; 48% trust AI when they can easily validate; 16% for most tasks that are not important work decisions",
+   "url": "https://survey.stackoverflow.co/2026/ai",
+   "note": "one self-selected survey of developers"
+  }
+ },
+ "notes": [
+  "Script v002 (A); picks hook A, THEN A, NOW A, NEXT C (Pop). Voice: ElevenLabs take (free tier = draft; regenerate on Starter before a monetised post).",
+  "NEXT is a Pop scene: its caption builds at the top, so it has no act tag (it would sit on the caption)."
+ ]
+}
