@@ -17,7 +17,7 @@ window.X004_OPT = (() => {
     now: [[0.0, 2.7, 'But now, *more than 7 in 10*\nuse AI every day.'], [2.7, 5.9, 'So they trust it? Only *16%*\ntrust it with most tasks.'], [5.9, 9.0, 'Most trust it only when\nthey can *check the answer*.']],
     next: [[0.0, 3.1, 'So the next skill may not be\nasking… but *checking*.'], [3.1, 5.6, 'Because when it answers\nin *two seconds*—']],
   };
-  const cap = (c, t, k) => K.caption(c, t, CAPS[k]), pcap = (c, t, k, mode) => P.caption(c, t, POPCAPS[k], mode);
+  let CH = true; const cap = (c, t, k) => K.caption(c, t, CAPS[k]), pcap = (c, t, k, mode) => { if (CH) P.caption(c, t, POPCAPS[k], mode); };
   const voidBg = (c) => { c.fillStyle = C.void; c.fillRect(0, 0, 1080, 1920); };
   const SRC = 'Stack Overflow Developer Survey 2026 · 30,903 developers';
   const src = (c, t, a, y = 1330) => drawTex(c, layout(c, [T(SRC, {f: 'mono'})], 22, 540, y, 'center'), {p: seg(a, a + 0.6, t), col: C.fog});
@@ -106,11 +106,22 @@ window.X004_OPT = (() => {
     if (t > 4.6) voidBg(c); cap(c, t, 'next');
   }
   function nextC(c, t) { // Pop: the answer card, a magnifier pops and scans, each line gets a tick (the last is the green one), CHECKING pill
-    if (t > 4.8) { voidBg(c); return; } P.bg(c, t, 'dark'); P.card(c, t, 0.2, 540, 980, 900, 340, (cc) => answerLines(cc, 99, 0, -410, -70, C.void), {label: 'AI ANSWER'});
+    if (t > 5.4) { voidBg(c); return; } P.bg(c, t, 'dark'); P.card(c, t, 0.2, 540, 980, 900, 340, (cc) => answerLines(cc, 99, 0, -410, -70, C.void), {label: 'AI ANSWER'});
     const sx = lerp(220, 860, P.out3(seg(1.0, 3.0, t))); if (t > 0.9) P.withPop(c, t, 0.9, sx, 1000, (cc) => lens(cc, 0, 0, 70, C.amber));
     [0, 1, 2].forEach((i) => { const at = 1.6 + i * 0.6; if (t < at) return; P.withPop(c, t, at, 1010, 900 + i * 60, (cc) => { cc.fillStyle = i === 2 ? C.green : C.white; cc.beginPath(); cc.arc(0, 0, 24, 0, TAU); cc.fill(); }, {r0: 0}); });
     P.pill(c, t, 1.2, 540, 1240, 'CHECKING', {kind: 'amber'}); pcap(c, t, 'next', 'dark');
   }
+
+  /* Samrat's picks (3 Nov 2026): hook A, THEN A, NOW A, NEXT C — each move with its own sound */
+  const chrome = (v) => { CH = v; K.setChrome(v); };
+  const SND = {
+    hook: (k, P, c) => { for (let i = 0; i < 22; i++) P('key', c(0.15 + i * 0.065), {g: 0.35}); P('click', c(1.6), {f: 2400, g: 0.9}); P('thud', c(1.92), {f: 120, g: 0.8}); },
+    then: (k, P, c) => { P('put', c(0.15), {g: 1}); P('tear', c(0.6), {g: 0.5}); P('put', c(0.62), {g: 0.8}); for (let x = 1.4; x < 3.2; x += 0.5) P('tick', c(x), {f: 2800, g: 0.5}); P('put', c(3.3), {g: 1}); P('tear', c(3.36), {g: 0.35}); P('stroke', c(3.9), {material: 'marker', dur: 0.55, g: 1}); },
+    now: (k, P, c) => { for (let i = 0; i < 7; i++) P('click', c(0.4 + i * 0.18), {f: 2000 + i * 120, g: 0.7}); P('stroke', c(1.8), {material: 'pen', dur: 0.5, g: 0.5}); P('slide', c(3.0), {dur: 0.4, g: 0.6}); P('slide', c(3.5), {dur: 0.9, g: 0.5}); P('thud', c(4.4), {f: 110, g: 0.7}); P('tick', c(4.3), {f: 2600, g: 0.5});
+      P('slide', c(6.1), {dur: 0.4, g: 0.6}); P('slide', c(6.6), {dur: 0.9, g: 0.5}); P('tick', c(7.2), {f: 2400, g: 0.5}); P('click', c(7.4), {f: 2200, g: 0.8}); P('tick', c(7.8), {f: 2800, g: 0.7}); },
+    next: (k, P, c) => { P('pop', c(0.2), {f: 380}); P('whoosh', c(0.9), {dur: 0.5, g: 0.4}); P('pop', c(0.95), {f: 460}); P('pop', c(1.2), {f: 520}); [1.6, 2.2, 2.8].forEach((x, i) => P('pop', c(x), {f: 560 + i * 90})); P('ding', c(2.85), {f: 1975, g: 0.15}); },
+  };
+  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x004_hook_answer: P.engineScene(hookA, 2.8, SND.hook, chrome), x004_then_forum: P.engineScene(thenA, 4.6, SND.then, chrome), x004_now_trust: P.engineScene(nowA, 9, SND.now, chrome), x004_next_check: P.engineScene(nextC, 5.6, SND.next, chrome)});
 
   const O = (name, draw, keys, note) => ({name, draw, keys, note});
   return {CAPS, scenes: [

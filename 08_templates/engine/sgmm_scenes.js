@@ -474,6 +474,8 @@ function makeKit(ctx,start,mute,warp){let useW=true;const T0=start||0,base=ctx.c
     tear:(t,o={})=>{noise(t,{dur:.03,filter:'bandpass',f:1500,q:1,gain:.2*(o.g||1),a:.001,pan:o.pan});noise(t,{dur:.22,filter:'bandpass',f:[[0,900],[.22,2200]],q:1.8,gain:.22*(o.g||1),a:.02,pan:o.pan})},
     stroke:(t,o={})=>{const d=o.dur||.4,r=rng(Math.round(t*991)),M={marker:[2900,2.2,.16,.05],sharpie:[2400,1.4,.2,.045],pen:[4200,1.6,.08,.06]}[o.material||'marker'];
       noise(t,{dur:.024,filter:'bandpass',f:1400,q:1.2,gain:.22*(o.g||1),a:.001,pan:o.pan});for(let x=0;x<d;x+=M[3]*(.7+r()*.6)){const gd=M[3]*(.8+r()*.9);noise(t+x,{dur:gd,filter:'bandpass',f:M[0]*(.8+r()*.4),q:M[1],gain:M[2]*(o.g||1)*(.6+r()*.5),a:gd*.3,pan:o.pan})}},
+    /* pop: the Pop Explainer's tag/card arrival — a short rising blip with a tiny click (3 Nov 2026) */
+    pop:(t,o={})=>{tone(t,{f:[[0,o.f||420],[.05,(o.f||420)*2.1]],dur:.09,gain:.22*(o.g||1),pan:o.pan});noise(t,{dur:.012,filter:'highpass',f:3000,gain:.1*(o.g||1),pan:o.pan})},
     ding:(t,o={})=>{tone(t,{f:o.f||1318.5,dur:1.3,gain:.2*(o.g||1),verb:.3,pan:o.pan});tone(t,{f:(o.f||1318.5)*2.76,dur:.5,gain:.05*(o.g||1),verb:.3})},
   };
   /* ney: breathy reed flute: triangle+sine body, pitched breath noise, glides between notes, vibrato that arrives late */
@@ -702,7 +704,10 @@ function drawCaps(ctx,t,CAPS){for(const [a,b,parts] of CAPS){if(t<a||t>b)continu
 function load(plan){
   const scenes=plan.scenes.map(s=>{const ty=TYPES[s.type];if(!ty)throw new Error(`unknown scene type "${s.type}" (have: ${Object.keys(TYPES).join(', ')})`);
     const [a,b]=s.t,off=ty.at-a;return{type:s.type,a,b,off,hold:s.hold||[],fn:ty.fn,tx:{...plan.text,...s.text},trail:ty.trail.map(([x,y,k])=>[x-off,y-off,k])}});
-  const CAPS=(plan.captions||[]).map(c=>[c.t[0],c.t[1],capParts(c.text)]);
+  /* caption style: default = mono at the bottom; "pop" = the Pop Explainer caption (builds word by word at the top, *bar*, {green bar}; "mode": light|dark); "hidden" = the picture says it (end cards) */
+  const CAPS=(plan.captions||[]).filter(c=>!c.style).map(c=>[c.t[0],c.t[1],capParts(c.text)]);
+  const POPC=(plan.captions||[]).filter(c=>c.style==='pop').map(c=>[c,[[c.t[0],c.t[1],c.text]]]);
+  const drawPop=(ctx,t)=>{if(!POPC.length||!window.SGMM_POP)return;for(const [c,spec] of POPC)if(t>=c.t[0]&&t<c.t[1])window.SGMM_POP.caption(ctx,t,spec,c.mode||'dark')};
   const TAGS=(plan.act_tags||[]).map(g=>[g.t[0],g.t[1],g.num,g.label,ACTCOL[g.label]||C.white]);
   const TRAIL=scenes.flatMap(s=>s.trail),DUR=plan.duration;
   const trailK=t=>{for(const [a,b,k] of TRAIL){if(t>=a&&t<b)return k*Math.min(seg(t,a,a+.15),1-seg(t,b-.15,b))}return 0};
@@ -717,13 +722,13 @@ function load(plan){
     const act=scenes.filter(s=>t>=s.a&&t<s.b);
     act.forEach((s,i)=>{if(i===0){draw(ctx,s,t);return}const al=ss(seg(t,s.a,act[i-1].b));const oc2=offFor(W,H),o=oc2.getContext('2d');o.setTransform(S,0,0,H/1920,0,0);o.globalAlpha=1;o.filter='none';o.fillStyle=C.void;o.fillRect(0,0,1080,1920);draw(o,s,t);
       ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=al;ctx.drawImage(oc2,0,0);ctx.restore()});
-    ctx.setTransform(S,0,0,H/1920,0,0);if(caps){drawActTag(ctx,t,TAGS);drawCaps(ctx,t,CAPS)}}
+    ctx.setTransform(S,0,0,H/1920,0,0);if(caps){drawActTag(ctx,t,TAGS);drawCaps(ctx,t,CAPS);drawPop(ctx,t)}}
   const cv=layer(1080,1920),ctx=cv.getContext('2d');
   return{render,trailK,
     /* one 1080x1920 frame as JPEG data-URL, with EP000's 4-sample motion blur inside trail windows */
     frame:(t,caps=true,type='image/jpeg')=>{const k=trailK(t),n=k>0?4:1,sh=1/120;
       if(n===1)render(ctx,1080,1920,t,caps);else{const tmp=offFor(1080,1921),tc=tmp.getContext('2d');ctx.setTransform(1,0,0,1,0,0);
-        for(let i=0;i<n;i++){const ti=Math.max(0,t-sh*(i/(n-1))*(k/.45));render(tc,1080,1920,ti,false);ctx.globalAlpha=1/(i+1);ctx.drawImage(tmp,0,0)}ctx.globalAlpha=1;ctx.setTransform(1,0,0,1,0,0);if(caps){drawActTag(ctx,t,TAGS);drawCaps(ctx,t,CAPS)}}
+        for(let i=0;i<n;i++){const ti=Math.max(0,t-sh*(i/(n-1))*(k/.45));render(tc,1080,1920,ti,false);ctx.globalAlpha=1/(i+1);ctx.drawImage(tmp,0,0)}ctx.globalAlpha=1;ctx.setTransform(1,0,0,1,0,0);if(caps){drawActTag(ctx,t,TAGS);drawCaps(ctx,t,CAPS);drawPop(ctx,t)}}
       return cv.toDataURL(type,.96)},
     /* the score as 16-bit stereo 48 kHz WAV (base64); mute = 'music' | 'sfx' for stems */
     audio:async(mute)=>{const sc=plan.score==null?()=>{}:SCORES[plan.score];if(!sc)throw new Error(`unknown score "${plan.score}"`);const sr=48000,off=new OfflineAudioContext(2,sr*DUR,sr);

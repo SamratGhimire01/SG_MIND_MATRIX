@@ -283,7 +283,7 @@ def build(plan_path, voice_path, chain=True, audio_only=False, lines_path=None, 
         while any(f.startswith(f'SGMM_{ep}_build_v{n:03d}') for f in os.listdir(out)): n += 1
         name = f'SGMM_{ep}_build_v{n:03d}'
     P = lambda s: os.path.join(out, name + s)
-    texts = [re.sub(r'[\[\]]', '', c['text']).replace('\n', ' ') for c in plan['captions']]
+    texts = [re.sub(r'[\[\]*{}]', '', c['text']).replace('\n', ' ') for c in plan['captions']]
 
     take = load(voice_path)
     if lines_path: cuts = [tuple(x) for x in json.load(open(lines_path))]
@@ -416,7 +416,7 @@ def qc(prefix):
     caps = plan['captions']
     wins = [(c['t'][0], c['t'][1] - CAP_TAIL) for c in caps]
     ratios = voice_over_bg(mix, voice, wins)
-    texts = [re.sub(r'[\[\]]', '', c['text']).replace('\n', ' ') for c in caps]
+    texts = [re.sub(r'[\[\]*{}]', '', c['text']).replace('\n', ' ') for c in caps]
     onsets = [a for a, _ in speech_runs(voice)]
     for i, (c, r) in enumerate(zip(caps, ratios)):
         off = min((o - c['t'][0] for o in onsets), key=abs) if onsets else 99
@@ -453,7 +453,7 @@ ABOUT = ('SG Mind Matrix documents the AI shift — then, now, next — with hon
 
 def srt(caps):
     ts = lambda t: f'{int(t // 3600):02d}:{int(t % 3600 // 60):02d}:{int(t % 60):02d},{int(round(t % 1 * 1000)) % 1000:03d}'
-    return '\n'.join(f"{i + 1}\n{ts(c['t'][0])} --> {ts(c['t'][1])}\n{re.sub(r'[\[\]]', '', c['text']).replace(chr(10), ' ')}\n" for i, c in enumerate(caps))
+    return '\n'.join(f"{i + 1}\n{ts(c['t'][0])} --> {ts(c['t'][1])}\n{re.sub(r'[\[\]*{}]', '', c['text']).replace(chr(10), ' ')}\n" for i, c in enumerate(caps))
 
 
 def package(prefix, out=None):
@@ -461,7 +461,7 @@ def package(prefix, out=None):
     ep, name = plan.get('episode', 'EP000'), os.path.basename(prefix)
     out = out or os.path.join(ROOT, '09_exports'); os.makedirs(out, exist_ok=True)
     final, clean = prefix + '_1080x1920_60fps.mp4', prefix + '_clean_1080x1920_60fps.mp4'
-    texts = [re.sub(r'[\[\]]', '', c['text']).replace('\n', ' ') for c in plan['captions']]
+    texts = [re.sub(r'[\[\]*{}]', '', c['text']).replace('\n', ' ') for c in plan['captions']]
     srt_path = os.path.join(out, f'{name}_captions_en.srt'); open(srt_path, 'w').write(srt(plan['captions']))
 
     # thumbnails: the approved template, words + frames from the plan, rendered at 3x and downsampled (lanczos)

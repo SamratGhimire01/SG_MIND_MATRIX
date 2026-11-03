@@ -13,7 +13,7 @@ window.X005_OPT = (() => {
     twist: [[0.0, 2.0, 'But there’s a *twist!*'], [2.0, 6.0, 'It picks the *likely* word…\nnot a checked fact.'], [6.0, 10.4, 'That’s why AI can sound *sure*…\nand still be *wrong*.']],
     end: [[0.0, 4.2, 'So AI doesn’t *find* your answer…\nit *writes* it!']],
   };
-  const cap = (c, t, id, mode) => P.caption(c, t, CAPS[id], mode);
+  let CH = true; const cap = (c, t, id, mode) => { if (CH) P.caption(c, t, CAPS[id], mode); };
   const PROMPT = 'Why is the sky blue?', ANSWER = 'The sky looks blue because sunlight scatters off the air, and blue light scatters the most.';
   const TOK = ['Why', ' is', ' the', ' sky', ' blue', '?'], NUMS = [[0.12, -0.8, 0.33], [-0.41, 0.07, 0.9], [0.66, 0.2, -0.15], [-0.05, 0.72, 0.48], [0.88, -0.3, 0.01], [-0.6, 0.15, -0.2]];
   const CAND = [['blue', 0.92], ['bright', 0.46], ['clear', 0.3], ['dark', 0.14]];
@@ -222,6 +222,19 @@ window.X005_OPT = (() => {
     else ANSWER.split(' ').slice(0, 12).forEach((w, i) => { const a = i * 0.52, d = out3(br) * (300 + 90 * (i % 4)); P.chip(c, 540 + Math.cos(a) * d * 1.4, 1000 + Math.sin(a) * d, w, {size: 28}); });
     cap(c, t, 'end', 'dark');
   }
+
+  /* Samrat's picks (3 Nov 2026): all A — a pop + its sound every 0.5–1 s */
+  const chrome = (v) => { CH = v; }, pops = (P, c, xs, f = 420) => xs.forEach((x, i) => P('pop', c(x), {f: f + (i % 4) * 70}));
+  const SND = {
+    hook: (k, P, c) => { P('key', c(1.15), {g: 1.6}); P('impact', c(1.15), {f: 70, g: 0.8}); pops(P, c, [1.0, 1.7, 4.5]); for (let x = 1.25; x < 3.0; x += 0.25) P('tick', c(x), {f: 3000, g: 0.35}); for (let x = 2.0; x < 4.2; x += 0.12) P('key', c(x), {g: 0.22}); P('whoosh', c(1.6), {dur: 0.4, g: 0.3}); },
+    claim: (k, P, c) => { pops(P, c, [0.9, 2.6, 3.7, 3.8, 4.2]); P('thud', c(2.5), {f: 120, g: 0.8}); for (let i = 0; i < 5; i++) P('tick', c(4.6 + i * 0.4), {f: 2400 + i * 150, g: 0.7}); },
+    tokens: (k, P, c) => { pops(P, c, [0.3, 2.2, 4.4, 5.8, 9.2]); for (let i = 0; i < 6; i++) P('tick', c(1.0 + i * 0.1), {f: 3200, g: 0.6}); P('whoosh', c(1.6), {dur: 0.45, g: 0.4}); P('tear', c(5.3), {g: 0.5}); P('whoosh', c(7.35), {dur: 0.35, g: 0.45, top: 3000}); for (let i = 0; i < 6; i++) P('click', c(7.95 + i * 0.12), {f: 2200, g: 0.6}); },
+    attend: (k, P, c) => { P('whoosh', c(0.9), {dur: 0.5, g: 0.3}); P('whoosh', c(1.4), {dur: 0.5, g: 0.3}); pops(P, c, [1.2, 2.4, 8.45, 8.9]); for (let i = 0; i < 4; i++) P('slide', c(4.8 + i * 0.25), {dur: 0.3, g: 0.55}); P('ding', c(5.3), {f: 1568, g: 0.15}); P('whoosh', c(8.0), {dur: 0.45, g: 0.4}); },
+    name: (k, P, c) => { P('whoosh', c(0.2), {dur: 0.5, g: 0.3}); for (let i = 0; i < 4; i++) P('pop', c(1.3 + i * 0.6), {f: 500 + i * 60}); pops(P, c, [1.5, 6.2]); for (let i = 0; i < 20; i++) P('key', c(5.0 + i * 0.036), {g: 0.3}); P('ding', c(5.8), {f: 1318.5, g: 0.25}); P('slide', c(5.75), {dur: 0.3, g: 0.4}); },
+    twist: (k, P, c) => { P('riser', c(0.0), {dur: 0.4, g: 0.8}); P('impact', c(0.4), {f: 90, g: 0.9}); P('pop', c(0.42), {f: 700}); pops(P, c, [2.4, 3.0]); P('stroke', c(3.6), {material: 'pen', dur: 0.4, g: 0.4}); P('slide', c(6.6), {dur: 0.9, g: 0.5}); P('thud', c(8.8), {f: 100, g: 1}); P('impact', c(8.82), {f: 80, g: 0.6}); },
+    end: (k, P, c) => { for (let i = 0; i < 5; i++) P('pop', c(0.4 + i * 0.5), {f: 380 + i * 80}); P('whoosh', c(4.4), {dur: 0.4, g: 0.4}); P('impact', c(4.9), {f: 90, g: 0.7}); P('ding', c(4.95), {f: 1975, g: 0.25}); pops(P, c, [5.3, 5.42, 5.54, 5.66], 600); },
+  };
+  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x005_hook: P.engineScene(hookA, 6.4, SND.hook, chrome), x005_claim: P.engineScene(claimA, 7.0, SND.claim, chrome), x005_tokens: P.engineScene(tokensA, 11.2, SND.tokens, chrome), x005_attend: P.engineScene(attendA, 11.2, SND.attend, chrome), x005_name: P.engineScene(nameA, 7.6, SND.name, chrome), x005_twist: P.engineScene(twistA, 10.4, SND.twist, chrome), x005_end: P.engineScene(endA, 8.0, SND.end, chrome)});
 
   const O = (name, draw, keys, note) => ({name, draw, keys, note});
   return {CAPS, scenes: [

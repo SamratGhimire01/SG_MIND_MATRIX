@@ -92,6 +92,16 @@ window.X006_OPT = (() => {
     else counter(c, t, 4.8, 960, 'light'); pcap(c, t, 'fix', 'light');
   }
 
+  /* Samrat's picks (3 Nov 2026): all A */
+  const chrome = (v) => K.setChrome(v);
+  const SND = {
+    hook: (k, P, c) => { P('click', c(0.1), {f: 1800, g: 0.8}); P('whoosh', c(0.1), {dur: 0.4, g: 0.3}); for (let x = 0.5; x < 3; x += 0.5) P('tick', c(x), {f: 2600, g: 0.35}); for (let x = 1.0; x < 2.8; x += 0.09) P('key', c(x), {g: 0.2}); },
+    find: (k, P, c) => { for (let x = 0.3; x < 2.8; x += 0.5) P('tick', c(x), {f: 2600, g: 0.35}); P('slide', c(3.0), {dur: 0.4, g: 0.6}); P('whoosh', c(3.4), {dur: 1.0, g: 0.35, top: 1800}); P('thud', c(4.4), {f: 90, g: 0.8}); P('pop', c(4.6), {f: 520}); P('ding', c(4.65), {f: 1568, g: 0.15}); },
+    stereo: (k, P, c) => { P('stroke', c(0.1), {material: 'pen', dur: 0.3, g: 0.4}); for (let i = 0; i < 6; i++) P('tick', c(0.2 + i * 0.1), {f: 3000, g: 0.4}); P('stroke', c(1.3), {material: 'pen', dur: 0.3, g: 0.4}); for (let i = 0; i < 6; i++) P('tick', c(1.4 + i * 0.1), {f: 2400, g: 0.4, pan: (i % 2 ? 0.6 : -0.6)}); },
+    fix: (k, P, c) => { P('stroke', c(0.0), {material: 'pen', dur: 0.3, g: 0.4}); for (let i = 0; i < 3; i++) { P('key', c(0.6 + i * 1.1), {g: 0.5}); P('click', c(1.2 + i * 1.1), {f: 2200 + i * 200, g: 0.9}); } P('whoosh', c(4.75), {dur: 0.3, g: 0.4}); P('click', c(4.95), {f: 2600, g: 1}); },
+  };
+  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x006_hook: P.engineScene(hookA, 3.0, SND.hook, chrome), x006_find: P.engineScene(findA, 6.2, SND.find, chrome), x006_stereo: P.engineScene(stereoA, 3.2, SND.stereo, chrome), x006_fix: P.engineScene(fixA, 6.2, SND.fix, chrome)});
+
   const O = (name, draw, keys, note) => ({name, draw, keys, note});
   return {CAPS, scenes: [
     {id: 'hook', label: 'Hook', act: 'LOG', lines: 'L01', dur: 3.0, options: [

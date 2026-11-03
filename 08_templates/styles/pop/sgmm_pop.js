@@ -46,7 +46,8 @@ window.SGMM_POP = (() => {
   }
   function caption(c, t, specs, mode = 'dark') {
     const sp = specs.map((s) => (Array.isArray(s) ? {a: s[0], b: s[1], lines: s[2].split('\n')} : s)).find((s) => t >= s.a && t < s.b); if (!sp) return;
-    const fade = 1 - seg(sp.b - 0.15, sp.b, t), nw = sp.lines.join(' ').split(' ').length, wps = Math.max(WPS, nw / Math.max(0.5, sp.b - sp.a - 0.5)); let k = 0; c.save(); c.font = CAPF; c.textBaseline = 'middle'; const spc = c.measureText(' ').width;
+    const fade = 1 - seg(sp.b - 0.15, sp.b, t), nw = sp.lines.join(' ').split(' ').length, wps = Math.max(WPS, nw / Math.max(0.5, sp.b - sp.a - 0.5)); let k = 0; c.save(); c.font = CAPF; c.textBaseline = 'middle';
+    const fit = Math.min(1, 940 / Math.max(...sp.lines.map((ln) => c.measureText(ln.replace(/[*{}]/g, '')).width + 48))); if (fit < 1) c.font = `700 ${Math.floor(62 * fit)}px ${SG}`; const spc = c.measureText(' ').width;
     sp.lines.forEach((ln, li) => {
       const ws = parse(ln), wd = ws.map((x) => c.measureText(x.w).width), tot = wd.reduce((s, v) => s + v, 0) + spc * (ws.length - 1) + 24 * ws.filter((x, i) => x.h && !(ws[i - 1] || {}).h).length;
       let x = 540 - tot / 2; const y = CAPY + li * CAPLH;
@@ -142,5 +143,11 @@ window.SGMM_POP = (() => {
     c.save(); c.translate(x, y + 10 * press); c.scale(s, s); c.fillStyle = '#033D22'; rr(c, -170, -90, 340, 200, 34); c.fill(); c.fillStyle = lit ? C.green : '#0C5E37'; rr(c, -160, -100 + 6 * press, 320, 180, 30); c.fill();
     c.font = `700 52px ${MONO}`; c.fillStyle = C.void; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('ENTER ⏎', 0, -10 + 6 * press); c.restore();
   }
-  return {C, SG, MONO, TAU, cl, lerp, seg, out3, io, back, pop, withPop, rr, bg, push, caption, capEnd, pill, sticker, card, dotted, xMark, burst, stamp, qBubble, chip, title, endCard, label, hand, enterKey, ink};
+  // a picked draft as an engine scene: its own clock scaled to the plan's span (scene.text.speed = D / span), its own sounds on that clock;
+  // chrome(false) while the engine draws, so the engine's captions (re-timed to the real voice) replace the draft's own
+  function engineScene(fn, D, snd, chrome) {
+    return {at: 0, draw: (ctx, t, tx) => { chrome(false); try { fn(ctx, Math.min(D - 1e-3, t * ((tx && tx.speed) || 1))); } finally { chrome(true); } },
+      sound: (k, Pl, c, end, start) => { if (!snd) return; const s = end > start ? D / (end - start) : 1; snd(k, Pl, (x) => c(x / s)); }};
+  }
+  return {C, SG, MONO, TAU, engineScene, cl, lerp, seg, out3, io, back, pop, withPop, rr, bg, push, caption, capEnd, pill, sticker, card, dotted, xMark, burst, stamp, qBubble, chip, title, endCard, label, hand, enterKey, ink};
 })();
