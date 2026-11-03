@@ -10,3 +10,8 @@ The three are linked on purpose: SHIFT asks "did you check it?", Under the Hood 
 
 Next after approval: one storyboard grid per video (3–5 options per scene) → Samrat's OK → one line list for all 3 voices in one sitting.
 Phase 1 streak: day 0 of 7 (counts once all 3 ship on time).
+
+## Storyboard options (3 Nov 2026) — waiting for picks
+- X004: https://claude.ai/artifact/3a4p6YueP3xqwxgmSBQcoV (4 scenes; C = Pop version of each beat)
+- X005: https://claude.ai/artifact/SBH7ydHUHNi6F7aykR3PNW (7 scenes, first Pop Explainer)
+- X006: https://claude.ai/artifact/7v7veF9jRoyXCV4YhgtsaA (4 scenes; A = your screen recording goes in the frame)
