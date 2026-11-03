@@ -32,7 +32,7 @@ Writing rules seen in all three:
 - **Viewer verbs**: Look, Suppose, Think, Now you know.
 - **One hero word per line** in the highlight bar — the noun the picture shows.
 
-**Open decision for Samrat:** their end is a catchphrase sign-off with a 2–3 s hold, not our seamless loop, and they run 50–65 s (our Shorts rule is 20–30 s). Suggested: TIP videos and long-form segments use this explainer shape at 45–60 s with an SGMM catchphrase; SHIFT keeps the 20–30 s loop. Ask before the first one.
+**Decided by Samrat (3 Nov 2026): Pop Explainers run 45–60 s and end on a catchphrase sign-off** (2–3 s hold on the card), not the 20–30 s seamless loop. The loop rule and 20–30 s length stay for the other formats unless he says otherwise. The SGMM catchphrase itself is still to be picked by him (never "KINA?").
 
 ## Voice and delivery (measured)
 - **Storyteller energy, very animated**: pitch moves across ~15 semitones (p10–p90) — rising questions ("…right?", "interesting part?"), punch on the highlight word, dropping on the reveal. Monotone kills this style.
