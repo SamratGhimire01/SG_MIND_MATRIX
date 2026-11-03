@@ -24,7 +24,7 @@ Samrat's brief: scripts must be **engaging enough that people watch from the fir
 | **Loop** | last 2–3 s | The last line is the open question that the first line answers on replay. No CTA. | NEXT → end card |
 
 ## Explainer shape (Samrat's references, 3 Nov 2026)
-For "how does X work?" videos use the 8-beat formula in `sgmm-video-production/POP_EXPLAINER.md`: everyday hook + "the interesting part?" → counter-intuitive claim ("The secret isn't X… it's Y!") → mechanism in 3–5 steps ("Look," / "Suppose you're…" / "Think…") → visual proof → "This is called…" → honest TWIST → "So X doesn't just A… it B!" → catchphrase. 3–8-word sentences, ~2.3 words/s, one hero word per line. **Samrat decided (3 Nov 2026): explainers are 45–60 s (~105–140 words) and end on the SGMM catchphrase, not a loop** — rules 10–12 below (loop, 20–30 s) don't apply to them.
+For "how does X work?" videos use the 8-beat formula in `sgmm-video-production/POP_EXPLAINER.md`: everyday hook + "the interesting part?" → counter-intuitive claim ("The secret isn't X… it's Y!") → mechanism in 3–5 steps ("Look," / "Suppose you're…" / "Think…") → visual proof → "This is called…" → honest TWIST → "So X doesn't just A… it B!" → catchphrase. 3–8-word sentences, ~2.3 words/s, one hero word per line. **Samrat decided (3 Nov 2026): explainers are 45–60 s (~105–140 words) and end on the SGMM catchphrase "Now you see the code.", not a loop** — rules 10–12 below (loop, 20–30 s) don't apply to them.
 
 ## Rules
 **Hook (first line + first frame together)**
