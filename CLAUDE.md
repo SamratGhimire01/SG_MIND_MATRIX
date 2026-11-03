@@ -29,6 +29,9 @@ Extra explainer styles (recoloured to SGMM): `08_templates/styles/STYLE_LIBRARY_
 ## Cadence
 3 X videos every day (SHIFT / TIP / LOG) + 1 long-form every Saturday: `07_scripts/CADENCE_SGMM_weekly_v001.md`.
 
+## Roadmap
+Where the channel is going (phases): `07_scripts/ROADMAP_SGMM_v001.md`. Phase 1 = 3 videos/day before anything new.
+
 ## Niche
 Main teaching niche: "Under the Hood" — how AI actually works inside: `07_scripts/IDEA_niche_under_the_hood_v001.md`.
 

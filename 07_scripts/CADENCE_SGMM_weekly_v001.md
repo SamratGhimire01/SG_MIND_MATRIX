@@ -3,6 +3,8 @@
 **Every day: 3 short videos for X** (also usable as YouTube Shorts / Reels).
 **Every Saturday: 1 long-form episode on YouTube** (8–15 min), posted 7:45 pm Nepal time.
 
+> Update 3 Nov 2026: the afternoon TIP slot is now **UNDER THE HOOD** (how one AI thing works inside, Manim style). See `07_scripts/ROADMAP_SGMM_v001.md`.
+
 ## The 3 daily X videos (fixed formats, so they are fast)
 | Slot | Format | What it is | Length | Default style | Voice |
 |---|---|---|---|---|---|
