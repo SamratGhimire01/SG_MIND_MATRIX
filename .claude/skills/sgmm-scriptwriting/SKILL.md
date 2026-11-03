@@ -23,6 +23,9 @@ Samrat's brief: scripts must be **engaging enough that people watch from the fir
 | **Next** | 18–24 s | "**Therefore** …" the consequence / forecast (marked "may"). | NEXT |
 | **Loop** | last 2–3 s | The last line is the open question that the first line answers on replay. No CTA. | NEXT → end card |
 
+## Explainer shape (Samrat's references, 3 Nov 2026)
+For "how does X work?" videos use the 8-beat formula in `sgmm-video-production/POP_EXPLAINER.md`: everyday hook + "the interesting part?" → counter-intuitive claim ("The secret isn't X… it's Y!") → mechanism in 3–5 steps ("Look," / "Suppose you're…" / "Think…") → visual proof → "This is called…" → honest TWIST → "So X doesn't just A… it B!" → catchphrase. 3–8-word sentences, ~2.3 words/s, one hero word per line. Length (45–60 s) and catchphrase-vs-loop ending are still Samrat's call.
+
 ## Rules
 **Hook (first line + first frame together)**
 1. Say the topic and the tension in the first sentence; show it in the first frame. A verbal hook without a matching visual doesn't work. [Kallaway; TikTok]

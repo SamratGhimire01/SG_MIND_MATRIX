@@ -1,6 +1,66 @@
-# Pop Explainer style (learned 3 Nov 2026 from Samrat's 3 references)
+# Pop Explainer playbook — the whole video (learned 3 Nov 2026 from Samrat's 3 references)
+
+Samrat: "Learn everything about the video. It is so engaging." — script, voice, sound and picture are all here, not only the pop-ups.
 
 Samrat: "The pop-ups of different components are really great — attention and retention. We will use this way of building in our coming videos." References studied frame by frame (kept out of git, in his Downloads): `ANC_Earbuds_KINA_SFX-only`, `StepCount_KINA_MusicSFX`, `UnitPricing_Shampoo_KINA_MusicSFX` (1440×1080, 30 fps, 51–66 s, −12.8 LUFS). **We take the method, never their colours, art, logo or the "KINA?" sign-off.** Everything below is already remapped to SGMM.
+
+## The whole video at a glance (why it is so engaging)
+- **One everyday question, answered completely in ~50–65 s.** Topics the viewer touches daily (earbuds, step counter, shampoo packet). The viewer already half-knows the "what" and never knew the "how" — curiosity with zero setup.
+- **Every 3–5 s a new idea, every 0.5–1 s a new pop with its own sound, every sentence written on screen as it is said.** Eyes, ears and reading are all busy at once; there is no moment to swipe.
+- **Counter-intuition up front** ("To cancel noise, earbuds make *another* sound!", "your phone doesn't need your location!", "small price doesn't always mean cheapest!") → the viewer must stay to resolve it.
+- **Talks to "you", in a relatable scene** ("Suppose you're on a bus", "Phone in your pocket"), with **simple analogies** ("Think… one wave goes up, the other goes exactly down").
+- **An honest twist** near the end (ANC doesn't cancel all noise equally; shaking counts as steps; small packets have their own benefit). It adds a second hook and makes the channel trustworthy.
+- **Named concept + one-line recap + catchphrase sign-off** ("This is called… UNIT PRICING" → "So next time… compare quantity too!" → "Now you know, KINA?"). The viewer leaves with a word they can repeat; the catchphrase is the series brand.
+- **Real-life footage only as anchors** (hook, the twist moment): dimmed ~50 %, graphics on top. The rest is clean animated stages.
+
+## Script formula (all three follow it exactly)
+| # | Beat | Time | Their lines (summarised) | Our version |
+|---|---|---|---|---|
+| 1 | **Hook: everyday moment + "the interesting part?"** | 0–5 s | "ANC earbuds on… outside noise drops… But here's the interesting part?" / "Phone in your pocket… Internet OFF, GPS OFF…" / "A Rs.10 packet feels cheap, right? But what if the bottle is even cheaper?" | A moment the viewer lives, the state shown with tags (ON/OFF, price), then a question. |
+| 2 | **Counter-intuitive claim** | 5–14 s | "The secret isn't silence… it's opposite sound waves!" / "Your phone doesn't need your location!" / "Small price doesn't always mean cheapest! The real game is in QUANTITY." | "The secret isn't X… it's Y!" — Y is the hero word (green). |
+| 3 | **Mechanism in 3–5 small steps** | 14–35 s | "Look, earbuds have microphones…" → "Suppose you're on a bus…" → "Earbuds analyse it in real time and make the opposite wave!" | Each step opens with "Look," / "Suppose…" / "Think…"; one step = one scene = one diagram. |
+| 4 | **Analogy / visual proof** | ~28–37 s | Two waves overlap → flat line; 20 packets = Rs. 200 vs one bottle Rs. 150 | The "aha" picture. Numbers here are real, sourced, and simple. |
+| 5 | **Name it** | ~37–40 s | "This is called… ACTIVE NOISE CANCELLATION" / "UNIT PRICING" | Title card, typed on, amber underline, short pill (= ANC). |
+| 6 | **Twist (honest limit)** | ~40–55 s | "But there's a twist! ANC doesn't cancel all noise equally" / "Even shaking can count as a step!" / "But small packets have their own benefit!" | TWIST! sticker + riser. Always true, sourced. |
+| 7 | **Recap in one line** | last 5–8 s | "So earbuds don't just block noise… they create a counter-sound!" / "So next time… don't just compare price, compare quantity too!" | "So X doesn't just A… it B!" |
+| 8 | **Catchphrase sign-off** | last 2–3 s | "Now you know, KINA?" over a burst card with faint episode icons floating behind | Our own recurring sign-off (to be chosen with Samrat — see below). |
+
+Writing rules seen in all three:
+- **Sentences of 3–8 words**, split across the 2 caption lines; "…" marks a beat (only 0.1–0.3 s in the voice, the picture does the pause).
+- **Spoken pace ≈ 2.2–2.4 words/s** (≈ 3.5–3.9 syllables/s), ~110–150 words per video.
+- **Link words** on almost every line: But / So / And / That means / That's why / This is called. (Our but/therefore rule, confirmed.)
+- **Viewer verbs**: Look, Suppose, Think, Now you know.
+- **One hero word per line** in the highlight bar — the noun the picture shows.
+
+**Open decision for Samrat:** their end is a catchphrase sign-off with a 2–3 s hold, not our seamless loop, and they run 50–65 s (our Shorts rule is 20–30 s). Suggested: TIP videos and long-form segments use this explainer shape at 45–60 s with an SGMM catchphrase; SHIFT keeps the 20–30 s loop. Ask before the first one.
+
+## Voice and delivery (measured)
+- **Storyteller energy, very animated**: pitch moves across ~15 semitones (p10–p90) — rising questions ("…right?", "interesting part?"), punch on the highlight word, dropping on the reveal. Monotone kills this style.
+- **Almost no dead air**: pauses between words never longer than 0.35 s (median 0.1 s); breaths and gaps are cut out. The voice runs continuously like a friend explaining fast.
+- **Steady loudness**: 3-s loudness moves only ~1–2 dB through the whole video (heavily levelled voice, every word equally clear).
+- **Warm, close, full** voice — most energy in 80–800 Hz (the body of the voice), presence gentle, top end soft (no hiss, no harsh s).
+
+## Audio mix (measured, theirs vs our X003 v006)
+| | References (3 videos) | Our X003 v006 | Do next time |
+|---|---|---|---|
+| Loudness / range | −12.8 LUFS, LRA 1.4–2.0, peaks 0 dBFS | −14 LUFS-ish, peak −2.1 | keep ours (−14, ≤ −1.5 dBTP); match their **steadiness** |
+| Stereo | essentially **mono** (side −28…−30 dB, corr 0.997) | side −20 dB, corr 0.98 | keep voice + SFX centred, music narrow (side ≤ −25 dB) |
+| Sub < 80 Hz (whole mix) | **−29 dB** | **−13.4 dB** | our bed is far too heavy in the sub — high-pass the music/808 around 80–100 Hz, ≥ 15 dB less sub |
+| 250–800 Hz (voice body) | −1.5 … −2.3 dB | −6.6 dB | less mud cut on the voice (warmer, fuller) |
+| 2–4 kHz / 4–8 kHz | −15.7 / −19 dB | −12.9 / −18 dB | presence ~2–3 dB gentler |
+| 8–16 kHz (air) | −25.6 dB | −19.9 dB | ~5 dB less treble/exciter — soft top, no hiss |
+| Music+SFX under voice | bed ≈ **17 dB** under the speech level; bed itself mid-range (sub −18…−22) | bed ≈ 21 dB under, but sub-heavy (−7.9) | level is fine; the **bed's tone** is what to change |
+| SFX density | **1.8–2.5 sharp hits / s** | 1.65 / s | more, smaller hits (one per pop) |
+| Gaps | voice gaps ≤ 0.35 s; in the SFX-only cut the gaps are true silence (no room tone) | ≤ 0.4 s | already close |
+
+How to apply: this is a **proposed "warm explainer" voice curve to A/B** against the approved "crisp and bigger" chain on the next video (Samrat approved crisp; don't replace it without his ear): 250–800 ≈ −2, 2–4 kHz ≈ −15.5, 4–8 kHz ≈ −19, 8–16 kHz ≈ −25.5 relative to total. The **music sub cut and the mono image are safe wins** — do them by default for Pop Explainers. Send both voice versions for him to pick.
+
+## Picture beyond the pops
+- **Live footage of the creator** is used only at the hook and the twist, dimmed/desaturated ~50 % so the graphics read. **We are faceless**: replace with Samrat's hands / over-the-shoulder / object POV clips (realme + Open Camera), dimmed the same way, or a fully drawn scene. Never a face.
+- **Objects are one consistent family**: soft stylised 3D product renders, each tinted with the channel colour (red tips on earbuds, red bottle). Ours: soft 3D-icon objects drawn in code, tinted Deep Forest / amber, one green accent max.
+- **Backgrounds** are never flat: soft radial light, faint grid, very faint floating digits on dark. For SGMM: faint Fog grid + radial light only (**no floating code digits** — reads like Matrix rain).
+- **Camera** is always alive: slow push-ins, zoom-through to the next object, whip pans; never a locked frame.
+- **End card**: catchphrase in a big white rounded card, burst lines on arrival, faint icons of the episode's objects drifting behind, "?" bubbles popping, ~3 s hold.
 
 ## What makes it work (the grammar)
 1. **The sentence builds on screen word by word, synced to the voice.** Caption block at the top, max 2 lines, centred. Plain words appear with a quick de-blur; the **key word sits in a solid highlight bar**. A line never appears all at once.
