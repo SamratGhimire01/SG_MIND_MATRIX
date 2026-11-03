@@ -943,7 +943,8 @@ window.SGMM_POP = (() => {
   }
   function caption(c, t, specs, mode = 'dark') {
     const sp = specs.map((s) => (Array.isArray(s) ? {a: s[0], b: s[1], lines: s[2].split('\n')} : s)).find((s) => t >= s.a && t < s.b); if (!sp) return;
-    const fade = 1 - seg(sp.b - 0.15, sp.b, t), nw = sp.lines.join(' ').split(' ').length, wps = Math.max(WPS, nw / Math.max(0.5, sp.b - sp.a - 0.5)); let k = 0; c.save(); c.font = CAPF; c.textBaseline = 'middle'; const spc = c.measureText(' ').width;
+    const fade = 1 - seg(sp.b - 0.15, sp.b, t), nw = sp.lines.join(' ').split(' ').length, wps = Math.max(WPS, nw / Math.max(0.5, sp.b - sp.a - 0.5)); let k = 0; c.save(); c.font = CAPF; c.textBaseline = 'middle';
+    const fit = Math.min(1, 940 / Math.max(...sp.lines.map((ln) => c.measureText(ln.replace(/[*{}]/g, '')).width + 48))); if (fit < 1) c.font = `700 ${Math.floor(62 * fit)}px ${SG}`; const spc = c.measureText(' ').width;
     sp.lines.forEach((ln, li) => {
       const ws = parse(ln), wd = ws.map((x) => c.measureText(x.w).width), tot = wd.reduce((s, v) => s + v, 0) + spc * (ws.length - 1) + 24 * ws.filter((x, i) => x.h && !(ws[i - 1] || {}).h).length;
       let x = 540 - tot / 2; const y = CAPY + li * CAPLH;
@@ -1039,13 +1040,30 @@ window.SGMM_POP = (() => {
     c.save(); c.translate(x, y + 10 * press); c.scale(s, s); c.fillStyle = '#033D22'; rr(c, -170, -90, 340, 200, 34); c.fill(); c.fillStyle = lit ? C.green : '#0C5E37'; rr(c, -160, -100 + 6 * press, 320, 180, 30); c.fill();
     c.font = `700 52px ${MONO}`; c.fillStyle = C.void; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('ENTER ⏎', 0, -10 + 6 * press); c.restore();
   }
-  // a picked draft as an engine scene: its own clock scaled to the plan's span (scene.text.speed = D / span), its own sounds on that clock;
-  // chrome(false) while the engine draws, so the engine's captions (re-timed to the real voice) replace the draft's own
-  function engineScene(fn, D, snd, chrome) {
-    return {at: 0, draw: (ctx, t, tx) => { chrome(false); try { fn(ctx, Math.min(D - 1e-3, t * ((tx && tx.speed) || 1))); } finally { chrome(true); } },
-      sound: (k, Pl, c, end, start) => { if (!snd) return; const s = end > start ? D / (end - start) : 1; snd(k, Pl, (x) => c(x / s)); }};
+  // ---- scenes for the engine (3 Nov 2026, after Samrat's v003 notes: no generic "heartbeat" filler — every beat is a real component with its own sound)
+  // timeline item: {at, draw(c, t), snd: [name, opts]} — drawn from `at`, its sound plays at `at`. Times are seconds from the scene start (plan time).
+  const item = (at, draw, snd) => ({at, draw, snd});
+  const pillI = (at, x, y, text, o = {}) => item(at, (c, t) => pill(c, t, at, x, y, text, o), o.snd === null ? null : (o.snd || ['pop', {f: o.f || 420 + (text.length % 5) * 60, g: o.g || 0.9}]));
+  const cardI = (at, x, y, w, h, paint, o = {}) => item(at, (c, t) => card(c, t, at, x, y, w, h, paint && ((cc, W, H) => paint(cc, t, W, H)), o), o.snd === null ? null : (o.snd || ['pop', {f: 330, g: 1}]));
+  const runItems = (c, t, items) => { for (const it of items) if (t >= it.at - 1e-3 && !(it.out && t > it.out)) it.draw(c, t); };
+  const playItems = (Pl, c, items) => { for (const it of items) if (it.snd) Pl(it.snd[0], c(it.at), it.snd[1] || {}); };
+  // word time inside a line: L = [[a, b, text], ...] relative to the scene start (plan sets scene.text.L)
+  const W = (L, li, k) => { const [a, b, txt] = L[li]; const n = txt.split(/\s+/).length; return a + (b - a) * Math.min(k, n) / n; };
+
+  // a picked draft as an engine scene: its clock scaled to the plan's span (scene.text.speed = D / span) with its own sounds;
+  // `extra(tx)` = timeline items on top, in unscaled scene time (real components that fill the moments the draft holds still)
+  function engineScene(fn, D, snd, chrome, extra) {
+    const ex = (tx) => (extra ? (tx.__ex || (tx.__ex = extra(tx))) : []);
+    return {at: 0, draw: (ctx, t, tx) => { const sp = (tx && tx.speed) || 1; chrome(false); try { ctx.save(); fn(ctx, Math.min(D - 1e-3, t * sp)); ctx.restore(); runItems(ctx, t, ex(tx || {})); } finally { chrome(true); } },
+      sound: (k, Pl, c, end, start, A, tx) => { const s = end > start ? D / (end - start) : 1; if (snd) snd(k, Pl, (x) => c(x / s)); playItems(Pl, c, ex(tx || {})); }};
   }
-  return {C, SG, MONO, TAU, engineScene, cl, lerp, seg, out3, io, back, pop, withPop, rr, bg, push, caption, capEnd, pill, sticker, card, dotted, xMark, burst, stamp, qBubble, chip, title, endCard, label, hand, enterKey, ink};
+  // a scene written straight on the voice: build(tx) -> {bg(c, t), items, post(c, t)?} with tx.L = its lines; no time scaling
+  function timelineScene(build, chrome) {
+    const get = (tx) => tx.__tl || (tx.__tl = build(tx));
+    return {at: 0, draw: (ctx, t, tx) => { const S = get(tx || {}); chrome(false); try { S.bg(ctx, t); runItems(ctx, t, S.items); if (S.post) S.post(ctx, t); } finally { chrome(true); } },
+      sound: (k, Pl, c, end, start, A, tx) => playItems(Pl, c, get(tx || {}).items)};
+  }
+  return {C, SG, MONO, TAU, engineScene, timelineScene, item, pillI, cardI, runItems, playItems, W, cl, lerp, seg, out3, io, back, pop, withPop, rr, bg, push, caption, capEnd, pill, sticker, card, dotted, xMark, burst, stamp, qBubble, chip, title, endCard, label, hand, enterKey, ink};
 })();
 
 /* X006 LOG · Day 001 "Why our sound felt worse" — storyboard options v001: 3 drafts per scene, 1080x1920, pure functions of t.
@@ -1150,7 +1168,15 @@ window.X006_OPT = (() => {
     stereo: (k, P, c) => { P('stroke', c(0.1), {material: 'pen', dur: 0.3, g: 0.4}); for (let i = 0; i < 6; i++) P('tick', c(0.2 + i * 0.1), {f: 3000, g: 0.4}); P('stroke', c(1.3), {material: 'pen', dur: 0.3, g: 0.4}); for (let i = 0; i < 6; i++) P('tick', c(1.4 + i * 0.1), {f: 2400, g: 0.4, pan: (i % 2 ? 0.6 : -0.6)}); },
     fix: (k, P, c) => { P('stroke', c(0.0), {material: 'pen', dur: 0.3, g: 0.4}); for (let i = 0; i < 3; i++) { P('key', c(0.6 + i * 1.1), {g: 0.5}); P('click', c(1.2 + i * 1.1), {f: 2200 + i * 200, g: 0.9}); } P('whoosh', c(4.75), {dur: 0.3, g: 0.4}); P('click', c(4.95), {f: 2600, g: 1}); },
   };
-  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x006_hook: P.engineScene(hookA, 3.0, SND.hook, chrome), x006_find: P.engineScene(findA, 6.2, SND.find, chrome), x006_stereo: P.engineScene(stereoA, 3.2, SND.stereo, chrome), x006_fix: P.engineScene(fixA, 6.2, SND.fix, chrome)});
+  /* v004 (Samrat's notes): real components on the beats the drafts held still */
+  const {W, item, pillI} = P, O2 = (it, out) => Object.assign(it, {out});
+  const EX = {
+    hook: ({L}) => [pillI(W(L, 0, 5), 300, 1320, 'OUR MIX · X003', {kind: 'white', size: 28}), pillI(W(L, 0, 7), 760, 1320, 'SOUNDS WORSE?', {kind: 'amber', size: 28}), item(W(L, 0, 8) + 0.2, (c, t) => P.qBubble(c, t, W(L, 0, 8) + 0.2, 900, 500, 50), ['pop', {f: 640}])],
+    find: ({L}) => [O2(pillI(W(L, 0, 2), 300, 900, 'OURS', {kind: 'white', size: 40}), 4.0), O2(item(W(L, 0, 4), (c, t) => P.withPop(c, t, W(L, 0, 4), 540, 900, (cc) => { cc.font = `700 60px ${P.SG}`; cc.fillStyle = C.amber; cc.textAlign = "center"; cc.textBaseline = "middle"; cc.fillText("VS", 0, 0); }), ['thud', {f: 150, g: 0.7}]), 4.0),
+      O2(pillI(W(L, 0, 6), 780, 900, 'THEIRS', {kind: 'white', size: 40}), 4.0), O2(pillI(W(L, 0, 8), 540, 1020, '3 EXPLAINERS · MEASURED', {kind: 'dark', size: 26}), 4.0), pillI(W(L, 1, 1), 540, 1330, 'SAME VOICE LEVEL ✓', {kind: 'white', size: 28})],
+    stereo: ({L}) => [pillI(W(L, 0, 3), 300, 1330, 'CENTRE', {kind: 'amber', size: 28}), pillI(W(L, 0, 4) + 0.4, 300, 1430, 'NEAR MONO', {kind: 'dark', size: 24}), pillI(W(L, 0, 7), 780, 1330, 'WIDE', {kind: 'white', size: 28})],
+  };
+  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x006_hook: P.engineScene(hookA, 3.0, SND.hook, chrome, EX.hook), x006_find: P.engineScene(findA, 6.2, SND.find, chrome, EX.find), x006_stereo: P.engineScene(stereoA, 3.2, SND.stereo, chrome, EX.stereo), x006_fix: P.engineScene(fixA, 6.2, SND.fix, chrome)});
 
   const O = (name, draw, keys, note) => ({name, draw, keys, note});
   return {CAPS, scenes: [
@@ -1800,7 +1826,7 @@ function sceneSounds(k,plan,scenes){
   const hook=find('enter_in_dark'),field=find('field_push'),logo=find('logo_from_dark'),tease=find('blackout_tease');
   const press=hook?clock(hook)(PRESS):0,hit=field?clock(field)(28.0):null;
   const A={press,hit,cut:hit!=null?hit-.52:null,logoHit:logo?clock(logo)(41.0):null,blackout:tease?tease.a:logo?clock(logo)(BLACKOUT):D};
-  for(const s of scenes){const f=SCENE_SOUND[s.type]||(TYPES[s.type]||{}).sound;if(!f)continue;const kk=inWindow(k,s.a,s.b);f(kk,(n,t,o)=>kk.play(n,t,o),clock(s),s.b,s.a,A)}
+  for(const s of scenes){const f=SCENE_SOUND[s.type]||(TYPES[s.type]||{}).sound;if(!f)continue;const kk=inWindow(k,s.a,s.b);f(kk,(n,t,o)=>kk.play(n,t,o),clock(s),s.b,s.a,A,s.tx)}
   return A;
 }
 function sufiTension(k,plan,scenes){
@@ -1925,7 +1951,7 @@ return{load,types:Object.keys(TYPES)};
 })();
 </script>
 <script>
-const plan={"episode": "X006", "format": "log", "version": "v001", "title": "LOG Day 001 — Why Our Sound Felt Worse", "status": "Picks approved · built from the ElevenLabs take · draft for Samrat", "fps": 60, "size": [1080, 1920], "score": "sgmm_signal", "style_files": ["04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js", "08_templates/styles/pop/sgmm_pop.js", "04_video_projects/X006_log_day001_sound/storyboard/x006_options.js"], "text": {}, "captions": [{"t": [0.11, 3.16], "text": "Today I found out why\nour videos sound worse.", "kind": "line"}, {"t": [3.27, 6.48], "text": "I measured our mix against\nan explainer that sounds great.", "kind": "line"}, {"t": [6.76, 11.3], "text": "Same voice level… but we had\n16 dB more deep bass.", "kind": "fact", "src": "own"}, {"t": [11.42, 14.9], "text": "Theirs sits in the centre.\nOurs spreads wide.", "kind": "fact", "src": "own"}, {"t": [15.06, 19.78], "text": "So tomorrow: cut the bass,\npull it to the middle,\nmore small hits.", "kind": "line"}, {"t": [19.96, 21.95], "text": "Day 002 starts… now.", "kind": "line"}], "act_tags": [], "duration": 27.41, "cues": [{"t": 21.94, "cue": "cut", "reopen": 22.4}], "silences": [[25.1, 25.5]], "scenes": [{"id": "hook", "type": "x006_hook", "t": [0.0, 3.37], "text": {"speed": 0.8902}}, {"id": "find", "type": "x006_find", "t": [3.12, 11.52], "text": {"speed": 0.7381}}, {"id": "stereo", "type": "x006_stereo", "t": [11.27, 15.16], "text": {"speed": 0.8226}}, {"id": "fix", "type": "x006_fix", "t": [14.91, 22.0], "text": {"speed": 0.8745}}, {"id": "logo", "type": "logo_from_dark", "t": [22.0, 24.8]}, {"id": "tease", "type": "blackout_tease", "t": [24.8, 27.41], "text": {"tease": "NEXT LOG · TOMORROW EVENING"}}], "sources": {"own": {"title": "Our own measurement (3 Nov 2026): energy below 80 Hz −29 dB (reference explainers) vs −13.4 dB (our X003 v006); stereo side −28…−30 vs −20 dB", "url": ".claude/skills/sgmm-video-production/POP_EXPLAINER.md"}}, "notes": ["Picks all A. The screen-capture frame is a placeholder until Samrat records his screen (never a drawn fake screen).", "Voice: ElevenLabs take (free tier = draft)."]};
+const plan={"episode": "X006", "format": "log", "version": "v001", "title": "LOG Day 001 — Why Our Sound Felt Worse", "status": "Picks approved · built from the ElevenLabs take · draft for Samrat", "fps": 60, "size": [1080, 1920], "score": "sgmm_signal", "style_files": ["04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js", "08_templates/styles/pop/sgmm_pop.js", "04_video_projects/X006_log_day001_sound/storyboard/x006_options.js"], "text": {}, "captions": [{"t": [0.11, 3.16], "text": "Today I found out why\nour videos sound worse.", "kind": "line"}, {"t": [3.27, 6.48], "text": "I measured our mix against\nan explainer that sounds great.", "kind": "line"}, {"t": [6.76, 11.3], "text": "Same voice level… but we had\n16 dB more deep bass.", "kind": "fact", "src": "own"}, {"t": [11.42, 14.9], "text": "Theirs sits in the centre.\nOurs spreads wide.", "kind": "fact", "src": "own"}, {"t": [15.06, 19.78], "text": "So tomorrow: cut the bass,\npull it to the middle,\nmore small hits.", "kind": "line"}, {"t": [19.96, 21.95], "text": "Day 002 starts… now.", "kind": "line"}], "act_tags": [], "duration": 27.41, "cues": [{"t": 21.94, "cue": "cut", "reopen": 22.4}], "silences": [[25.1, 25.5]], "scenes": [{"id": "hook", "type": "x006_hook", "t": [0.0, 3.37], "text": {"speed": 0.8902, "L": [[0.11, 2.91, "Today I found out why our videos sound worse."]]}}, {"id": "find", "type": "x006_find", "t": [3.12, 11.52], "text": {"speed": 0.7381, "L": [[0.15, 3.11, "I measured our mix against an explainer that sounds great."], [3.64, 7.93, "Same voice level… but we had sixteen decibels more deep bass."]]}}, {"id": "stereo", "type": "x006_stereo", "t": [11.27, 15.16], "text": {"speed": 0.8226, "L": [[0.15, 3.38, "Theirs sits in the centre. Ours spreads wide."]]}}, {"id": "fix", "type": "x006_fix", "t": [14.91, 22.0], "text": {"speed": 0.8745, "L": [[0.15, 4.62, "So tomorrow: cut the bass, pull it to the middle, more small hits."], [5.05, 6.79, "Day two starts… now."]]}}, {"id": "logo", "type": "logo_from_dark", "t": [22.0, 24.8]}, {"id": "tease", "type": "blackout_tease", "t": [24.8, 27.41], "text": {"tease": "NEXT LOG · TOMORROW EVENING"}}], "sources": {"own": {"title": "Our own measurement (3 Nov 2026): energy below 80 Hz −29 dB (reference explainers) vs −13.4 dB (our X003 v006); stereo side −28…−30 vs −20 dB", "url": ".claude/skills/sgmm-video-production/POP_EXPLAINER.md"}}, "notes": ["Picks all A. The screen-capture frame is a placeholder until Samrat records his screen (never a drawn fake screen).", "Voice: ElevenLabs take (free tier = draft)."]};
 const ep=SGMM.load(plan),D=plan.duration,$=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cap=s=>esc(s).replace(/\[([^\]]*)\]/g,'<mark>$1</mark>').replace(/\n/g,' ');

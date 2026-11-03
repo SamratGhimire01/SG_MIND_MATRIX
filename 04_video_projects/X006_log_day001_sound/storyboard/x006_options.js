@@ -55,7 +55,7 @@ window.X006_OPT = (() => {
   }
   function findC(c, t) { // Pop: light stage; a DEEP BASS card with THEIRS / OURS pills; a big Amber "+16 dB" sticker
     const mode = t < 2.9 ? 'dark' : 'light'; P.bg(c, t, mode);
-    if (t < 2.9) { P.pill(c, t, 0.3, 360, 900, 'OURS', {kind: 'white', size: 44}); P.pill(c, t, 0.9, 720, 900, 'THEIRS', {kind: 'white', size: 44}); P.withPop(c, t, 1.4, 540, 900, (cc) => { cc.font = `700 60px ${P.SG}`; cc.fillStyle = C.amber; cc.textAlign = 'center'; cc.textBaseline = 'middle'; cc.fillText('VS', 0, 0); }); }
+    if (t < 2.9) { P.pill(c, t, 0.3, 360, 900, 'OURS', {kind: 'white', size: 44}); P.pill(c, t, 0.9, 720, 900, 'THEIRS', {kind: 'white', size: 44}); P.withPop(c, t, 1.4, 540, 1260, (cc) => { cc.font = `700 60px ${P.SG}`; cc.fillStyle = C.amber; cc.textAlign = 'center'; cc.textBaseline = 'middle'; cc.fillText('VS', 0, 0); }); }
     else { P.card(c, t, 3.0, 540, 900, 820, 360, (cc) => { cc.font = `700 46px ${MONO}`; cc.fillStyle = C.void; cc.fillText('THEIRS   −29 dB', -340, -20); cc.fillText('OURS     −13 dB', -340, 70); }, {label: 'DEEP BASS · BELOW 80 Hz'}); P.sticker(c, t, 4.6, 540, 1260, '+16 dB', {size: 80, r: 220}); }
     pcap(c, t, 'find', mode);
   }
@@ -100,7 +100,15 @@ window.X006_OPT = (() => {
     stereo: (k, P, c) => { P('stroke', c(0.1), {material: 'pen', dur: 0.3, g: 0.4}); for (let i = 0; i < 6; i++) P('tick', c(0.2 + i * 0.1), {f: 3000, g: 0.4}); P('stroke', c(1.3), {material: 'pen', dur: 0.3, g: 0.4}); for (let i = 0; i < 6; i++) P('tick', c(1.4 + i * 0.1), {f: 2400, g: 0.4, pan: (i % 2 ? 0.6 : -0.6)}); },
     fix: (k, P, c) => { P('stroke', c(0.0), {material: 'pen', dur: 0.3, g: 0.4}); for (let i = 0; i < 3; i++) { P('key', c(0.6 + i * 1.1), {g: 0.5}); P('click', c(1.2 + i * 1.1), {f: 2200 + i * 200, g: 0.9}); } P('whoosh', c(4.75), {dur: 0.3, g: 0.4}); P('click', c(4.95), {f: 2600, g: 1}); },
   };
-  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x006_hook: P.engineScene(hookA, 3.0, SND.hook, chrome), x006_find: P.engineScene(findA, 6.2, SND.find, chrome), x006_stereo: P.engineScene(stereoA, 3.2, SND.stereo, chrome), x006_fix: P.engineScene(fixA, 6.2, SND.fix, chrome)});
+  /* v004 (Samrat's notes): real components on the beats the drafts held still */
+  const {W, item, pillI} = P, O2 = (it, out) => Object.assign(it, {out});
+  const EX = {
+    hook: ({L}) => [pillI(W(L, 0, 5), 300, 1320, 'OUR MIX · X003', {kind: 'white', size: 28}), pillI(W(L, 0, 7), 760, 1320, 'SOUNDS WORSE?', {kind: 'amber', size: 28}), item(W(L, 0, 8) + 0.2, (c, t) => P.qBubble(c, t, W(L, 0, 8) + 0.2, 900, 500, 50), ['pop', {f: 640}])],
+    find: ({L}) => [O2(pillI(W(L, 0, 2), 300, 1260, 'OURS', {kind: 'white', size: 40}), 4.0), O2(item(W(L, 0, 4), (c, t) => P.withPop(c, t, W(L, 0, 4), 540, 1260, (cc) => { cc.font = `700 60px ${P.SG}`; cc.fillStyle = C.amber; cc.textAlign = "center"; cc.textBaseline = "middle"; cc.fillText("VS", 0, 0); }), ['thud', {f: 150, g: 0.7}]), 4.0),
+      O2(pillI(W(L, 0, 6), 780, 1260, 'THEIRS', {kind: 'white', size: 40}), 4.0), O2(pillI(W(L, 0, 8), 540, 1350, '3 EXPLAINERS · MEASURED', {kind: 'dark', size: 26}), 4.0), pillI(W(L, 1, 1), 540, 1330, 'SAME VOICE LEVEL ✓', {kind: 'white', size: 28})],
+    stereo: ({L}) => [pillI(W(L, 0, 3), 300, 1265, 'CENTRE', {kind: 'amber', size: 28}), pillI(W(L, 0, 4) + 0.4, 300, 1345, 'NEAR MONO', {kind: 'white', size: 24}), pillI(W(L, 0, 7), 780, 1265, 'WIDE', {kind: 'white', size: 28})],
+  };
+  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x006_hook: P.engineScene(hookA, 3.0, SND.hook, chrome, EX.hook), x006_find: P.engineScene(findA, 6.2, SND.find, chrome, EX.find), x006_stereo: P.engineScene(stereoA, 3.2, SND.stereo, chrome, EX.stereo), x006_fix: P.engineScene(fixA, 6.2, SND.fix, chrome)});
 
   const O = (name, draw, keys, note) => ({name, draw, keys, note});
   return {CAPS, scenes: [

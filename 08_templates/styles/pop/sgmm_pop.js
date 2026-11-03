@@ -143,21 +143,28 @@ window.SGMM_POP = (() => {
     c.save(); c.translate(x, y + 10 * press); c.scale(s, s); c.fillStyle = '#033D22'; rr(c, -170, -90, 340, 200, 34); c.fill(); c.fillStyle = lit ? C.green : '#0C5E37'; rr(c, -160, -100 + 6 * press, 320, 180, 30); c.fill();
     c.font = `700 52px ${MONO}`; c.fillStyle = C.void; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('ENTER ⏎', 0, -10 + 6 * press); c.restore();
   }
-  // a picked draft as an engine scene: its own clock scaled to the plan's span (scene.text.speed = D / span), its own sounds on that clock;
-  // chrome(false) while the engine draws, so the engine's captions (re-timed to the real voice) replace the draft's own.
-  // Keep-alive (Samrat: a move + its sound every 1.5–2 s): wherever the scene's own sounds leave a gap > 1 s of plan time, a beat is added —
-  // a small punch-in of the picture (2.5 %, 0.25 s) and a sharp pop on the same frame.
-  const SOFT = new Set(['key', 'tick', 'slide', 'whoosh', 'stroke', 'paper', 'riser']);
-  function engineScene(fn, D, snd, chrome) {
-    const own = []; const nop = new Proxy({}, {get: () => () => {}});
-    if (snd) snd(nop, (n, t) => { if (!SOFT.has(n)) own.push(t); }, (x) => x); // soft beds (key runs, ticks, slides, whooshes) don't count as beats own.sort((x, y) => x - y);
-    const cache = {}, fillers = (speed) => cache[speed] || (cache[speed] = (() => { const gap = 1.0 * speed, out = [], pts = [0].concat(own, [D]);
-      for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], b = pts[i]; if (b - a <= gap) continue; const n = Math.floor((b - a) / (0.85 * speed)); for (let k = 1; k <= n; k++) { const x = a + (b - a) * k / (n + 1); if (x > 0.2 && x < D - 0.15) out.push(x); } }
-      return out; })());
-    return {at: 0, draw: (ctx, t, tx) => { const sp = (tx && tx.speed) || 1, tl = Math.min(D - 1e-3, t * sp); let bump = 0;
-        for (const f of fillers(sp)) { const q = (tl - f) / (0.25 * sp); if (q > 0 && q < 1) bump = Math.max(bump, Math.sin(q * Math.PI)); }
-        chrome(false); ctx.save(); try { const k = 1 + 0.025 * bump; ctx.translate(540, 960); ctx.scale(k, k); ctx.translate(-540, -960); fn(ctx, tl); } finally { ctx.restore(); chrome(true); } },
-      sound: (k, Pl, c, end, start) => { const s = end > start ? D / (end - start) : 1; if (snd) snd(k, Pl, (x) => c(x / s)); fillers(+s.toFixed(4)).forEach((f, i) => Pl('pop', c(f / s), {f: 340 + (i % 3) * 90, g: 1.1})); }};
+  // ---- scenes for the engine (3 Nov 2026, after Samrat's v003 notes: no generic "heartbeat" filler — every beat is a real component with its own sound)
+  // timeline item: {at, draw(c, t), snd: [name, opts]} — drawn from `at`, its sound plays at `at`. Times are seconds from the scene start (plan time).
+  const item = (at, draw, snd) => ({at, draw, snd});
+  const pillI = (at, x, y, text, o = {}) => item(at, (c, t) => pill(c, t, at, x, y, text, o), o.snd === null ? null : (o.snd || ['pop', {f: o.f || 420 + (text.length % 5) * 60, g: o.g || 0.9}]));
+  const cardI = (at, x, y, w, h, paint, o = {}) => item(at, (c, t) => card(c, t, at, x, y, w, h, paint && ((cc, W, H) => paint(cc, t, W, H)), o), o.snd === null ? null : (o.snd || ['pop', {f: 330, g: 1}]));
+  const runItems = (c, t, items) => { for (const it of items) if (t >= it.at - 1e-3 && !(it.out && t > it.out)) it.draw(c, t); };
+  const playItems = (Pl, c, items) => { for (const it of items) if (it.snd) Pl(it.snd[0], c(it.at), it.snd[1] || {}); };
+  // word time inside a line: L = [[a, b, text], ...] relative to the scene start (plan sets scene.text.L)
+  const W = (L, li, k) => { const [a, b, txt] = L[li]; const n = txt.split(/\s+/).length; return a + (b - a) * Math.min(k, n) / n; };
+
+  // a picked draft as an engine scene: its clock scaled to the plan's span (scene.text.speed = D / span) with its own sounds;
+  // `extra(tx)` = timeline items on top, in unscaled scene time (real components that fill the moments the draft holds still)
+  function engineScene(fn, D, snd, chrome, extra) {
+    const ex = (tx) => (extra ? (tx.__ex || (tx.__ex = extra(tx))) : []);
+    return {at: 0, draw: (ctx, t, tx) => { const sp = (tx && tx.speed) || 1; chrome(false); try { ctx.save(); fn(ctx, Math.min(D - 1e-3, t * sp)); ctx.restore(); runItems(ctx, t, ex(tx || {})); } finally { chrome(true); } },
+      sound: (k, Pl, c, end, start, A, tx) => { const s = end > start ? D / (end - start) : 1; if (snd) snd(k, Pl, (x) => c(x / s)); playItems(Pl, c, ex(tx || {})); }};
   }
-  return {C, SG, MONO, TAU, engineScene, cl, lerp, seg, out3, io, back, pop, withPop, rr, bg, push, caption, capEnd, pill, sticker, card, dotted, xMark, burst, stamp, qBubble, chip, title, endCard, label, hand, enterKey, ink};
+  // a scene written straight on the voice: build(tx) -> {bg(c, t), items, post(c, t)?} with tx.L = its lines; no time scaling
+  function timelineScene(build, chrome) {
+    const get = (tx) => tx.__tl || (tx.__tl = build(tx));
+    return {at: 0, draw: (ctx, t, tx) => { const S = get(tx || {}); chrome(false); try { S.bg(ctx, t); runItems(ctx, t, S.items); if (S.post) S.post(ctx, t); } finally { chrome(true); } },
+      sound: (k, Pl, c, end, start, A, tx) => playItems(Pl, c, get(tx || {}).items)};
+  }
+  return {C, SG, MONO, TAU, engineScene, timelineScene, item, pillI, cardI, runItems, playItems, W, cl, lerp, seg, out3, io, back, pop, withPop, rr, bg, push, caption, capEnd, pill, sticker, card, dotted, xMark, burst, stamp, qBubble, chip, title, endCard, label, hand, enterKey, ink};
 })();

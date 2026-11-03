@@ -45,6 +45,11 @@ Samrat added 8 explainer looks (Editorial Collage, Constructivist, Manim, Paperc
 ## Pop Explainer — default build method (Samrat, 3 Nov 2026)
 "The pop-ups of different components are really great… we will use this way of building the video in our coming videos." Full playbook in `POP_EXPLAINER.md` (this folder) — Samrat asked to learn **everything** about these videos, so it covers the 8-beat script formula, the voice delivery, the measured audio mix (mono, almost no sub, warm voice, bed ~17 dB under, ~2 SFX hits/s) and the picture, not only pops. Caption builds word by word with highlight bars, every spoken noun pops in as a component on that word, a pop + its own sound every 0.5–1 s, one idea per 3–5 s scene, dark ↔ light background flips, whip/zoom-through transitions, TWIST sticker, contrast pair, concept title card. **Their method, our colours** (Deep Forest / Signal White backgrounds, amber stickers and X marks, one green answer per frame, Space Grotesk + JetBrains Mono).
 
+## Samrat's notes on the Day 001 drafts (3 Nov 2026)
+- **Every format uses the Pop style now** — SHIFT too ("follow the same pop design as the second video"). Build scenes as Pop timelines written on the real voice (`SGMM_POP.timelineScene`, scene `text.L` = its lines): each spoken thing pops in on its word with its own sound.
+- **No generic "heartbeat" filler** (a repeating pop + punch-in every 1–2 s looked and sounded wrong). Fill every hold with a real component (tag, card, counter, ≠, ✓, "?") with a varied sound — never a pulse.
+- **Real-world references, so people recognise "this is that":** name the real products as SGMM tags (ChatGPT, Claude, Gemini, Stack Overflow). **No logo graphics and no look-alike logos** without written permission — Anthropic's trademark guidelines need prior approval and OpenAI's brand rules forbid similar logos; product names in text are fine. If permission ever comes, logos drop into the same tag spots.
+
 ## Cadence (decided 2 Nov 2026)
 3 X videos a day (SHIFT morning, TIP afternoon, LOG evening) + Saturday long-form. Formats, styles and weekly batching: `07_scripts/CADENCE_SGMM_weekly_v001.md`.
 

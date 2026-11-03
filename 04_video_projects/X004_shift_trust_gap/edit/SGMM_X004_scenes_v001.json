@@ -13,7 +13,7 @@
  "style_files": [
   "04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js",
   "08_templates/styles/pop/sgmm_pop.js",
-  "04_video_projects/X004_shift_trust_gap/storyboard/x004_options.js"
+  "04_video_projects/X004_shift_trust_gap/storyboard/x004_pop.js"
  ],
  "text": {},
  "captions": [
@@ -22,24 +22,30 @@
     0.1,
     3.73
    ],
-   "text": "It answered in two seconds.\nDid you check it?",
-   "kind": "line"
+   "text": "It answered in *two seconds*.\nDid you *check it?*",
+   "kind": "line",
+   "style": "pop",
+   "mode": "dark"
   },
   {
    "t": [
     3.78,
     8.39
    ],
-   "text": "Coders used to ask strangers\non forums… and wait hours\nfor a tick.",
-   "kind": "line"
+   "text": "Coders used to ask *strangers*\non forums… and wait *hours*\nfor a tick.",
+   "kind": "line",
+   "style": "pop",
+   "mode": "light"
   },
   {
    "t": [
     8.7,
     13.05
    ],
-   "text": "But now, more than seven in ten\nuse AI every day.",
+   "text": "But now, *more than 7 in 10*\nuse AI every day.",
    "kind": "fact",
+   "style": "pop",
+   "mode": "dark",
    "src": "so2026"
   },
   {
@@ -47,8 +53,10 @@
     13.47,
     18.86
    ],
-   "text": "So they trust it? Only 16%\ntrust it with most tasks.",
+   "text": "So they trust it? Only *16%*\ntrust it with most tasks.",
    "kind": "fact",
+   "style": "pop",
+   "mode": "light",
    "src": "so2026"
   },
   {
@@ -56,8 +64,10 @@
     19.0,
     22.52
    ],
-   "text": "Most trust it only when\nthey can check the answer.",
+   "text": "Most trust it only when\nthey can *check the answer*.",
    "kind": "fact",
+   "style": "pop",
+   "mode": "dark",
    "src": "so2026"
   },
   {
@@ -81,24 +91,7 @@
    "mode": "dark"
   }
  ],
- "act_tags": [
-  {
-   "t": [
-    3.73,
-    8.6
-   ],
-   "num": "01",
-   "label": "THEN"
-  },
-  {
-   "t": [
-    8.65,
-    22.47
-   ],
-   "num": "02",
-   "label": "NOW"
-  }
- ],
+ "act_tags": [],
  "duration": 35.31,
  "cues": [
   {
@@ -115,47 +108,116 @@
  ],
  "scenes": [
   {
-   "id": "hook_answer",
-   "type": "x004_hook_answer",
+   "id": "hook",
+   "type": "x004p_hook",
    "t": [
     0.0,
     3.88
    ],
    "text": {
-    "speed": 0.7216
+    "speed": 1,
+    "L": [
+     [
+      0.1,
+      3.48,
+      "It answered in two seconds. Did you check it?"
+     ]
+    ]
    }
   },
   {
-   "id": "then_forum",
-   "type": "x004_then_forum",
+   "id": "then",
+   "type": "x004p_then",
    "t": [
     3.63,
     8.8
    ],
    "text": {
-    "speed": 0.8897
+    "speed": 1,
+    "L": [
+     [
+      0.15,
+      4.51,
+      "Coders used to ask strangers on forums… and wait hours for a tick."
+     ]
+    ]
    }
   },
   {
-   "id": "now_trust",
-   "type": "x004_now_trust",
+   "id": "now_a",
+   "type": "x004p_now_a",
    "t": [
     8.55,
+    13.57
+   ],
+   "text": {
+    "speed": 1,
+    "L": [
+     [
+      0.15,
+      4.25,
+      "But now, more than seven in ten use AI every day."
+     ]
+    ]
+   }
+  },
+  {
+   "id": "now_b",
+   "type": "x004p_now_b",
+   "t": [
+    13.32,
+    19.1
+   ],
+   "text": {
+    "speed": 1,
+    "L": [
+     [
+      0.15,
+      5.29,
+      "So they trust it? Only sixteen percent trust it with most tasks."
+     ]
+    ]
+   }
+  },
+  {
+   "id": "now_c",
+   "type": "x004p_now_c",
+   "t": [
+    18.85,
     22.67
    ],
    "text": {
-    "speed": 0.6374
+    "speed": 1,
+    "L": [
+     [
+      0.15,
+      3.42,
+      "Most trust it only when they can check the answer."
+     ]
+    ]
    }
   },
   {
-   "id": "next_check",
-   "type": "x004_next_check",
+   "id": "next",
+   "type": "x004p_next",
    "t": [
     22.42,
     29.9
    ],
    "text": {
-    "speed": 0.7487
+    "speed": 1,
+    "L": [
+     [
+      0.15,
+      4.13,
+      "So the next skill may not be asking… but checking."
+     ],
+     [
+      4.42,
+      7.13,
+      "Because when it answers in two seconds—"
+     ]
+    ]
    }
   },
   {
@@ -186,7 +248,8 @@
   }
  },
  "notes": [
-  "Script v002 (A); picks hook A, THEN A, NOW A, NEXT C (Pop). Voice: ElevenLabs take (free tier = draft; regenerate on Starter before a monetised post).",
-  "NEXT is a Pop scene: its caption builds at the top, so it has no act tag (it would sit on the caption)."
+  "v004 (Samrat: \"follow the same pop design as the second video\"): every scene is a Pop timeline on the ElevenLabs take; act pills 01 THEN / 02 NOW / 03 NEXT inside the scenes.",
+  "Real-world references as product-name tags (ChatGPT, Claude, Gemini, Stack Overflow); no logo graphics or look-alikes (trademark permission needed).",
+  "Voice: ElevenLabs free tier = draft; regenerate on Starter before a monetised post."
  ]
 }

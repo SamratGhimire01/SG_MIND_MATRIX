@@ -92,7 +92,14 @@
     3.37
    ],
    "text": {
-    "speed": 0.8902
+    "speed": 0.8902,
+    "L": [
+     [
+      0.11,
+      2.91,
+      "Today I found out why our videos sound worse."
+     ]
+    ]
    }
   },
   {
@@ -103,7 +110,19 @@
     11.52
    ],
    "text": {
-    "speed": 0.7381
+    "speed": 0.7381,
+    "L": [
+     [
+      0.15,
+      3.11,
+      "I measured our mix against an explainer that sounds great."
+     ],
+     [
+      3.64,
+      7.93,
+      "Same voice level… but we had sixteen decibels more deep bass."
+     ]
+    ]
    }
   },
   {
@@ -114,7 +133,14 @@
     15.16
    ],
    "text": {
-    "speed": 0.8226
+    "speed": 0.8226,
+    "L": [
+     [
+      0.15,
+      3.38,
+      "Theirs sits in the centre. Ours spreads wide."
+     ]
+    ]
    }
   },
   {
@@ -125,7 +151,19 @@
     22.0
    ],
    "text": {
-    "speed": 0.8745
+    "speed": 0.8745,
+    "L": [
+     [
+      0.15,
+      4.62,
+      "So tomorrow: cut the bass, pull it to the middle, more small hits."
+     ],
+     [
+      5.05,
+      6.79,
+      "Day two starts… now."
+     ]
+    ]
    }
   },
   {

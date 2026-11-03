@@ -234,7 +234,18 @@ window.X005_OPT = (() => {
     twist: (k, P, c) => { P('riser', c(0.0), {dur: 0.4, g: 0.8}); P('impact', c(0.4), {f: 90, g: 0.9}); P('pop', c(0.42), {f: 700}); pops(P, c, [2.4, 3.0]); P('stroke', c(3.6), {material: 'pen', dur: 0.4, g: 0.4}); P('slide', c(6.6), {dur: 0.9, g: 0.5}); P('thud', c(8.8), {f: 100, g: 1}); P('impact', c(8.82), {f: 80, g: 0.6}); },
     end: (k, P, c) => { for (let i = 0; i < 5; i++) P('pop', c(0.4 + i * 0.5), {f: 380 + i * 80}); P('whoosh', c(4.4), {dur: 0.4, g: 0.4}); P('impact', c(4.9), {f: 90, g: 0.7}); P('ding', c(4.95), {f: 1975, g: 0.25}); pops(P, c, [5.3, 5.42, 5.54, 5.66], 600); },
   };
-  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x005_hook: P.engineScene(hookA, 6.4, SND.hook, chrome), x005_claim: P.engineScene(claimA, 7.0, SND.claim, chrome), x005_tokens: P.engineScene(tokensA, 11.2, SND.tokens, chrome), x005_attend: P.engineScene(attendA, 11.2, SND.attend, chrome), x005_name: P.engineScene(nameA, 7.6, SND.name, chrome), x005_twist: P.engineScene(twistA, 10.4, SND.twist, chrome), x005_end: P.engineScene(endA, 8.0, SND.end, chrome)});
+  /* v004 (Samrat's notes): real components on the beats the drafts held still; product names as tags (no logo graphics without permission) */
+  const {W, item, pillI} = P, O2 = (it, out) => Object.assign(it, {out});
+  const EX = {
+    hook: ({L}) => [pillI(W(L, 0, 6), 300, 1450, 'ChatGPT', {kind: 'white', size: 30}), pillI(W(L, 0, 6) + 0.3, 540, 1450, 'Claude', {kind: 'white', size: 30}), pillI(W(L, 0, 6) + 0.6, 780, 1450, 'Gemini', {kind: 'white', size: 30})],
+    attend: ({L}) => [O2(pillI(W(L, 0, 7), 300, 940, 'sky = strong', {kind: 'amber', size: 28}), L[1][0]), O2(pillI(W(L, 0, 9), 700, 940, 'The = weak', {kind: 'fog', size: 28}), L[1][0]),
+      O2(pillI(W(L, 1, 5), 880, 920, 'TOP PICK', {kind: 'white', size: 26}), L[2][0] + 0.3), O2(item(W(L, 1, 6) + 0.4, (c, t) => P.qBubble(c, t, W(L, 1, 6) + 0.4, 900, 1330, 44), ['pop', {f: 640}]), L[2][0] + 0.3),
+      ...[0, 1, 2].map((i) => pillI(W(L, 2, 5) + i * 0.5, 300 + i * 240, 1420, '+1 TOKEN', {kind: 'amber', size: 26}))],
+    twist: ({L}) => [item(W(L, 1, 5), (c, t) => P.withPop(c, t, W(L, 1, 5), 545, 860, (cc) => { cc.font = `700 110px ${SG}`; cc.fillStyle = C.amber; cc.textAlign = 'center'; cc.textBaseline = 'middle'; cc.fillText('≠', 0, 0); }), ['thud', {f: 140, g: 0.8}]),
+      pillI(W(L, 1, 8), 750, 1010, 'NO FACT-CHECK', {kind: 'amber', size: 24}), item(W(L, 2, 2), (c, t) => P.qBubble(c, t, W(L, 2, 2), 900, 660, 50), ['pop', {f: 660}])],
+    end: ({L}) => [pillI(L[1][1] + 0.3, 540, 1300, 'UNDER THE HOOD · #1', {kind: 'white', size: 30}), pillI(L[1][1] + 0.9, 540, 1400, 'SG MIND MATRIX', {kind: 'dark', size: 30, snd: ['ding', {f: 1975, g: 0.25}]})],
+  };
+  window.SGMM_STYLE_SCENES = Object.assign(window.SGMM_STYLE_SCENES || {}, {x005_hook: P.engineScene(hookA, 6.4, SND.hook, chrome, EX.hook), x005_claim: P.engineScene(claimA, 7.0, SND.claim, chrome), x005_tokens: P.engineScene(tokensA, 11.2, SND.tokens, chrome), x005_attend: P.engineScene(attendA, 11.2, SND.attend, chrome, EX.attend), x005_name: P.engineScene(nameA, 7.6, SND.name, chrome), x005_twist: P.engineScene(twistA, 10.4, SND.twist, chrome, EX.twist), x005_end: P.engineScene(endA, 8.0, SND.end, chrome, EX.end)});
 
   const O = (name, draw, keys, note) => ({name, draw, keys, note});
   return {CAPS, scenes: [

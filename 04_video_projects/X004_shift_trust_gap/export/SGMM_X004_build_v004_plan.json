@@ -1,0 +1,255 @@
+{
+ "episode": "X004",
+ "format": "shift",
+ "version": "v001",
+ "title": "The Trust Gap",
+ "status": "Picks approved · built from the ElevenLabs take · draft for Samrat",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "score": "sgmm_signal",
+ "style_files": [
+  "04_video_projects/X001_shift_end_of_the_click/storyboard/x001_options.js",
+  "08_templates/styles/pop/sgmm_pop.js",
+  "04_video_projects/X004_shift_trust_gap/storyboard/x004_pop.js"
+ ],
+ "text": {},
+ "captions": [
+  {
+   "t": [
+    0.1,
+    3.73
+   ],
+   "text": "It answered in *two seconds*.\nDid you *check it?*",
+   "kind": "line",
+   "style": "pop",
+   "mode": "dark"
+  },
+  {
+   "t": [
+    3.78,
+    8.39
+   ],
+   "text": "Coders used to ask *strangers*\non forums… and wait *hours*\nfor a tick.",
+   "kind": "line",
+   "style": "pop",
+   "mode": "light"
+  },
+  {
+   "t": [
+    8.7,
+    13.05
+   ],
+   "text": "But now, *more than 7 in 10*\nuse AI every day.",
+   "kind": "fact",
+   "style": "pop",
+   "mode": "dark",
+   "src": "so2026"
+  },
+  {
+   "t": [
+    13.47,
+    18.86
+   ],
+   "text": "So they trust it? Only *16%*\ntrust it with most tasks.",
+   "kind": "fact",
+   "style": "pop",
+   "mode": "light",
+   "src": "so2026"
+  },
+  {
+   "t": [
+    19.0,
+    22.52
+   ],
+   "text": "Most trust it only when\nthey can *check the answer*.",
+   "kind": "fact",
+   "style": "pop",
+   "mode": "dark",
+   "src": "so2026"
+  },
+  {
+   "t": [
+    22.57,
+    26.79
+   ],
+   "text": "So the next skill may not be\nasking… but *checking*.",
+   "kind": "forecast",
+   "style": "pop",
+   "mode": "dark"
+  },
+  {
+   "t": [
+    26.84,
+    29.8
+   ],
+   "text": "Because when it answers\nin *two seconds*—",
+   "kind": "line",
+   "style": "pop",
+   "mode": "dark"
+  }
+ ],
+ "act_tags": [],
+ "duration": 35.31,
+ "cues": [
+  {
+   "t": 29.84,
+   "cue": "cut",
+   "reopen": 30.3
+  }
+ ],
+ "silences": [
+  [
+   33.0,
+   33.4
+  ]
+ ],
+ "scenes": [
+  {
+   "id": "hook",
+   "type": "x004p_hook",
+   "t": [
+    0.0,
+    3.88
+   ],
+   "text": {
+    "speed": 1,
+    "L": [
+     [
+      0.1,
+      3.48,
+      "It answered in two seconds. Did you check it?"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "then",
+   "type": "x004p_then",
+   "t": [
+    3.63,
+    8.8
+   ],
+   "text": {
+    "speed": 1,
+    "L": [
+     [
+      0.15,
+      4.51,
+      "Coders used to ask strangers on forums… and wait hours for a tick."
+     ]
+    ]
+   }
+  },
+  {
+   "id": "now_a",
+   "type": "x004p_now_a",
+   "t": [
+    8.55,
+    13.57
+   ],
+   "text": {
+    "speed": 1,
+    "L": [
+     [
+      0.15,
+      4.25,
+      "But now, more than seven in ten use AI every day."
+     ]
+    ]
+   }
+  },
+  {
+   "id": "now_b",
+   "type": "x004p_now_b",
+   "t": [
+    13.32,
+    19.1
+   ],
+   "text": {
+    "speed": 1,
+    "L": [
+     [
+      0.15,
+      5.29,
+      "So they trust it? Only sixteen percent trust it with most tasks."
+     ]
+    ]
+   }
+  },
+  {
+   "id": "now_c",
+   "type": "x004p_now_c",
+   "t": [
+    18.85,
+    22.67
+   ],
+   "text": {
+    "speed": 1,
+    "L": [
+     [
+      0.15,
+      3.42,
+      "Most trust it only when they can check the answer."
+     ]
+    ]
+   }
+  },
+  {
+   "id": "next",
+   "type": "x004p_next",
+   "t": [
+    22.42,
+    29.9
+   ],
+   "text": {
+    "speed": 1,
+    "L": [
+     [
+      0.15,
+      4.13,
+      "So the next skill may not be asking… but checking."
+     ],
+     [
+      4.42,
+      7.13,
+      "Because when it answers in two seconds—"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "logo",
+   "type": "logo_from_dark",
+   "t": [
+    29.9,
+    32.7
+   ]
+  },
+  {
+   "id": "tease",
+   "type": "blackout_tease",
+   "t": [
+    32.7,
+    35.31
+   ],
+   "text": {
+    "tease": "NEXT SHIFT · TOMORROW MORNING"
+   }
+  }
+ ],
+ "sources": {
+  "so2026": {
+   "title": "Stack Overflow Developer Survey 2026 — AI (30,903 valid responses, fielded 23 Jun – 5 Aug 2026): 73% use coding assistants/agents daily; 48% trust AI when they can easily validate; 16% for most tasks that are not important work decisions",
+   "url": "https://survey.stackoverflow.co/2026/ai",
+   "note": "one self-selected survey of developers"
+  }
+ },
+ "notes": [
+  "v004 (Samrat: \"follow the same pop design as the second video\"): every scene is a Pop timeline on the ElevenLabs take; act pills 01 THEN / 02 NOW / 03 NEXT inside the scenes.",
+  "Real-world references as product-name tags (ChatGPT, Claude, Gemini, Stack Overflow); no logo graphics or look-alikes (trademark permission needed).",
+  "Voice: ElevenLabs free tier = draft; regenerate on Starter before a monetised post."
+ ]
+}

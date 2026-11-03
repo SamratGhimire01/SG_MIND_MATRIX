@@ -376,7 +376,10 @@ def data_uri(path):
 
 
 def still(mp4, t, path):
-    sh('ffmpeg', '-v', 'error', '-y', '-ss', f'{t:.3f}', '-i', mp4, '-frames:v', '1', '-q:v', '3', path)
+    for dt in (0, 0.05, 0.15):   # the very last frame can fall past the decoder's end: step back a little
+        try: return sh('ffmpeg', '-v', 'error', '-y', '-ss', f'{max(0, t - dt):.3f}', '-i', mp4, '-frames:v', '1', '-q:v', '3', path)
+        except subprocess.CalledProcessError:
+            if dt == 0.15: raise
 
 
 def contact_sheet(mp4, shots, out):

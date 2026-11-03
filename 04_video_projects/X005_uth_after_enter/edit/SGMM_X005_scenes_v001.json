@@ -214,7 +214,19 @@
     6.27
    ],
    "text": {
-    "speed": 1.0207
+    "speed": 1.0207,
+    "L": [
+     [
+      0.11,
+      3.54,
+      "You press Enter… and the answer starts typing back."
+     ],
+     [
+      4.51,
+      5.66,
+      "But here's the interesting part?"
+     ]
+    ]
    }
   },
   {
@@ -225,7 +237,19 @@
     12.28
    ],
    "text": {
-    "speed": 1.1182
+    "speed": 1.1182,
+    "L": [
+     [
+      0.15,
+      3.41,
+      "The model doesn't look up a finished answer… it writes it."
+     ],
+     [
+      4.07,
+      5.58,
+      "One small piece at a time!"
+     ]
+    ]
    }
   },
   {
@@ -236,7 +260,24 @@
     21.34
    ],
    "text": {
-    "speed": 1.203
+    "speed": 1.203,
+    "L": [
+     [
+      0.15,
+      2.81,
+      "Look, first your message is cut into tokens."
+     ],
+     [
+      3.13,
+      5.63,
+      "A token is about a word… or part of one."
+     ],
+     [
+      6.27,
+      8.64,
+      "Then each token becomes a list of numbers."
+     ]
+    ]
    }
   },
   {
@@ -247,7 +288,24 @@
     34.21
    ],
    "text": {
-    "speed": 0.8537
+    "speed": 0.8537,
+    "L": [
+     [
+      0.15,
+      4.92,
+      "Now attention: every word checks which words matter to it."
+     ],
+     [
+      5.62,
+      8.5,
+      "Then it scores every possible next word."
+     ],
+     [
+      8.92,
+      12.18,
+      "It picks one… adds it… and guesses again."
+     ]
+    ]
    }
   },
   {
@@ -258,7 +316,19 @@
     41.75
    ],
    "text": {
-    "speed": 0.9756
+    "speed": 0.9756,
+    "L": [
+     [
+      0.15,
+      3.21,
+      "That's why you see it typing… piece by piece."
+     ],
+     [
+      3.69,
+      6.91,
+      "This is called… next-token prediction."
+     ]
+    ]
    }
   },
   {
@@ -269,7 +339,24 @@
     52.19
    ],
    "text": {
-    "speed": 0.9729
+    "speed": 0.9729,
+    "L": [
+     [
+      0.15,
+      1.13,
+      "But there's a twist!"
+     ],
+     [
+      1.79,
+      5.64,
+      "It picks the likely word… not a checked fact."
+     ],
+     [
+      5.81,
+      10.49,
+      "That's why AI can sound sure… and still be wrong."
+     ]
+    ]
    }
   },
   {
@@ -280,7 +367,19 @@
     59.86
    ],
    "text": {
-    "speed": 1.0101
+    "speed": 1.0101,
+    "L": [
+     [
+      0.15,
+      3.45,
+      "So AI doesn't find your answer… it writes it!"
+     ],
+     [
+      4.34,
+      5.42,
+      "Now you see the code."
+     ]
+    ]
    }
   }
  ],

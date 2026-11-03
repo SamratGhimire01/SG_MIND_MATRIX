@@ -625,7 +625,7 @@ function sceneSounds(k,plan,scenes){
   const hook=find('enter_in_dark'),field=find('field_push'),logo=find('logo_from_dark'),tease=find('blackout_tease');
   const press=hook?clock(hook)(PRESS):0,hit=field?clock(field)(28.0):null;
   const A={press,hit,cut:hit!=null?hit-.52:null,logoHit:logo?clock(logo)(41.0):null,blackout:tease?tease.a:logo?clock(logo)(BLACKOUT):D};
-  for(const s of scenes){const f=SCENE_SOUND[s.type]||(TYPES[s.type]||{}).sound;if(!f)continue;const kk=inWindow(k,s.a,s.b);f(kk,(n,t,o)=>kk.play(n,t,o),clock(s),s.b,s.a,A)}
+  for(const s of scenes){const f=SCENE_SOUND[s.type]||(TYPES[s.type]||{}).sound;if(!f)continue;const kk=inWindow(k,s.a,s.b);f(kk,(n,t,o)=>kk.play(n,t,o),clock(s),s.b,s.a,A,s.tx)}
   return A;
 }
 function sufiTension(k,plan,scenes){
